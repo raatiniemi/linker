@@ -13,6 +13,17 @@ targetCompatibility = JavaVersion.VERSION_1_8
 // noinspection GroovyUnusedAssignment
 mainClassName = 'me.raatiniemi.linker.Main';
 
+// noinspection GroovyMissingReturnStatement
+run {
+    if (project.hasProperty("config")) {
+        // noinspection GrUnresolvedAccess
+        String config = config
+
+        // noinspection GroovyAssignabilityCheck
+        args config
+    }
+}
+
 repositories {
     mavenCentral()
 }

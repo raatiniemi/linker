@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String... args) throws IOException {
@@ -32,6 +34,22 @@ public class Main {
         if (sourceDirectory.isEmpty()) {
             throw new RuntimeException(
                     "No source directory have been supplied"
+            );
+        }
+
+        // Attempt to read the target directories.
+        //
+        // Since we need to support multiple target directories the target
+        // directory properties have to be prefixed with 'target.directory',
+        // and preferable suffixed with a numeric value.
+        List<String> targetDirectories = properties.stringPropertyNames()
+                .stream()
+                .filter(key -> key.startsWith("target.directory"))
+                .map(properties::getProperty)
+                .collect(Collectors.toList());
+        if (targetDirectories.isEmpty()) {
+            throw new RuntimeException(
+                    "No target directories have been supplied"
             );
         }
     }

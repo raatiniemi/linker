@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -81,5 +82,26 @@ public class Main {
             // Add the symbolic links to the target collection.
             targets.addAll(links);
         }
+
+        // List the sources and exclude the items existing within any of the
+        // target directories.
+        List<Path> sources = Files.list(Paths.get(sourceDirectory))
+                .filter(Files::isDirectory)
+                .map(Path::getFileName)
+                .filter(source -> {
+                    Optional<Path> found = targets.stream()
+                            .filter(source::equals)
+                            .findFirst();
+
+                    return !found.isPresent();
+                })
+                .collect(Collectors.toList());
+
+        // Print the number of targets and unlinked sources.
+        System.out.println("Targets: " + targets.size());
+        System.out.println("Sources: " + sources.size());
+
+        // Print the unlinked sources.
+        sources.forEach(System.out::println);
     }
 }

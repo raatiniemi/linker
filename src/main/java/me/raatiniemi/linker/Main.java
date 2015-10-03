@@ -102,6 +102,9 @@ public class Main {
         System.out.println("Sources: " + sources.size());
 
         // Print the unlinked sources.
-        sources.forEach(System.out::println);
+        sources.stream()
+                .map(Path::toString)
+                .sorted()
+                .forEach(System.out::println);
     }
 }

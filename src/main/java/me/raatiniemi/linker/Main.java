@@ -55,33 +55,31 @@ public class Main {
             );
         }
 
-        // Symbolic links from the target directories.
-        List<Path> targets = new ArrayList<>();
-
-        // For each target directory we have to walk through the directory.
+        // We have to walk through each of the target directories to find the
+        // source directory of the symbolic links.
         //
-        // Since we are only interested in symbolic links back to the source
-        // directory we can exclude everything that is not a symbolic link.
-        //
-        // Since each name is rather unique we only need the basename of the
-        // link to exclude it from the source.
-        for (String directory : targetDirectories) {
-            List<Path> links = Files.walk(Paths.get(directory))
-                    .filter(Files::isSymbolicLink)
-                    .map(link -> {
-                        try {
-                            return Files.readSymbolicLink(link);
-                        } catch (IOException e) {
-                            System.out.println(e.getMessage());
-                            return null;
-                        }
-                    })
-                    .map(Path::getFileName)
-                    .collect(Collectors.toList());
-
-            // Add the symbolic links to the target collection.
-            targets.addAll(links);
-        }
+        // TODO: Handle the null/empty values better.
+        List<Path> targets = targetDirectories.stream()
+                .map(Paths::get)
+                .flatMap(directory -> {
+                    try {
+                        return Files.walk(directory);
+                    } catch (IOException e) {
+                        return null;
+                    }
+                })
+                .filter(path -> null != path)
+                .filter(Files::isSymbolicLink)
+                .map(link -> {
+                    try {
+                        return Files.readSymbolicLink(link);
+                    } catch (IOException e) {
+                        return null;
+                    }
+                })
+                .filter(path -> null != path)
+                .map(Path::getFileName)
+                .collect(Collectors.toList());
 
         // List the sources and exclude the items existing within any of the
         // target directories.

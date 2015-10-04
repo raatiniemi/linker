@@ -13,4 +13,11 @@ public class AbstractDirectory implements Directory {
     public Path getPath() {
         return this.path;
     }
+
+    @Override
+    public String getBasename() {
+        return this.getPath()
+                .getFileName()
+                .toString();
+    }
 }

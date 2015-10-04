@@ -9,4 +9,11 @@ public interface Directory {
      * @return Path of the directory.
      */
     Path getPath();
+
+    /**
+     * Getter method for the basename of the directory.
+     *
+     * @return Basename for the directory.
+     */
+    String getBasename();
 }

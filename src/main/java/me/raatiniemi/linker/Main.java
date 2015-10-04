@@ -155,12 +155,9 @@ public class Main {
         // List the sources and exclude the items existing within any of the
         // target directories.
         List<Directory> sources = directories.stream()
-                .filter(path -> {
-                    Path filename = path.getPath()
-                            .getFileName();
-
+                .filter(directory -> {
                     Optional<Item> found = targets.stream()
-                            .filter(target -> target.getPath().getFileName().equals(filename))
+                            .filter(target -> target.getBasename().equals(directory.getBasename()))
                             .findFirst();
 
                     return !found.isPresent();

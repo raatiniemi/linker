@@ -157,7 +157,7 @@ public class Main {
         List<Directory> sources = directories.stream()
                 .filter(directory -> {
                     Optional<Item> found = targets.stream()
-                            .filter(target -> target.getBasename().equals(directory.getBasename()))
+                            .filter(directory::equals)
                             .findFirst();
 
                     return !found.isPresent();

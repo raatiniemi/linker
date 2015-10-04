@@ -2,6 +2,7 @@ package me.raatiniemi.linker.domain;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Group extends AbstractDirectory {
     /**
@@ -28,5 +29,27 @@ public class Group extends AbstractDirectory {
      */
     public List<Item> getItems() {
         return this.items;
+    }
+
+    @Override
+    public String toString() {
+        String value = super.toString();
+
+        // If the group contain any items they should be appended to the value.
+        //
+        // Directory 1
+        // Directory 2 (Group)
+        //     Directory 3
+        //     Directory 4
+        List<String> items = this.getItems()
+                .stream()
+                .map(Directory::getBasename)
+                .collect(Collectors.toList());
+        if (!items.isEmpty()) {
+            String separator = "\n  ";
+            value += separator + String.join(separator, items);
+        }
+
+        return value;
     }
 }

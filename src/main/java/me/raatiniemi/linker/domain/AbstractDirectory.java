@@ -38,4 +38,9 @@ public class AbstractDirectory implements Directory {
         return this.getBasename()
                 .equals(directory.getBasename());
     }
+
+    @Override
+    public String toString() {
+        return this.getBasename();
+    }
 }

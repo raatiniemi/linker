@@ -1,5 +1,9 @@
 package me.raatiniemi.linker;
 
+import me.raatiniemi.linker.domain.Directory;
+import me.raatiniemi.linker.domain.Group;
+import me.raatiniemi.linker.domain.Item;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,7 +94,7 @@ public class Main {
         //
         // Depending on if the value is empty at the end of the walk determinds
         // whether the directory is a group or single item.
-        Map<Path, List<Path>> rawMap = new HashMap<>();
+        Map<Path, List<Item>> rawMap = new HashMap<>();
 
         // TODO: Add support for recursive mapping.
         Path source = Paths.get(sourceDirectory);
@@ -128,13 +132,30 @@ public class Main {
                     }
 
                     rawMap.get(path.getParent())
-                            .add(path);
+                            .add(new Item(path));
                 });
+
+        // Build the mapped structure from the raw data. Depending on whether
+        // the item have children the item should be mapped as Item or Group.
+        //
+        // Directory 1 (Item)
+        // Directory 2 (Group)
+        //    Directory 3 (Item)
+        //    Directory 4 (Item)
+        List<Directory> directories = new ArrayList<>();
+        rawMap.forEach((path, children) -> {
+            if (children.isEmpty()) {
+                directories.add(new Item(path));
+                return;
+            }
+
+            directories.add(new Group(path, children));
+        });
 
         // List the sources and exclude the items existing within any of the
         // target directories.
-        List<Path> sources = rawMap.keySet().stream()
-                .map(Path::getFileName)
+        List<Path> sources = directories.stream()
+                .map(directory -> directory.getPath().getFileName())
                 .filter(path -> {
                     Optional<Path> found = targets.stream()
                             .filter(path::equals)

@@ -7,7 +7,7 @@ public class Group extends AbstractDirectory {
     /**
      * Items contained within the group.
      */
-    private List<Path> items;
+    private List<Item> items;
 
     /**
      * Constructor.
@@ -15,7 +15,7 @@ public class Group extends AbstractDirectory {
      * @param path Path for the group.
      * @param items Items contained within the group.
      */
-    public Group(Path path, List<Path> items) {
+    public Group(Path path, List<Item> items) {
         super(path);
 
         this.items = items;
@@ -26,7 +26,7 @@ public class Group extends AbstractDirectory {
      *
      * @return Items contained within the group.
      */
-    public List<Path> getItems() {
+    public List<Item> getItems() {
         return this.items;
     }
 }

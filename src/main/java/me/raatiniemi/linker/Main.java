@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -81,14 +78,66 @@ public class Main {
                 .map(Path::getFileName)
                 .collect(Collectors.toList());
 
+        // Store the mapped raw data from the source directory.
+        //
+        // We have to map the raw data before attempting to filter anything,
+        // otherwise we can't handle grouped directories.
+        //
+        // The data is mapped as follows:
+        //
+        // Directory 1 -> []
+        // Directory 2 -> [Directory 3, Directory 4]
+        //
+        // Depending on if the value is empty at the end of the walk determinds
+        // whether the directory is a group or single item.
+        Map<Path, List<Path>> rawMap = new HashMap<>();
+
+        // TODO: Add support for recursive mapping.
+        Path source = Paths.get(sourceDirectory);
+        Files.walk(source, 2)
+                .filter(Files::isDirectory)
+                .filter(path -> {
+                    // When walking with `Files.walk` the source directory is
+                    // listed along with the other directories.
+                    //
+                    // We have to filter away the source directory since we
+                    // only want to map two levels.
+                    try {
+                        return !Files.isSameFile(path, source);
+                    } catch (IOException e) {
+                        return false;
+                    }
+                })
+                .sorted()
+                .forEach(path -> {
+                    // Since we are sorting the stream before building the raw
+                    // data, we can safely assume that parent directories will
+                    // appear before its children.
+                    //
+                    // Directory 1
+                    // Directory 2/Directory 3
+                    // Directory 2/Directory 4
+                    //
+                    // If the parent do not exists within the data, we have to
+                    // initialize it with an empty array.
+                    //
+                    // And, then just add the children.
+                    if (!rawMap.containsKey(path.getParent())) {
+                        rawMap.put(path, new ArrayList<>());
+                        return;
+                    }
+
+                    rawMap.get(path.getParent())
+                            .add(path);
+                });
+
         // List the sources and exclude the items existing within any of the
         // target directories.
-        List<Path> sources = Files.list(Paths.get(sourceDirectory))
-                .filter(Files::isDirectory)
+        List<Path> sources = rawMap.keySet().stream()
                 .map(Path::getFileName)
-                .filter(source -> {
+                .filter(path -> {
                     Optional<Path> found = targets.stream()
-                            .filter(source::equals)
+                            .filter(path::equals)
                             .findFirst();
 
                     return !found.isPresent();

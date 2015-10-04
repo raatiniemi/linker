@@ -170,9 +170,7 @@ public class Main {
 
         // Print the unlinked sources.
         sources.stream()
-                .map(Directory::getPath)
-                .map(Path::getFileName)
-                .sorted()
+                .sorted((d1, d2) -> d1.getBasename().compareTo(d2.getBasename()))
                 .forEach(System.out::println);
     }
 }

@@ -60,7 +60,7 @@ public class Main {
         // source directory of the symbolic links.
         //
         // TODO: Handle the null/empty values better.
-        List<Path> targets = targetDirectories.stream()
+        List<Item> targets = targetDirectories.stream()
                 .map(Paths::get)
                 .flatMap(directory -> {
                     try {
@@ -79,7 +79,7 @@ public class Main {
                     }
                 })
                 .filter(path -> null != path)
-                .map(Path::getFileName)
+                .map(Item::new)
                 .collect(Collectors.toList());
 
         // Store the mapped raw data from the source directory.
@@ -154,11 +154,13 @@ public class Main {
 
         // List the sources and exclude the items existing within any of the
         // target directories.
-        List<Path> sources = directories.stream()
-                .map(directory -> directory.getPath().getFileName())
+        List<Directory> sources = directories.stream()
                 .filter(path -> {
-                    Optional<Path> found = targets.stream()
-                            .filter(path::equals)
+                    Path filename = path.getPath()
+                            .getFileName();
+
+                    Optional<Item> found = targets.stream()
+                            .filter(target -> target.getPath().getFileName().equals(filename))
                             .findFirst();
 
                     return !found.isPresent();
@@ -171,7 +173,8 @@ public class Main {
 
         // Print the unlinked sources.
         sources.stream()
-                .map(Path::toString)
+                .map(Directory::getPath)
+                .map(Path::getFileName)
                 .sorted()
                 .forEach(System.out::println);
     }

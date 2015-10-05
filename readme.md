@@ -30,21 +30,6 @@ target.directory1=/path/to/target-directory-1
 target.directory2=/path/to/target-directory-2
 ```
 
-## Limitations
-
-With the current implementation the following scenario is not supported.
-
-```
-source/directory-1
-source/group/directory-2
-source/group/directory-3
-target/directory-1 -> ../source/directory-1
-target/directory-2 -> ../source/group/directory-2
-target/directory-3 -> ../source/group/directory-3
-```
-
-The `source/group` will be displayed as unlinked. This will be supported in future releases.
-
 ## License
 
 Copyright (C) 2015 Raatiniemi

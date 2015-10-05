@@ -156,6 +156,31 @@ public class Main {
         // target directories.
         List<Directory> sources = directories.stream()
                 .filter(directory -> {
+                    // TODO: Migrate filter to objects.
+                    // TODO: Check if item is linked before checking content.
+                    if (directory instanceof Group) {
+                        // If we're working with a group we have to check if
+                        // the contained items have been linked.
+                        Group group = (Group) directory;
+                        List<Item> items = group.getItems()
+                                .stream()
+                                .filter(item -> {
+                                    Optional<Item> found = targets.stream()
+                                            .filter(item::equals)
+                                            .findFirst();
+
+                                    return !found.isPresent();
+                                })
+                                .collect(Collectors.toList());
+
+                        // If all items within the gorup have been linked we
+                        // should exclude the group.
+                        //
+                        // We need to update items to only list unlinked.
+                        group.setItems(items);
+                        return !items.isEmpty();
+                    }
+
                     Optional<Item> found = targets.stream()
                             .filter(directory::equals)
                             .findFirst();

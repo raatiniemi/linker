@@ -31,6 +31,15 @@ public class Group extends AbstractDirectory {
         return this.items;
     }
 
+    /**
+     * Setter method for items contained within the group.
+     *
+     * @param items Items contained within the group.
+     */
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
+
     @Override
     public String toString() {
         String value = super.toString();

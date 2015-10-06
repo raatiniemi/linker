@@ -3,6 +3,7 @@ version '0.0.1'
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 // noinspection GroovyUnusedAssignment
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -26,6 +27,16 @@ run {
 
 repositories {
     mavenCentral()
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
 }
 
 dependencies {

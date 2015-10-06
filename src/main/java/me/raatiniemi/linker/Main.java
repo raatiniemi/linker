@@ -127,6 +127,15 @@ public class Main {
                         return false;
                     }
                 })
+                .filter(path -> {
+                    // Check if the name of the directory is included within
+                    // the exclude directories.
+                    String filename = path.getFileName()
+                            .toString()
+                            .toLowerCase();
+
+                    return !excludeDirectories.contains(filename);
+                })
                 .sorted()
                 .forEach(path -> {
                     // Since we are sorting the stream before building the raw

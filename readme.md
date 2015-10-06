@@ -28,6 +28,14 @@ source.directory=/path/to/source-directory
 # property name have to be unique and begin with 'target.directory'.
 target.directory1=/path/to/target-directory-1
 target.directory2=/path/to/target-directory-2
+
+# One or more exclude directories can be supplied, note that each property name
+# have to be unique and begin with 'exclude.directory'.
+#
+# Also, only the basename of the directory should be supplied. Full or partial
+# path exclusion is not supported.
+exclude.directory1=exclude1
+exclude.directory2=exclude2
 ```
 
 ## License

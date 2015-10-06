@@ -56,6 +56,21 @@ public class Main {
             );
         }
 
+        // Attempt to read the exclude directories.
+        //
+        // Since we need to support multiple exclude directories the exclude
+        // directory properties have to be prefixed with 'exclude.directory',
+        // and preferable suffixed with a numeric value.
+        //
+        // The comparison have to be case insensitive, so everything have to
+        // be converted to lowercase.
+        List<String> excludeDirectories = properties.stringPropertyNames()
+                .stream()
+                .filter(key -> key.startsWith("exclude.directory"))
+                .map(properties::getProperty)
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+
         // We have to walk through each of the target directories to find the
         // source directory of the symbolic links.
         //

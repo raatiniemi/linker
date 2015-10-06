@@ -24,7 +24,7 @@ Sample configuration file
 # Only one source directory can be supplied.
 source.directory=/path/to/source-directory
 
-# One or more target directories can be supplied, not that each
+# One or more target directories can be supplied, note that each
 # property name have to be unique and begin with 'target.directory'.
 target.directory1=/path/to/target-directory-1
 target.directory2=/path/to/target-directory-2

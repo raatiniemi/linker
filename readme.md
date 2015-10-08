@@ -1,5 +1,6 @@
 # Linker
 ![license](https://img.shields.io/badge/license-GPLv2-blue.svg)
+[![build status](https://gitlab.raatiniemi.me/ci/projects/10/status.png?ref=master)](https://gitlab.raatiniemi.me/ci/projects/10?ref=master)
 
 The application takes a source directory and indexes the containing directories. These directories are then checked against one or more target directories, which source directories do not have a symbolic link within the target directories.
 

@@ -60,13 +60,13 @@ public class Main {
         }
 
         // Check whether we have directories to exclude.
-        if (null == configuration.getExcludeDirectories()) {
-            configuration.setExcludeDirectories(new ArrayList<>());
+        if (null == configuration.getExcludes()) {
+            configuration.setExcludes(new ArrayList<>());
         }
 
         // The comparison have to be case insensitive, so everything have to
         // be converted to lowercase.
-        List<String> excludeDirectories = configuration.getExcludeDirectories()
+        List<String> excludeDirectories = configuration.getExcludes()
                 .stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());

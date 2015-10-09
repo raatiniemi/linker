@@ -7,7 +7,7 @@ public class Configuration {
 
     private List<String> targets;
 
-    private List<String> excludeDirectories;
+    private List<String> excludes;
 
     public String getSource() {
         return source;
@@ -27,12 +27,12 @@ public class Configuration {
         this.targets = targets;
     }
 
-    public List<String> getExcludeDirectories() {
-        return excludeDirectories;
+    public List<String> getExcludes() {
+        return excludes;
     }
 
     @SuppressWarnings("unused")
-    public void setExcludeDirectories(List<String> excludeDirectories) {
-        this.excludeDirectories = excludeDirectories;
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 }

@@ -1,5 +1,7 @@
 package me.raatiniemi.linker.domain;
 
+import me.raatiniemi.linker.filter.ExcludeFilter;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +40,31 @@ public class Group extends AbstractDirectory {
      */
     public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public boolean filter(List<Directory> targets) {
+        // Check whether the group have been linked. If the group is linked
+        // there is no need to check the subdirectories.
+        if (!super.filter(targets)) {
+            return false;
+        }
+
+        // The group have not been linked, we have to check if the contained
+        // items have been linked.
+        List<Item> items = this.getItems()
+                .stream()
+                .filter(item -> ExcludeFilter.filter(item, targets))
+                .collect(Collectors.toList());
+
+        // If the containing items have been linked we can filter the group.
+        //
+        // We need to update the items to only list unlinked items.
+        this.setItems(items);
+        return !this.getItems().isEmpty();
     }
 
     @Override

@@ -1,6 +1,9 @@
 package me.raatiniemi.linker.domain;
 
+import me.raatiniemi.linker.filter.ExcludeFilter;
+
 import java.nio.file.Path;
+import java.util.List;
 
 public class AbstractDirectory implements Directory {
     private Path path;
@@ -19,6 +22,14 @@ public class AbstractDirectory implements Directory {
         return this.getPath()
                 .getFileName()
                 .toString();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public boolean filter(List<Directory> data) {
+        return ExcludeFilter.filter(this, data);
     }
 
     @Override

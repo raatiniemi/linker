@@ -1,6 +1,7 @@
 package me.raatiniemi.linker.domain;
 
 import java.nio.file.Path;
+import java.util.List;
 
 public interface Directory {
     /**
@@ -16,4 +17,12 @@ public interface Directory {
      * @return Basename for the directory.
      */
     String getBasename();
+
+    /**
+     * Filter item based on the data.
+     *
+     * @param data Data source.
+     * @return false if item is found within data, otherwise true.
+     */
+    boolean filter(List<Directory> data);
 }

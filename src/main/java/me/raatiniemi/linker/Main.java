@@ -1,5 +1,6 @@
 package me.raatiniemi.linker;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.Group;
 import me.raatiniemi.linker.domain.Item;
@@ -11,6 +12,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS;
+
 public class Main {
     public static void main(String... args) throws IOException {
         // Check that we have been supplied with a configuration file.
@@ -21,53 +24,50 @@ public class Main {
         }
 
         // Check that the configuration file exists.
-        Path configuration = Paths.get(args[0]);
-        if (!Files.exists(configuration)) {
+        Path file = Paths.get(args[0]);
+        if (!Files.exists(file)) {
             throw new RuntimeException(
                     "Configuration file do not exist"
             );
         }
 
-        // Load the configuration file into properties.
-        Properties properties = new Properties();
-        properties.load(Files.newInputStream(configuration));
+        // Setup the JSON to Object mapper.
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(ALLOW_COMMENTS, true);
 
-        // Attempt to read the source directory.
-        String sourceDirectory = properties.getProperty("source.directory");
-        if (sourceDirectory.isEmpty()) {
+        // Attempt to read the JSON configuration.
+        Configuration configuration = objectMapper.readValue(
+                Files.newInputStream(file),
+                Configuration.class
+        );
+
+        // Check that a source directory have been
+        // supplied via the configuration file.
+        String sourceDirectory = configuration.getSourceDirectory();
+        if (null == sourceDirectory || sourceDirectory.isEmpty()) {
             throw new RuntimeException(
                     "No source directory have been supplied"
             );
         }
 
-        // Attempt to read the target directories.
-        //
-        // Since we need to support multiple target directories the target
-        // directory properties have to be prefixed with 'target.directory',
-        // and preferable suffixed with a numeric value.
-        List<String> targetDirectories = properties.stringPropertyNames()
-                .stream()
-                .filter(key -> key.startsWith("target.directory"))
-                .map(properties::getProperty)
-                .collect(Collectors.toList());
-        if (targetDirectories.isEmpty()) {
+        // Check that a target directories have been
+        // supplied via the configuration file.
+        List<String> targetDirectories = configuration.getTargetDirectories();
+        if (null == targetDirectories || targetDirectories.isEmpty()) {
             throw new RuntimeException(
                     "No target directories have been supplied"
             );
         }
 
-        // Attempt to read the exclude directories.
-        //
-        // Since we need to support multiple exclude directories the exclude
-        // directory properties have to be prefixed with 'exclude.directory',
-        // and preferable suffixed with a numeric value.
-        //
+        // Check whether we have directories to exclude.
+        if (null == configuration.getExcludeDirectories()) {
+            configuration.setExcludeDirectories(new ArrayList<>());
+        }
+
         // The comparison have to be case insensitive, so everything have to
         // be converted to lowercase.
-        List<String> excludeDirectories = properties.stringPropertyNames()
+        List<String> excludeDirectories = configuration.getExcludeDirectories()
                 .stream()
-                .filter(key -> key.startsWith("exclude.directory"))
-                .map(properties::getProperty)
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
 

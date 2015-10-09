@@ -3,19 +3,19 @@ package me.raatiniemi.linker;
 import java.util.List;
 
 public class Configuration {
-    private String sourceDirectory;
+    private String source;
 
     private List<String> targetDirectories;
 
     private List<String> excludeDirectories;
 
-    public String getSourceDirectory() {
-        return sourceDirectory;
+    public String getSource() {
+        return source;
     }
 
     @SuppressWarnings("unused")
-    public void setSourceDirectory(String directory) {
-        this.sourceDirectory = directory;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public List<String> getTargetDirectories() {

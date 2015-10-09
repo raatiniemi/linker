@@ -43,7 +43,7 @@ public class Main {
 
         // Check that a source directory have been
         // supplied via the configuration file.
-        String sourceDirectory = configuration.getSourceDirectory();
+        String sourceDirectory = configuration.getSource();
         if (null == sourceDirectory || sourceDirectory.isEmpty()) {
             throw new RuntimeException(
                     "No source directory have been supplied"

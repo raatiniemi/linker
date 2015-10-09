@@ -52,7 +52,7 @@ public class Main {
 
         // Check that a target directories have been
         // supplied via the configuration file.
-        List<String> targetDirectories = configuration.getTargetDirectories();
+        List<String> targetDirectories = configuration.getTargets();
         if (null == targetDirectories || targetDirectories.isEmpty()) {
             throw new RuntimeException(
                     "No target directories have been supplied"

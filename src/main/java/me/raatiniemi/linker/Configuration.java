@@ -5,7 +5,7 @@ import java.util.List;
 public class Configuration {
     private String source;
 
-    private List<String> targetDirectories;
+    private List<String> targets;
 
     private List<String> excludeDirectories;
 
@@ -18,13 +18,13 @@ public class Configuration {
         this.source = source;
     }
 
-    public List<String> getTargetDirectories() {
-        return targetDirectories;
+    public List<String> getTargets() {
+        return targets;
     }
 
     @SuppressWarnings("unused")
-    public void setTargetDirectories(List<String> targetDirectories) {
-        this.targetDirectories = targetDirectories;
+    public void setTargets(List<String> targets) {
+        this.targets = targets;
     }
 
     public List<String> getExcludeDirectories() {

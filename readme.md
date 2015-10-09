@@ -21,22 +21,26 @@ With the sample directory structure only the `source/directory-3` will be shown 
 Run the application via Gradle: `./gradlew run -Pconfig=path/to/configuration-file`
 
 Sample configuration file
-```
-# Only one source directory can be supplied.
-source.directory=/path/to/source-directory
+```json
+{
+    // Only one source directory can be supplied.
+    "source": "/path/to/source-directory",
 
-# One or more target directories can be supplied, note that each
-# property name have to be unique and begin with 'target.directory'.
-target.directory1=/path/to/target-directory-1
-target.directory2=/path/to/target-directory-2
+    // One or more target directories can be supplied.
+    "targets": [
+        "/path/to/target-directory-1",
+        "/path/to/target-directory-2"
+    ],
 
-# One or more exclude directories can be supplied, note that each property name
-# have to be unique and begin with 'exclude.directory'.
-#
-# Also, only the basename of the directory should be supplied. Full or partial
-# path exclusion is not supported.
-exclude.directory1=exclude1
-exclude.directory2=exclude2
+    // One or more exclude directories can be supplied.
+    //
+    // Also, only the basename of the directory should be supplied.
+    // Full or partial path exclusion is not supported.
+    "excludes": [
+        "exclude1",
+        "exclude2"
+    ]
+}
 ```
 
 ## License

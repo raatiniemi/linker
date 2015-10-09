@@ -75,7 +75,7 @@ public class Main {
         // source directory of the symbolic links.
         //
         // TODO: Handle the null/empty values better.
-        List<Item> targets = targetDirectories.stream()
+        List<Directory> targets = targetDirectories.stream()
                 .map(Paths::get)
                 .flatMap(directory -> {
                     try {
@@ -189,7 +189,7 @@ public class Main {
                         List<Item> items = group.getItems()
                                 .stream()
                                 .filter(item -> {
-                                    Optional<Item> found = targets.stream()
+                                    Optional<Directory> found = targets.stream()
                                             .filter(item::equals)
                                             .findFirst();
 
@@ -205,7 +205,7 @@ public class Main {
                         return !items.isEmpty();
                     }
 
-                    Optional<Item> found = targets.stream()
+                    Optional<Directory> found = targets.stream()
                             .filter(directory::equals)
                             .findFirst();
 

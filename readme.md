@@ -39,8 +39,33 @@ Sample configuration file
     "excludes": [
         "exclude1",
         "exclude2"
+    ],
+
+    // One or more link maps can be supplied.
+    "linkMaps": [
+        {
+            "regex": "^(?i)(target[-]item[-]1)",
+
+            "prefix": "../source-directory",
+            "target": "/path/to/target-directory-1"
+        }
     ]
 }
+```
+
+### LinkMaps
+
+To enable automatic linking, i.e. the application creates symbolic links based on a regular expression.
+
+Each configuration item must supply a regex, prefix, and target.
+
+* **regex** matches a basename.
+* **prefix** prepend the link target, can be a relative path from target.
+* **target** is the location to which the link will be created.
+
+The sample configuration will link matching items with the equivalent `ln`-command:
+```
+ln -s ../source-directory/target-item-1 /path/to/target-directory-1/target-item-1
 ```
 
 ## License

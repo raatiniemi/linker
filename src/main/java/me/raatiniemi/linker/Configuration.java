@@ -1,5 +1,7 @@
 package me.raatiniemi.linker;
 
+import me.raatiniemi.linker.configuration.LinkMap;
+
 import java.util.List;
 
 /**
@@ -20,6 +22,11 @@ public class Configuration {
      * Basename of exclude directories.
      */
     private List<String> excludes;
+
+    /**
+     * Link map configurations.
+     */
+    private List<LinkMap> linkMaps;
 
     /**
      * Getter method for source directory.
@@ -85,5 +92,27 @@ public class Configuration {
     @SuppressWarnings("unused")
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
+    }
+
+    /**
+     * Getter method for link map configurations.
+     *
+     * @return Link map configurations.
+     */
+    public List<LinkMap> getLinkMaps() {
+        return linkMaps;
+    }
+
+    /**
+     * Setter method for link map configurations.
+     *
+     * Suppressing warnings for unused method because the method is called via
+     * the ObjectMapper from the jackson-databind library.
+     *
+     * @param linkMaps Link map configurations.
+     */
+    @SuppressWarnings("unused")
+    public void setLinkMaps(List<LinkMap> linkMaps) {
+        this.linkMaps = linkMaps;
     }
 }

@@ -1,5 +1,7 @@
 package me.raatiniemi.linker.configuration;
 
+import java.util.regex.Pattern;
+
 public class LinkMap {
     private String regex;
 
@@ -29,5 +31,17 @@ public class LinkMap {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    /**
+     * Check if the text matches the regex.
+     *
+     * @param text Text to check against regex.
+     * @return true if text matches, otherwise false.
+     */
+    public boolean match(String text) {
+        return null != this.getRegex()
+                && !this.getRegex().isEmpty()
+                && Pattern.matches(this.getRegex(), text);
     }
 }

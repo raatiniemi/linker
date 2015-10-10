@@ -1,9 +1,13 @@
 package me.raatiniemi.linker.domain;
 
+import me.raatiniemi.linker.configuration.LinkMap;
 import me.raatiniemi.linker.filter.ExcludeFilter;
+import me.raatiniemi.linker.util.FileUtil;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Group extends AbstractDirectory {
@@ -65,6 +69,42 @@ public class Group extends AbstractDirectory {
         // We need to update the items to only list unlinked items.
         this.setItems(items);
         return !this.getItems().isEmpty();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public boolean link(List<LinkMap> linkMaps) {
+        List<Item> items = this.getItems().stream()
+                .filter(item -> {
+                    Optional<LinkMap> linkMap = linkMaps.stream()
+                            .filter(map -> map.match(item.getBasename()))
+                            .findFirst();
+
+                    // If we were unable to find a configuration, i.e. we are
+                    // unable to link the item we have to return false.
+                    if (!linkMap.isPresent()) {
+                        return true;
+                    }
+
+                    LinkMap map = linkMap.get();
+
+                    // Build the path for the link and target.
+                    Path link = Paths.get(map.getTarget(), item.getBasename());
+                    Path target = Paths.get(map.getPrefix(), this.getBasename(), item.getBasename());
+
+                    // If the symbolic link is created we have to exclude the
+                    // item from the filter by returning false.
+                    return !FileUtil.createSymbolicLink(link, target);
+                })
+                .collect(Collectors.toList());
+
+        // If the containing items have been linked we can filter the group.
+        //
+        // We need to update the items to only list unlinked items.
+        this.setItems(items);
+        return this.getItems().isEmpty();
     }
 
     @Override

@@ -1,9 +1,13 @@
 package me.raatiniemi.linker.domain;
 
+import me.raatiniemi.linker.configuration.LinkMap;
 import me.raatiniemi.linker.filter.ExcludeFilter;
+import me.raatiniemi.linker.util.FileUtil;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 public class AbstractDirectory implements Directory {
     private Path path;
@@ -30,6 +34,33 @@ public class AbstractDirectory implements Directory {
     @Override
     public boolean filter(List<Directory> data) {
         return ExcludeFilter.filter(this, data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public boolean link(List<LinkMap> linkMaps) {
+        // Attempt to find a link map configuration based on the basename.
+        Optional<LinkMap> linkMap = linkMaps.stream()
+                .filter(map -> map.match(this.getBasename()))
+                .findFirst();
+
+        // If we were unable to find a configuration, i.e. we are unable to
+        // link the item we have to return false.
+        if (!linkMap.isPresent()) {
+            return false;
+        }
+
+        LinkMap map = linkMap.get();
+
+        // Build the path for the link and target.
+        Path link = Paths.get(map.getTarget(), this.getBasename());
+        Path target = Paths.get(map.getPrefix(), this.getBasename());
+
+        // If the symbolic link is created we have to exclude the item from the
+        // filter by returning false.
+        return FileUtil.createSymbolicLink(link, target);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package me.raatiniemi.linker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.raatiniemi.linker.configuration.LinkMap;
 import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.Group;
 import me.raatiniemi.linker.domain.Item;
@@ -176,10 +177,22 @@ public class Main {
             directories.add(new Group(path, children));
         });
 
+        // We no link map configurations have been set we have to set the
+        // default value as an empty array. Otherwise we are unable to use
+        // the configurations within a lambda, because of final.
+        if (null == configuration.getLinkMaps()) {
+            configuration.setLinkMaps(new ArrayList<>());
+        }
+        List<LinkMap> linkMaps = configuration.getLinkMaps();
+
         // List the sources and exclude the items existing within any of the
         // target directories.
         List<Directory> sources = directories.stream()
                 .filter(directory -> directory.filter(targets))
+                .filter(directory ->
+                        // Since we want to exclude items that are considered
+                        // linked we have to inverse the return value.
+                        !directory.link(linkMaps))
                 .collect(Collectors.toList());
 
         // Print the number of targets and unlinked sources.

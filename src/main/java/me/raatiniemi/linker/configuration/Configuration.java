@@ -1,6 +1,4 @@
-package me.raatiniemi.linker;
-
-import me.raatiniemi.linker.configuration.LinkMap;
+package me.raatiniemi.linker.configuration;
 
 import java.util.List;
 

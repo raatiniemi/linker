@@ -1,0 +1,22 @@
+group 'me.raatiniemi'
+version '0.0.1'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+// noinspection GroovyUnusedAssignment
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+// noinspection GroovyUnusedAssignment
+targetCompatibility = JavaVersion.VERSION_1_8
+
+// noinspection GroovyUnusedAssignment
+mainClassName = 'me.raatiniemi.linker.Main';
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.11'
+}

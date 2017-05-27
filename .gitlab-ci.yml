@@ -1,3 +1,5 @@
+image: raatiniemi/gradle:latest
+
 build:
     script:
         - "./gradlew test assemble"

@@ -1,5 +1,18 @@
 image: raatiniemi/gradle:latest
 
+stages:
+  - build
+  - test
+
 build:
-    script:
-        - "./gradlew test assemble"
+  stage: build
+  script:
+    - bin/build
+  artifacts:
+    paths:
+      - build/libs/*.jar
+
+test:
+  stage: test
+  script:
+    - bin/test

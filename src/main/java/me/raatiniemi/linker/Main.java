@@ -16,8 +16,8 @@
 
 package me.raatiniemi.linker;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import me.raatiniemi.linker.configuration.Configuration;
+import me.raatiniemi.linker.configuration.ConfigurationParser;
 import me.raatiniemi.linker.configuration.LinkMap;
 import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.Group;
@@ -30,34 +30,9 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS;
-
 public class Main {
     public static void main(String... args) throws IOException {
-        // Check that we have been supplied with a configuration file.
-        if (0 == args.length || args[0].isEmpty()) {
-            throw new RuntimeException(
-                    "No configuration file have been supplied"
-            );
-        }
-
-        // Check that the configuration file exists.
-        Path file = Paths.get(args[0]);
-        if (!Files.exists(file)) {
-            throw new RuntimeException(
-                    "Configuration file do not exist"
-            );
-        }
-
-        // Setup the JSON to Object mapper.
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(ALLOW_COMMENTS, true);
-
-        // Attempt to read the JSON configuration.
-        Configuration configuration = objectMapper.readValue(
-                Files.newInputStream(file),
-                Configuration.class
-        );
+        Configuration configuration = parseConfigurationFileFromArguments(args);
 
         // Check that a source directory have been
         // supplied via the configuration file.
@@ -220,5 +195,13 @@ public class Main {
         sources.stream()
                 .sorted(Comparator.comparing(Directory::getBasename))
                 .forEach(System.out::println);
+    }
+
+    private static Configuration parseConfigurationFileFromArguments(String[] args) {
+        if (0 == args.length || args[0].isEmpty()) {
+            throw new RuntimeException("No configuration file have been supplied");
+        }
+
+        return ConfigurationParser.parse(args[0]);
     }
 }

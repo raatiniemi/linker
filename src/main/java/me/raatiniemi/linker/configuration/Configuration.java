@@ -16,35 +16,45 @@
 
 package me.raatiniemi.linker.configuration;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import me.raatiniemi.linker.domain.LinkMap;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
+
 /**
  * Represent the configuration file.
  */
 public class Configuration {
-    /**
-     * Path to source directory.
-     */
-    private String source;
+    private final String source;
+    private final List<String> targets;
+    private final List<String> excludes;
+    private final Set<LinkMap> linkMaps;
 
-    /**
-     * Path to target directories.
-     */
-    private List<String> targets;
+    @JsonCreator
+    public Configuration(
+            @JsonProperty("source") String source,
+            @JsonProperty("targets") List<String> targets,
+            @JsonProperty("excludes") List<String> excludes,
+            @JsonProperty("linkMaps") Set<LinkMap> linkMaps
+    ) {
+        this.source = source;
+        this.targets = targets;
 
-    /**
-     * Basename of exclude directories.
-     */
-    private List<String> excludes = Collections.emptyList();
+        if (isNull(excludes)) {
+            excludes = Collections.emptyList();
+        }
+        this.excludes = excludes;
 
-    /**
-     * Link map configurations.
-     */
-    private Set<LinkMap> linkMaps = Collections.emptySet();
+        if (isNull(linkMaps)) {
+            linkMaps = Collections.emptySet();
+        }
+        this.linkMaps = linkMaps;
+    }
 
     /**
      * Getter method for source directory.
@@ -53,19 +63,6 @@ public class Configuration {
      */
     public String getSource() {
         return source;
-    }
-
-    /**
-     * Setter method for source directory.
-     *
-     * Suppressing warnings for unused method because the method is called via
-     * the ObjectMapper from the jackson library.
-     *
-     * @param source Path to source directory.
-     */
-    @SuppressWarnings("unused")
-    public void setSource(String source) {
-        this.source = source;
     }
 
     /**
@@ -78,19 +75,6 @@ public class Configuration {
     }
 
     /**
-     * Setter method for target directories.
-     *
-     * Suppressing warnings for unused method because the method is called via
-     * the ObjectMapper from the jackson library.
-     *
-     * @param targets Path to target directories.
-     */
-    @SuppressWarnings("unused")
-    public void setTargets(List<String> targets) {
-        this.targets = targets;
-    }
-
-    /**
      * Getter method for exclude directories.
      *
      * @return Basename of exclude directories.
@@ -100,37 +84,11 @@ public class Configuration {
     }
 
     /**
-     * Setter method for exclude directories.
-     *
-     * Suppressing warnings for unused method because the method is called via
-     * the ObjectMapper from the jackson library.
-     *
-     * @param excludes Basename of exclude directories.
-     */
-    @SuppressWarnings("unused")
-    public void setExcludes(List<String> excludes) {
-        this.excludes = excludes;
-    }
-
-    /**
      * Getter method for link map configurations.
      *
      * @return Link map configurations.
      */
     public Set<LinkMap> getLinkMaps() {
         return linkMaps;
-    }
-
-    /**
-     * Setter method for link map configurations.
-     *
-     * Suppressing warnings for unused method because the method is called via
-     * the ObjectMapper from the jackson-databind library.
-     *
-     * @param linkMaps Link map configurations.
-     */
-    @SuppressWarnings("unused")
-    public void setLinkMaps(Set<LinkMap> linkMaps) {
-        this.linkMaps = linkMaps;
     }
 }

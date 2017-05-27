@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class AbstractDirectory implements Directory {
     private Path path;
@@ -56,7 +57,7 @@ public class AbstractDirectory implements Directory {
      * @inheritDoc
      */
     @Override
-    public boolean link(List<LinkMap> linkMaps) {
+    public boolean link(Set<LinkMap> linkMaps) {
         // Attempt to find a link map configuration based on the basename.
         Optional<LinkMap> linkMap = linkMaps.stream()
                 .filter(map -> map.match(this.getBasename()))

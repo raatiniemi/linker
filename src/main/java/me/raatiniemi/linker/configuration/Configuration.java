@@ -18,6 +18,7 @@ package me.raatiniemi.linker.configuration;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represent the configuration file.
@@ -41,7 +42,7 @@ public class Configuration {
     /**
      * Link map configurations.
      */
-    private List<LinkMap> linkMaps = Collections.emptyList();
+    private Set<LinkMap> linkMaps = Collections.emptySet();
 
     /**
      * Getter method for source directory.
@@ -114,7 +115,7 @@ public class Configuration {
      *
      * @return Link map configurations.
      */
-    public List<LinkMap> getLinkMaps() {
+    public Set<LinkMap> getLinkMaps() {
         return linkMaps;
     }
 
@@ -127,7 +128,7 @@ public class Configuration {
      * @param linkMaps Link map configurations.
      */
     @SuppressWarnings("unused")
-    public void setLinkMaps(List<LinkMap> linkMaps) {
+    public void setLinkMaps(Set<LinkMap> linkMaps) {
         this.linkMaps = linkMaps;
     }
 }

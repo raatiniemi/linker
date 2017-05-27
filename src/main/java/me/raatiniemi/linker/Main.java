@@ -146,7 +146,7 @@ public class Main {
             directories.add(new Group(path, children));
         });
 
-        List<LinkMap> linkMaps = configuration.getLinkMaps();
+        Set<LinkMap> linkMaps = configuration.getLinkMaps();
 
         // List the sources and exclude the items existing within any of the
         // target directories.

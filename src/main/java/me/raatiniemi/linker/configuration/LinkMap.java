@@ -16,6 +16,7 @@
 
 package me.raatiniemi.linker.configuration;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class LinkMap {
@@ -59,5 +60,31 @@ public class LinkMap {
         return null != this.getRegex()
                 && !this.getRegex().isEmpty()
                 && Pattern.matches(this.getRegex(), text);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof LinkMap)) {
+            return false;
+        }
+
+        LinkMap linkMap = (LinkMap) o;
+        return Objects.equals(regex, linkMap.regex)
+                && Objects.equals(prefix, linkMap.prefix)
+                && Objects.equals(target, linkMap.target);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + Objects.hashCode(regex);
+        result = 31 * result + Objects.hashCode(prefix);
+        result = 31 * result + Objects.hashCode(target);
+
+        return result;
     }
 }

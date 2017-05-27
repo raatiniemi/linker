@@ -20,6 +20,7 @@ import me.raatiniemi.linker.configuration.LinkMap;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 public interface Directory {
     /**
@@ -50,5 +51,5 @@ public interface Directory {
      * @param linkMaps Link map configurations.
      * @return true if item was linked, otherwise false.
      */
-    boolean link(List<LinkMap> linkMaps);
+    boolean link(Set<LinkMap> linkMaps);
 }

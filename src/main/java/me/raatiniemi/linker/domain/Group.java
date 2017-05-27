@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Group extends AbstractDirectory {
@@ -91,7 +92,7 @@ public class Group extends AbstractDirectory {
      * @inheritDoc
      */
     @Override
-    public boolean link(List<LinkMap> linkMaps) {
+    public boolean link(Set<LinkMap> linkMaps) {
         List<Item> items = this.getItems().stream()
                 .filter(item -> {
                     Optional<LinkMap> linkMap = linkMaps.stream()

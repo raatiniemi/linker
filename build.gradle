@@ -12,7 +12,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 // noinspection GroovyUnusedAssignment
-mainClassName = 'me.raatiniemi.linker.Main';
+mainClassName = 'me.raatiniemi.linker.Main'
 
 // noinspection GroovyMissingReturnStatement
 run {

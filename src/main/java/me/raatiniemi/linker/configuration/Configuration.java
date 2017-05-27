@@ -71,7 +71,7 @@ public class Configuration {
      * @return Path to target directories.
      */
     public List<String> getTargets() {
-        return targets;
+        return Collections.unmodifiableList(targets);
     }
 
     /**
@@ -80,7 +80,7 @@ public class Configuration {
      * @return Basename of exclude directories.
      */
     public List<String> getExcludes() {
-        return excludes;
+        return Collections.unmodifiableList(excludes);
     }
 
     /**
@@ -89,6 +89,6 @@ public class Configuration {
      * @return Link map configurations.
      */
     public Set<LinkMap> getLinkMaps() {
-        return linkMaps;
+        return Collections.unmodifiableSet(linkMaps);
     }
 }

@@ -16,6 +16,7 @@
 
 package me.raatiniemi.linker.configuration;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,12 +36,12 @@ public class Configuration {
     /**
      * Basename of exclude directories.
      */
-    private List<String> excludes;
+    private List<String> excludes = Collections.emptyList();
 
     /**
      * Link map configurations.
      */
-    private List<LinkMap> linkMaps;
+    private List<LinkMap> linkMaps = Collections.emptyList();
 
     /**
      * Getter method for source directory.

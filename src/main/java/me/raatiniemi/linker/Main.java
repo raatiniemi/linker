@@ -52,11 +52,6 @@ public class Main {
             );
         }
 
-        // Check whether we have directories to exclude.
-        if (null == configuration.getExcludes()) {
-            configuration.setExcludes(new ArrayList<>());
-        }
-
         // The comparison have to be case insensitive, so everything have to
         // be converted to lowercase.
         List<String> excludeDirectories = configuration.getExcludes()
@@ -169,12 +164,6 @@ public class Main {
             directories.add(new Group(path, children));
         });
 
-        // We no link map configurations have been set we have to set the
-        // default value as an empty array. Otherwise we are unable to use
-        // the configurations within a lambda, because of final.
-        if (null == configuration.getLinkMaps()) {
-            configuration.setLinkMaps(new ArrayList<>());
-        }
         List<LinkMap> linkMaps = configuration.getLinkMaps();
 
         // List the sources and exclude the items existing within any of the

@@ -218,7 +218,7 @@ public class Main {
 
         // Print the unlinked sources.
         sources.stream()
-                .sorted((d1, d2) -> d1.getBasename().compareTo(d2.getBasename()))
+                .sorted(Comparator.comparing(Directory::getBasename))
                 .forEach(System.out::println);
     }
 }

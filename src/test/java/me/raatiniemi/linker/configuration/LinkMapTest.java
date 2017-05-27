@@ -46,7 +46,7 @@ public class LinkMapTest {
                 new Object[][]{
                         {
                                 Boolean.FALSE,
-                                null,
+                                "",
                                 "without-regex"
                         },
                         {
@@ -85,10 +85,7 @@ public class LinkMapTest {
 
     @Test
     public void match() {
-        LinkMap linkMap = new LinkMap();
-        if (nonNull(regex)) {
-            linkMap.setRegex(regex);
-        }
+        LinkMap linkMap = new LinkMap(regex, "", "");
 
         if (expected) {
             assertTrue(linkMap.match(match));

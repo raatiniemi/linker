@@ -16,38 +16,38 @@
 
 package me.raatiniemi.linker.configuration;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class LinkMap {
-    private String regex;
+    private final String regex;
+    private final String prefix;
+    private final String target;
 
-    private String prefix;
-
-    private String target;
+    @JsonCreator
+    LinkMap(
+            @JsonProperty("regex") String regex,
+            @JsonProperty("prefix") String prefix,
+            @JsonProperty("target") String target
+    ) {
+        this.regex = regex;
+        this.prefix = prefix;
+        this.target = target;
+    }
 
     public String getRegex() {
         return regex;
-    }
-
-    public void setRegex(String regex) {
-        this.regex = regex;
     }
 
     public String getPrefix() {
         return prefix;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
     public String getTarget() {
         return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
     }
 
     /**

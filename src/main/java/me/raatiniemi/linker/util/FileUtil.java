@@ -29,16 +29,15 @@ public class FileUtil {
      * @return true if symbolic link was created, otherwise false.
      */
     public static boolean createSymbolicLink(Path link, Path target) {
-        boolean linked = false;
-
         System.out.println("Linking: " + link.getFileName());
+
         try {
             Files.createSymbolicLink(link, target);
-            linked = true;
+            return true;
         } catch (IOException e) {
             System.out.println("Failed to link: " + e.getMessage());
-        }
 
-        return linked;
+            return false;
+        }
     }
 }

@@ -102,7 +102,7 @@ public class Main {
                         return null;
                     }
                 })
-                .filter(path -> null != path)
+                .filter(Objects::nonNull)
                 .filter(Files::isSymbolicLink)
                 .map(link -> {
                     try {
@@ -111,7 +111,7 @@ public class Main {
                         return null;
                     }
                 })
-                .filter(path -> null != path)
+                .filter(Objects::nonNull)
                 .map(Item::new)
                 .collect(Collectors.toList());
 

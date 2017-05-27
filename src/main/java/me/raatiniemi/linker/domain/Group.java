@@ -16,7 +16,6 @@
 
 package me.raatiniemi.linker.domain;
 
-import me.raatiniemi.linker.configuration.LinkMap;
 import me.raatiniemi.linker.filter.ExcludeFilter;
 import me.raatiniemi.linker.util.FileUtil;
 

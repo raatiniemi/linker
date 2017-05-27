@@ -16,8 +16,6 @@
 
 package me.raatiniemi.linker.domain;
 
-import me.raatiniemi.linker.configuration.LinkMap;
-
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;

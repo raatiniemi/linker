@@ -18,19 +18,20 @@ package me.raatiniemi.linker.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import me.raatiniemi.linker.domain.LinkMap;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.nonNull;
 
-public class LinkMap {
+public class LinkMapConfiguration implements LinkMap {
     private final String regex;
     private final String prefix;
     private final String target;
 
     @JsonCreator
-    LinkMap(
+    LinkMapConfiguration(
             @JsonProperty("regex") String regex,
             @JsonProperty("prefix") String prefix,
             @JsonProperty("target") String target
@@ -40,20 +41,17 @@ public class LinkMap {
         this.target = target;
     }
 
+    @Override
     public String getPrefix() {
         return prefix;
     }
 
+    @Override
     public String getTarget() {
         return target;
     }
 
-    /**
-     * Check if the text matches the regex.
-     *
-     * @param text Text to check against regex.
-     * @return true if text matches, otherwise false.
-     */
+    @Override
     public boolean match(String text) {
         return nonNull(regex)
                 && !regex.isEmpty()
@@ -66,11 +64,11 @@ public class LinkMap {
             return true;
         }
 
-        if (!(o instanceof LinkMap)) {
+        if (!(o instanceof LinkMapConfiguration)) {
             return false;
         }
 
-        LinkMap linkMap = (LinkMap) o;
+        LinkMapConfiguration linkMap = (LinkMapConfiguration) o;
         return Objects.equals(regex, linkMap.regex)
                 && Objects.equals(prefix, linkMap.prefix)
                 && Objects.equals(target, linkMap.target);

@@ -1,6 +1,10 @@
 package me.raatiniemi.linker.configuration;
 
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import me.raatiniemi.linker.domain.LinkMap;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +19,14 @@ public final class ConfigurationParser {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     static {
+        SimpleAbstractTypeResolver resolver = new SimpleAbstractTypeResolver();
+        resolver.addMapping(LinkMap.class, LinkMapConfiguration.class);
+
+        SimpleModule module = new SimpleModule("LinkerModule", Version.unknownVersion());
+        module.setAbstractTypes(resolver);
+
         mapper.configure(ALLOW_COMMENTS, true);
+        mapper.registerModule(module);
     }
 
     public static Configuration parse(String filename) {

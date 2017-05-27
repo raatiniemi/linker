@@ -18,7 +18,7 @@ package me.raatiniemi.linker;
 
 import me.raatiniemi.linker.configuration.Configuration;
 import me.raatiniemi.linker.configuration.ConfigurationParser;
-import me.raatiniemi.linker.configuration.LinkMap;
+import me.raatiniemi.linker.domain.LinkMap;
 import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.Group;
 import me.raatiniemi.linker.domain.Item;

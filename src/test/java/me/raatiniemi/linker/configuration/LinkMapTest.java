@@ -16,6 +16,7 @@
 
 package me.raatiniemi.linker.configuration;
 
+import me.raatiniemi.linker.domain.LinkMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -24,7 +25,6 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static java.util.Objects.nonNull;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
@@ -85,7 +85,7 @@ public class LinkMapTest {
 
     @Test
     public void match() {
-        LinkMap linkMap = new LinkMap(regex, "", "");
+        LinkMap linkMap = new LinkMapConfiguration(regex, "", "");
 
         if (expected) {
             assertTrue(linkMap.match(match));

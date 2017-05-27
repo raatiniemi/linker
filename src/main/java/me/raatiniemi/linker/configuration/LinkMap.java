@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.nonNull;
+
 public class LinkMap {
     private final String regex;
     private final String prefix;
@@ -36,10 +38,6 @@ public class LinkMap {
         this.regex = regex;
         this.prefix = prefix;
         this.target = target;
-    }
-
-    public String getRegex() {
-        return regex;
     }
 
     public String getPrefix() {
@@ -57,9 +55,9 @@ public class LinkMap {
      * @return true if text matches, otherwise false.
      */
     public boolean match(String text) {
-        return null != this.getRegex()
-                && !this.getRegex().isEmpty()
-                && Pattern.matches(this.getRegex(), text);
+        return nonNull(regex)
+                && !regex.isEmpty()
+                && Pattern.matches(regex, text);
     }
 
     @Override

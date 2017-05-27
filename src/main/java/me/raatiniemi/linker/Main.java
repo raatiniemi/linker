@@ -34,24 +34,6 @@ public class Main {
     public static void main(String... args) throws IOException {
         Configuration configuration = parseConfigurationFileFromArguments(args);
 
-        // Check that a source directory have been
-        // supplied via the configuration file.
-        String sourceDirectory = configuration.getSource();
-        if (null == sourceDirectory || sourceDirectory.isEmpty()) {
-            throw new RuntimeException(
-                    "No source directory have been supplied"
-            );
-        }
-
-        // Check that a target directories have been
-        // supplied via the configuration file.
-        List<String> targetDirectories = configuration.getTargets();
-        if (null == targetDirectories || targetDirectories.isEmpty()) {
-            throw new RuntimeException(
-                    "No target directories have been supplied"
-            );
-        }
-
         // The comparison have to be case insensitive, so everything have to
         // be converted to lowercase.
         List<String> excludeDirectories = configuration.getExcludes()
@@ -63,7 +45,7 @@ public class Main {
         // source directory of the symbolic links.
         //
         // TODO: Handle the null/empty values better.
-        List<Directory> targets = targetDirectories.stream()
+        List<Directory> targets = configuration.getTargets().stream()
                 .map(Paths::get)
                 .flatMap(directory -> {
                     try {
@@ -100,7 +82,7 @@ public class Main {
         Map<Path, List<Item>> rawMap = new HashMap<>();
 
         // TODO: Add support for recursive mapping.
-        Path source = Paths.get(sourceDirectory);
+        Path source = Paths.get(configuration.getSource());
         Files.walk(source, 2)
                 .filter(Files::isDirectory)
                 .filter(path -> {

@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class AbstractDirectory implements Directory {
+class AbstractDirectory implements Directory {
     private Path path;
 
-    public AbstractDirectory(Path path) {
+    AbstractDirectory(Path path) {
         this.path = path;
     }
 

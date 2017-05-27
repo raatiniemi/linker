@@ -5,6 +5,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco'
 
 // noinspection GroovyUnusedAssignment
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -51,6 +52,18 @@ jar {
                 'Implementation-Version': version
         )
     }
+}
+
+sonarqube {
+    // noinspection GroovyAssignabilityCheck
+    properties {
+        // noinspection GroovyAssignabilityCheck
+        property "sonar.jacoco.reportPaths", "${buildDir}/jacoco/test.exec"
+    }
+}
+
+jacoco {
+    toolVersion = '0.7.8'
 }
 
 dependencies {

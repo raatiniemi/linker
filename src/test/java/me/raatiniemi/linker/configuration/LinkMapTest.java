@@ -16,57 +16,85 @@
 
 package me.raatiniemi.linker.configuration;
 
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
+import java.util.Collection;
 
-@RunWith(DataProviderRunner.class)
+import static java.util.Objects.nonNull;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
+
+@RunWith(Parameterized.class)
 public class LinkMapTest {
-    @DataProvider
-    public static Object[][] match_withoutMatchDataProvider() {
-        return new Object[][]{
-                {"match", "without-match"},
-                {"^match[-]\\d+$", "without-match"},
-                {"^(?i)match[-]\\d+$", "without-match"}
-        };
+    private final Boolean expected;
+    private final String regex;
+    private final String match;
+
+    public LinkMapTest(Boolean expected, String regex, String match) {
+        this.expected = expected;
+        this.regex = regex;
+        this.match = match;
     }
 
-    @DataProvider
-    public static Object[][] match_withMatchDataProvider() {
-        return new Object[][]{
-                {"match", "match"},
-                {"^match[-]\\d+$", "match-20"},
-                {"^(?i)match[-]\\d+$", "Match-530"}
-        };
+    @Parameters
+    public static Collection<Object[]> getParameters() {
+        return Arrays.asList(
+                new Object[][]{
+                        {
+                                Boolean.FALSE,
+                                null,
+                                "without-regex"
+                        },
+                        {
+                                Boolean.FALSE,
+                                "match",
+                                "without-match"
+                        },
+                        {
+                                Boolean.FALSE,
+                                "^match[-]\\d+$",
+                                "without-match"
+                        },
+                        {
+                                Boolean.FALSE,
+                                "^(?i)match[-]\\d+$",
+                                "without-match"
+                        },
+                        {
+                                Boolean.TRUE,
+                                "match",
+                                "match"
+                        },
+                        {
+                                Boolean.TRUE,
+                                "^match[-]\\d+$",
+                                "match-20"
+                        },
+                        {
+                                Boolean.TRUE,
+                                "^(?i)match[-]\\d+$",
+                                "Match-530"
+                        },
+                }
+        );
     }
 
     @Test
-    public void match_withoutRegex() {
-        LinkMap map = new LinkMap();
+    public void match() {
+        LinkMap linkMap = new LinkMap();
+        if (nonNull(regex)) {
+            linkMap.setRegex(regex);
+        }
 
-        assertFalse(map.match("without-regex"));
-    }
+        if (expected) {
+            assertTrue(linkMap.match(match));
+            return;
+        }
 
-    @Test
-    @UseDataProvider("match_withoutMatchDataProvider")
-    public void match_withoutMatch(String regex, String basename) {
-        LinkMap map = new LinkMap();
-        map.setRegex(regex);
-
-        assertFalse(map.match(basename));
-    }
-
-    @Test
-    @UseDataProvider("match_withMatchDataProvider")
-    public void match_withMatch(String regex, String basename) {
-        LinkMap map = new LinkMap();
-        map.setRegex(regex);
-
-        assertTrue(map.match(basename));
+        assertFalse(linkMap.match(match));
     }
 }

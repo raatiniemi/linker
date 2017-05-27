@@ -16,3 +16,8 @@ test:
   stage: test
   script:
     - bin/test
+
+sonarqube:
+  stage: test
+  script:
+    - bin/sonar

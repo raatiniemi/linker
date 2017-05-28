@@ -29,12 +29,12 @@ import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(Parameterized.class)
-public class LinkMapTest {
+public class LinkMapConfigurationTest {
     private final Boolean expected;
     private final String regex;
     private final String match;
 
-    public LinkMapTest(Boolean expected, String regex, String match) {
+    public LinkMapConfigurationTest(Boolean expected, String regex, String match) {
         this.expected = expected;
         this.regex = regex;
         this.match = match;

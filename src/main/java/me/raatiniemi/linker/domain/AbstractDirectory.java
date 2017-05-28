@@ -22,6 +22,7 @@ import me.raatiniemi.linker.util.FileUtil;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -99,6 +100,14 @@ class AbstractDirectory implements Directory {
         Directory directory = (Directory) o;
         return this.getBasename()
                 .equals(directory.getBasename());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + Objects.hashCode(getBasename());
+
+        return result;
     }
 
     @Override

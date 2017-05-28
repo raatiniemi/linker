@@ -81,6 +81,10 @@ class AbstractDirectory implements Directory {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
         // Since we are doing comparison based on the basename it doesn't
         // really matter whether the object is a Group or an Item.
         if (!(o instanceof Directory)) {

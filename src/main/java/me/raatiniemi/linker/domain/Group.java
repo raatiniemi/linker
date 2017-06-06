@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Group extends AbstractDirectory {
+public class Group extends Item {
     /**
      * Items contained within the group.
      */

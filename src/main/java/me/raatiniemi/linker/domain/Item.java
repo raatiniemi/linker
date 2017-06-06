@@ -87,7 +87,7 @@ public class Item implements Directory {
         }
 
         // Since we are doing comparison based on the basename it doesn't
-        // really matter whether the object is a Group or an Item.
+        // really matter whether the object is a CollectionItem or an Item.
         if (!(o instanceof Directory)) {
             return false;
         }

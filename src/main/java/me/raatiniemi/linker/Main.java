@@ -21,7 +21,7 @@ import me.raatiniemi.linker.configuration.ConfigurationParser;
 import me.raatiniemi.linker.domain.Item;
 import me.raatiniemi.linker.domain.LinkMap;
 import me.raatiniemi.linker.domain.Directory;
-import me.raatiniemi.linker.domain.Group;
+import me.raatiniemi.linker.domain.CollectionItem;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -130,10 +130,10 @@ public class Main {
                 });
 
         // Build the mapped structure from the raw data. Depending on whether
-        // the item have children the item should be mapped as Item or Group.
+        // the item have children the item should be mapped as Item or CollectionItem.
         //
         // Directory 1 (Item)
-        // Directory 2 (Group)
+        // Directory 2 (CollectionItem)
         //    Directory 3 (Item)
         //    Directory 4 (Item)
         List<Directory> directories = new ArrayList<>();
@@ -143,7 +143,7 @@ public class Main {
                 return;
             }
 
-            directories.add(new Group(path, children));
+            directories.add(new CollectionItem(path, children));
         });
 
         Set<LinkMap> linkMaps = configuration.getLinkMaps();

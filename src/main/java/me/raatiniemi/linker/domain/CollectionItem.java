@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Group extends Item {
+public class CollectionItem extends Item {
     /**
      * Items contained within the group.
      */
@@ -38,7 +38,7 @@ public class Group extends Item {
      * @param path Path for the group.
      * @param items Items contained within the group.
      */
-    public Group(Path path, List<Item> items) {
+    public CollectionItem(Path path, List<Item> items) {
         super(path);
 
         this.items = items;
@@ -130,7 +130,7 @@ public class Group extends Item {
         // If the group contain any items they should be appended to the value.
         //
         // Directory 1
-        // Directory 2 (Group)
+        // Directory 2 (CollectionItem)
         //     Directory 3
         //     Directory 4
         List<String> items = this.getItems()

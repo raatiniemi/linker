@@ -22,6 +22,7 @@ import me.raatiniemi.linker.domain.LinkMap;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Objects.isNull;
@@ -90,5 +91,27 @@ public class Configuration {
      */
     public Set<LinkMap> getLinkMaps() {
         return Collections.unmodifiableSet(linkMaps);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Configuration that = (Configuration) o;
+
+        if (!Objects.equals(source, that.source)) return false;
+        if (!Objects.equals(targets, that.targets)) return false;
+        if (!Objects.equals(excludes, that.excludes)) return false;
+        return Objects.equals(linkMaps, that.linkMaps);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = source != null ? source.hashCode() : 0;
+        result = 31 * result + (targets != null ? targets.hashCode() : 0);
+        result = 31 * result + (excludes != null ? excludes.hashCode() : 0);
+        result = 31 * result + (linkMaps != null ? linkMaps.hashCode() : 0);
+        return result;
     }
 }

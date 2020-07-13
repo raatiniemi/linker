@@ -91,6 +91,35 @@ class ParserKtTest {
     }
 
     @Test
+    fun `parse with required configuration`() {
+        val basename = "configuration.json"
+        val filename = "${folder.root.path}/$basename"
+        val file = folder.newFile(basename)
+        file.writeText(
+            """
+            {
+                "source": "/var/cache/pacman/pkg",
+                "targets": [
+                    "/var/www/archlinux/pkg"
+                ]
+            }
+            """.trimIndent()
+        )
+        val expected = Configuration(
+            "/var/cache/pacman/pkg",
+            listOf(
+                "/var/www/archlinux/pkg"
+            ),
+            emptyList(),
+            emptySet()
+        )
+
+        val actual = parseConfiguration(filename)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `parse with configuration`() {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"

@@ -5,12 +5,12 @@ import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import me.raatiniemi.linker.domain.LinkMap
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.*
 
 private val objectMapper: ObjectMapper by lazy {
     ObjectMapper()
@@ -23,6 +23,7 @@ private val objectMapper: ObjectMapper by lazy {
 
             it.configure(JsonParser.Feature.ALLOW_COMMENTS, true)
             it.registerModule(module)
+            it.registerModule(KotlinModule())
         }
 }
 
@@ -47,13 +48,13 @@ private fun parseConfigurationFromFile(file: Path): Configuration {
 }
 
 private fun validateConfiguration(configuration: Configuration): Configuration {
-    val source = configuration.source
-    if (Objects.isNull(source) || source.isEmpty()) {
+    if (configuration.source.isEmpty()) {
         throw RuntimeException("No source directory have been supplied")
     }
-    val targets = configuration.targets
-    if (Objects.isNull(targets) || targets.isEmpty()) {
+
+    if (configuration.targets.isEmpty()) {
         throw RuntimeException("No target directories have been supplied")
     }
+
     return configuration
 }

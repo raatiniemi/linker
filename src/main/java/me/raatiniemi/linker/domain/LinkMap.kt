@@ -1,9 +1,8 @@
-package me.raatiniemi.linker.domain;
+package me.raatiniemi.linker.domain
 
-public interface LinkMap {
-    String getPrefix();
-
-    String getTarget();
+internal interface LinkMap {
+    val prefix: String
+    val target: String
 
     /**
      * Check if the text matches the regex.
@@ -11,5 +10,5 @@ public interface LinkMap {
      * @param text Text to check against regex.
      * @return true if text matches, otherwise false.
      */
-    boolean match(String text);
+    fun match(text: String): Boolean
 }

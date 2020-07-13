@@ -5,7 +5,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-class ConfigurationParserTest {
+class ParserKtTest {
     @get:Rule
     var folder = TemporaryFolder()
 
@@ -14,7 +14,7 @@ class ConfigurationParserTest {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"
 
-        ConfigurationParser.parse(filename)
+        parseConfiguration(filename)
     }
 
     @Test(expected = RuntimeException::class)
@@ -23,7 +23,7 @@ class ConfigurationParserTest {
         val filename = "${folder.root.path}/$basename"
         folder.newFile(basename)
 
-        ConfigurationParser.parse(filename)
+        parseConfiguration(filename)
     }
 
     @Test(expected = RuntimeException::class)
@@ -38,7 +38,7 @@ class ConfigurationParserTest {
             """.trimIndent()
         )
 
-        ConfigurationParser.parse(filename)
+        parseConfiguration(filename)
     }
 
     @Test(expected = RuntimeException::class)
@@ -54,7 +54,7 @@ class ConfigurationParserTest {
             """.trimIndent()
         )
 
-        ConfigurationParser.parse(filename)
+        parseConfiguration(filename)
     }
 
     @Test(expected = RuntimeException::class)
@@ -70,7 +70,7 @@ class ConfigurationParserTest {
             """.trimIndent()
         )
 
-        ConfigurationParser.parse(filename)
+        parseConfiguration(filename)
     }
 
     @Test(expected = RuntimeException::class)
@@ -87,7 +87,7 @@ class ConfigurationParserTest {
             """.trimIndent()
         )
 
-        ConfigurationParser.parse(filename)
+        parseConfiguration(filename)
     }
 
     @Test
@@ -132,7 +132,7 @@ class ConfigurationParserTest {
             )
         )
 
-        val actual = ConfigurationParser.parse(filename)
+        val actual = parseConfiguration(filename)
 
         assertEquals(expected, actual)
     }

@@ -17,11 +17,10 @@
 package me.raatiniemi.linker;
 
 import me.raatiniemi.linker.configuration.Configuration;
-import me.raatiniemi.linker.configuration.ConfigurationParser;
+import me.raatiniemi.linker.domain.CollectionItem;
+import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.Item;
 import me.raatiniemi.linker.domain.LinkMap;
-import me.raatiniemi.linker.domain.Directory;
-import me.raatiniemi.linker.domain.CollectionItem;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +28,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
 
 public class Main {
     public static void main(String... args) throws IOException {
@@ -173,6 +174,6 @@ public class Main {
             throw new RuntimeException("No configuration file have been supplied");
         }
 
-        return ConfigurationParser.parse(args[0]);
+        return parseConfiguration(args[0]);
     }
 }

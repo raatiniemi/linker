@@ -18,7 +18,7 @@
 package me.raatiniemi.linker.domain;
 
 import me.raatiniemi.linker.filter.ExcludeFilterKt;
-import me.raatiniemi.linker.util.FileUtil;
+import me.raatiniemi.linker.util.FileUtilKt;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -113,7 +113,7 @@ public class CollectionItem extends Item {
 
                     // If the symbolic link is created we have to exclude the
                     // item from the filter by returning false.
-                    return !FileUtil.createSymbolicLink(link, target);
+                    return !FileUtilKt.createSymbolicLink(link, target);
                 })
                 .collect(Collectors.toList());
 

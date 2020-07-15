@@ -22,6 +22,7 @@ import me.raatiniemi.linker.domain.CollectionItem;
 import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.Item;
 import me.raatiniemi.linker.domain.LinkMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,18 +37,42 @@ public class Main {
     public static void main(String... args) throws IOException {
         Configuration configuration = parseConfigurationFileFromArguments(args);
 
-        // The comparison have to be case insensitive, so everything have to
-        // be converted to lowercase.
-        List<String> excludeDirectories = configuration.getExcludes()
+        List<String> excludeDirectories = configureExcludeDirectories(configuration);
+        List<Directory> targetNodes = collectTargetNodes(configuration);
+        List<Directory> sourceNodes = collectSourceNodes(configuration, excludeDirectories);
+        List<Directory> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
+
+        printReportForCollectionSizes(targetNodes, sources);
+        printReportForUnlinkedNodes(sources);
+    }
+
+    private static Configuration parseConfigurationFileFromArguments(String[] args) {
+        if (0 == args.length || args[0].isEmpty()) {
+            throw new RuntimeException("No configuration file have been supplied");
+        }
+
+        return parseConfiguration(args[0]);
+    }
+
+    /**
+     * The comparison have to be case insensitive, so everything have to be converted to lowercase.
+     */
+    @NotNull
+    private static List<String> configureExcludeDirectories(@NotNull Configuration configuration) {
+        return configuration.getExcludes()
                 .stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
+    }
 
-        // We have to walk through each of the target directories to find the
-        // source directory of the symbolic links.
-        //
-        // TODO: Handle the null/empty values better.
-        List<Directory> targets = configuration.getTargets().stream()
+    /**
+     * We have to walk through each of the target directories to find the source directory of the symbolic links.
+     * <p>
+     * TODO: Handle the null/empty values better.
+     */
+    @NotNull
+    private static List<Directory> collectTargetNodes(@NotNull Configuration configuration) {
+        return configuration.getTargets().stream()
                 .map(Paths::get)
                 .flatMap(directory -> {
                     try {
@@ -68,19 +93,54 @@ public class Main {
                 .filter(Objects::nonNull)
                 .map(Item::new)
                 .collect(Collectors.toList());
+    }
 
-        // Store the mapped raw data from the source directory.
+    @NotNull
+    private static List<Directory> collectSourceNodes(
+            @NotNull Configuration configuration,
+            @NotNull List<String> excludeDirectories
+    ) throws IOException {
+        Map<Path, List<Item>> rawSourceNodes = collectRawSourceNodes(configuration, excludeDirectories);
+
+        // Build the mapped structure from the raw data. Depending on whether
+        // the item have children the item should be mapped as Item or CollectionItem.
         //
-        // We have to map the raw data before attempting to filter anything,
-        // otherwise we can't handle grouped directories.
-        //
-        // The data is mapped as follows:
-        //
-        // Directory 1 -> []
-        // Directory 2 -> [Directory 3, Directory 4]
-        //
-        // Depending on if the value is empty at the end of the walk determinds
-        // whether the directory is a group or single item.
+        // Directory 1 (Item)
+        // Directory 2 (CollectionItem)
+        //    Directory 3 (Item)
+        //    Directory 4 (Item)
+        List<Directory> directories = new ArrayList<>();
+        rawSourceNodes.forEach((path, children) -> {
+            if (children.isEmpty()) {
+                directories.add(new Item(path));
+                return;
+            }
+
+            directories.add(new CollectionItem(path, children));
+        });
+
+        return directories;
+    }
+
+    /**
+     * Store the mapped raw data from the source directory.
+     * <p>
+     * We have to map the raw data before attempting to filter anything,
+     * otherwise we can't handle grouped directories.
+     * <p>
+     * The data is mapped as follows:
+     * <p>
+     * Directory 1 -> []
+     * Directory 2 -> [Directory 3, Directory 4]
+     * <p>
+     * Depending on if the value is empty at the end of the walk determines
+     * whether the directory is a group or single item.
+     */
+    @NotNull
+    private static Map<Path, List<Item>> collectRawSourceNodes(
+            @NotNull Configuration configuration,
+            @NotNull List<String> excludeDirectories
+    ) throws IOException {
         Map<Path, List<Item>> rawMap = new HashMap<>();
 
         // TODO: Add support for recursive mapping.
@@ -131,50 +191,38 @@ public class Main {
                             .add(new Item(path));
                 });
 
-        // Build the mapped structure from the raw data. Depending on whether
-        // the item have children the item should be mapped as Item or CollectionItem.
-        //
-        // Directory 1 (Item)
-        // Directory 2 (CollectionItem)
-        //    Directory 3 (Item)
-        //    Directory 4 (Item)
-        List<Directory> directories = new ArrayList<>();
-        rawMap.forEach((path, children) -> {
-            if (children.isEmpty()) {
-                directories.add(new Item(path));
-                return;
-            }
+        return rawMap;
+    }
 
-            directories.add(new CollectionItem(path, children));
-        });
-
+    @NotNull
+    private static List<Directory> linkSourceNodesIntoTargets(
+            @NotNull Configuration configuration,
+            @NotNull List<Directory> targetNodes,
+            @NotNull List<Directory> sourceNodes
+    ) {
         Set<LinkMap> linkMaps = configuration.getLinkMaps();
 
         // List the sources and exclude the items existing within any of the
         // target directories.
-        List<Directory> sources = directories.stream()
-                .filter(directory -> directory.filter(targets))
+        return sourceNodes.stream()
+                .filter(directory -> directory.filter(targetNodes))
                 .filter(directory ->
                         // Since we want to exclude items that are considered
                         // linked we have to inverse the return value.
                         !directory.link(linkMaps))
                 .collect(Collectors.toList());
+    }
 
+    private static void printReportForCollectionSizes(@NotNull List<Directory> targetNodes, @NotNull List<Directory> sources) {
         // Print the number of targets and unlinked sources.
-        System.out.println("Targets: " + targets.size());
+        System.out.println("Targets: " + targetNodes.size());
         System.out.println("Sources: " + sources.size());
+    }
 
+    private static void printReportForUnlinkedNodes(@NotNull List<Directory> sources) {
         // Print the unlinked sources.
         sources.stream()
                 .sorted(Comparator.comparing(Directory::getBasename))
                 .forEach(System.out::println);
-    }
-
-    private static Configuration parseConfigurationFileFromArguments(String[] args) {
-        if (0 == args.length || args[0].isEmpty()) {
-            throw new RuntimeException("No configuration file have been supplied");
-        }
-
-        return parseConfiguration(args[0]);
     }
 }

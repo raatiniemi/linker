@@ -13,25 +13,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package me.raatiniemi.linker.filter
 
-package me.raatiniemi.linker.filter;
-
-import java.util.List;
-import java.util.Optional;
-
-public class ExcludeFilter {
-    /**
-     * Filter item if found within the data.
-     *
-     * @param item Item to find in data.
-     * @param data Data source.
-     * @return false if item is found within data, otherwise true.
-     */
-    public static <T> boolean filter(T item, List<T> data) {
-        Optional<T> found = data.stream()
-                .filter(item::equals)
-                .findFirst();
-
-        return !found.isPresent();
-    }
+/**
+ * Filter item if found within the data.
+ *
+ * @param item Item to find in data.
+ * @param data Data source.
+ * @return false if item is found within data, otherwise true.
+ */
+internal fun <T> excludeFilter(item: T, data: List<T>): Boolean {
+    return data.firstOrNull { item == it } == null
 }

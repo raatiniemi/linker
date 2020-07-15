@@ -16,7 +16,7 @@
 
 package me.raatiniemi.linker.domain;
 
-import me.raatiniemi.linker.filter.ExcludeFilter;
+import me.raatiniemi.linker.filter.ExcludeFilterKt;
 import me.raatiniemi.linker.util.FileUtil;
 
 import java.nio.file.Path;
@@ -50,7 +50,7 @@ public class Item implements Directory {
      */
     @Override
     public boolean filter(List<Directory> data) {
-        return ExcludeFilter.filter(this, data);
+        return ExcludeFilterKt.excludeFilter(this, data);
     }
 
     /**

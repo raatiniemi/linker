@@ -16,7 +16,7 @@
 
 package me.raatiniemi.linker.domain;
 
-import me.raatiniemi.linker.filter.ExcludeFilter;
+import me.raatiniemi.linker.filter.ExcludeFilterKt;
 import me.raatiniemi.linker.util.FileUtil;
 
 import java.nio.file.Path;
@@ -77,7 +77,7 @@ public class CollectionItem extends Item {
         // items have been linked.
         List<Item> items = this.getItems()
                 .stream()
-                .filter(item -> ExcludeFilter.filter(item, targets))
+                .filter(item -> ExcludeFilterKt.excludeFilter(item, targets))
                 .collect(Collectors.toList());
 
         // If the containing items have been linked we can filter the group.

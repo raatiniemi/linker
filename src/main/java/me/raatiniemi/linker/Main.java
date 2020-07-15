@@ -38,7 +38,7 @@ public class Main {
         Configuration configuration = parseConfigurationFileFromArguments(args);
 
         List<String> excludeDirectories = configureExcludeDirectories(configuration);
-        List<Directory> targetNodes = collectTargetNodes(configuration);
+        List<Directory> targetNodes = collectTargetNodes(configuration.getTargets());
         List<Directory> sourceNodes = collectSourceNodes(configuration, excludeDirectories);
         List<Directory> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
 
@@ -71,8 +71,8 @@ public class Main {
      * TODO: Handle the null/empty values better.
      */
     @NotNull
-    private static List<Directory> collectTargetNodes(@NotNull Configuration configuration) {
-        return configuration.getTargets().stream()
+    private static List<Directory> collectTargetNodes(@NotNull List<String> targets) {
+        return targets.stream()
                 .map(Paths::get)
                 .flatMap(directory -> {
                     try {

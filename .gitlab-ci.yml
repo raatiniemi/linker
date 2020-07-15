@@ -22,4 +22,4 @@ test:
   extends:
     - .in-gradle-environment
   script:
-    - gradle test
+    - gradle test printCoverage

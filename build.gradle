@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version("1.3.72")
     id("jacoco")
     id("com.github.johnrengelman.shadow") version("2.0.0")
+    id("de.jansauer.printcoverage") version "2.0.0"
 }
 
 group 'me.raatiniemi'
@@ -46,6 +47,18 @@ jar {
                 'Implementation-Title': 'Linker',
                 'Implementation-Version': archiveVersion
         )
+    }
+}
+
+test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.enabled = true
     }
 }
 

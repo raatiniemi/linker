@@ -1,11 +1,16 @@
-image: gradle:6.5.1-jdk8
-
 stages:
   - build
   - test
 
+.in-gradle-environment:
+  image: gradle:6.5.1-jdk8
+  tags:
+    - docker
+
 build:
   stage: build
+  extends:
+    - .in-gradle-environment
   script:
     - gradle clean assemble
   artifacts:
@@ -14,5 +19,7 @@ build:
 
 test:
   stage: test
+  extends:
+    - .in-gradle-environment
   script:
     - gradle test

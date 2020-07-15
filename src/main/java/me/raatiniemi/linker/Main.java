@@ -71,7 +71,7 @@ public class Main {
      * TODO: Handle the null/empty values better.
      */
     @NotNull
-    private static List<Directory> collectTargetNodes(@NotNull List<String> targets) {
+    static List<Directory> collectTargetNodes(@NotNull List<String> targets) {
         return targets.stream()
                 .map(Paths::get)
                 .flatMap(directory -> {

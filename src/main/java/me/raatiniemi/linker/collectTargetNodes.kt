@@ -19,38 +19,25 @@ package me.raatiniemi.linker
 
 import me.raatiniemi.linker.domain.Directory
 import me.raatiniemi.linker.domain.Item
-import java.io.IOException
+import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.*
-import java.util.stream.Collectors
 
 /**
- * We have to walk through each of the target directories to find the source directory of the symbolic links.
- * <p>
- * TODO: Handle the null/empty values better.
+ * Collect symbolic links from each of the targets.
+ *
+ * @param targets List of target directories.
+ *
+ * @return List of symbolic link nodes available within the targets.
  */
-internal fun collectTargetNodes(targets: List<String?>): List<Directory?> {
-    return targets.stream()
-        .map { s: String? -> Paths.get(s) }
-        .flatMap { directory: Path? ->
-            try {
-                return@flatMap Files.walk(directory)
-            } catch (e: IOException) {
-                return@flatMap null
-            }
+internal fun collectTargetNodes(targets: List<String>): List<Directory> {
+    return targets.asSequence()
+        .map { File(it) }
+        .flatMap { file ->
+            file.walk()
+                .map(File::toPath)
+                .filter(Files::isSymbolicLink)
+                .map(Files::readSymbolicLink)
+                .map { Item(it) }
         }
-        .filter { o: Path? -> Objects.nonNull(o) }
-        .filter { path: Path? -> Files.isSymbolicLink(path) }
-        .map<Path> { link: Path? ->
-            try {
-                return@map Files.readSymbolicLink(link)
-            } catch (e: IOException) {
-                return@map null
-            }
-        }
-        .filter { o: Path? -> Objects.nonNull(o) }
-        .map { path: Path? -> Item(path) }
-        .collect(Collectors.toList())
+        .toList()
 }

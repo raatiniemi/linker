@@ -17,7 +17,6 @@
 
 package me.raatiniemi.linker
 
-import me.raatiniemi.linker.Main.collectTargetNodes
 import me.raatiniemi.linker.domain.Directory
 import me.raatiniemi.linker.domain.Item
 import me.raatiniemi.linker.util.createSymbolicLink

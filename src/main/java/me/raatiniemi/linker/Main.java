@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static me.raatiniemi.linker.CollectTargetNodesKt.collectTargetNodes;
 import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
 
 public class Main {
@@ -62,36 +63,6 @@ public class Main {
         return configuration.getExcludes()
                 .stream()
                 .map(String::toLowerCase)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * We have to walk through each of the target directories to find the source directory of the symbolic links.
-     * <p>
-     * TODO: Handle the null/empty values better.
-     */
-    @NotNull
-    static List<Directory> collectTargetNodes(@NotNull List<String> targets) {
-        return targets.stream()
-                .map(Paths::get)
-                .flatMap(directory -> {
-                    try {
-                        return Files.walk(directory);
-                    } catch (IOException e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .filter(Files::isSymbolicLink)
-                .map(link -> {
-                    try {
-                        return Files.readSymbolicLink(link);
-                    } catch (IOException e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .map(Item::new)
                 .collect(Collectors.toList());
     }
 

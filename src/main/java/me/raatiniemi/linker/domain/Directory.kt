@@ -14,27 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package me.raatiniemi.linker.domain
 
-package me.raatiniemi.linker.domain;
+import java.nio.file.Path
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
-
-public interface Directory {
+internal interface Directory {
     /**
      * Getter method for the path of the directory.
      *
      * @return Path of the directory.
      */
-    Path getPath();
+    val path: Path
 
     /**
      * Getter method for the basename of the directory.
      *
      * @return Basename for the directory.
      */
-    String getBasename();
+    val basename: String
 
     /**
      * Filter item based on the data.
@@ -42,7 +39,7 @@ public interface Directory {
      * @param data Data source.
      * @return false if item is found within data, otherwise true.
      */
-    boolean filter(List<Directory> data);
+    fun filter(data: List<Directory>): Boolean
 
     /**
      * Attempt to link directory if link map configuration is found.
@@ -50,5 +47,5 @@ public interface Directory {
      * @param linkMaps Link map configurations.
      * @return true if item was linked, otherwise false.
      */
-    boolean link(Set<LinkMap> linkMaps);
+    fun link(linkMaps: Set<LinkMap>): Boolean
 }

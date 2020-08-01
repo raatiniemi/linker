@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.raatiniemi.linker.CollectTargetNodesKt.collectTargetNodes;
+import static me.raatiniemi.linker.ConfigureExcludeDirectoriesKt.configureExcludeDirectories;
 import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
 
 public class Main {
@@ -53,17 +54,6 @@ public class Main {
         }
 
         return parseConfiguration(args[0]);
-    }
-
-    /**
-     * The comparison have to be case insensitive, so everything have to be converted to lowercase.
-     */
-    @NotNull
-    private static List<String> configureExcludeDirectories(@NotNull Configuration configuration) {
-        return configuration.getExcludes()
-                .stream()
-                .map(String::toLowerCase)
-                .collect(Collectors.toList());
     }
 
     @NotNull

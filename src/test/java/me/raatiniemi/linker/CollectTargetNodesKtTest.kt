@@ -29,7 +29,7 @@ import org.junit.runners.JUnit4
 import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
-class CollectTargetNodesTest {
+class CollectTargetNodesKtTest {
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 

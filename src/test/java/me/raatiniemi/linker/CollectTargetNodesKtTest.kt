@@ -18,7 +18,7 @@
 package me.raatiniemi.linker
 
 import me.raatiniemi.linker.domain.Directory
-import me.raatiniemi.linker.domain.Item
+import me.raatiniemi.linker.domain.Node
 import me.raatiniemi.linker.util.createSymbolicLink
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -26,7 +26,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
 class CollectTargetNodesKtTest {
@@ -57,7 +56,7 @@ class CollectTargetNodesKtTest {
 
     @Test
     fun `collect target nodes with file in target`() {
-        temporaryFolder.newFile("file-in-target")
+        createNewFile(temporaryFolder, "file-in-target")
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
@@ -70,7 +69,7 @@ class CollectTargetNodesKtTest {
 
     @Test
     fun `collect target nodes with directory in target`() {
-        temporaryFolder.newFolder("directory-in-target")
+        createNewFolder(temporaryFolder, "directory-in-target")
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
@@ -83,17 +82,15 @@ class CollectTargetNodesKtTest {
 
     @Test
     fun `collect target nodes with node linked to source`() {
-        val source = temporaryFolder.newFolder("source")
-        val sourceFile = Paths.get(source.path, "file")
-            .also { it.toFile().createNewFile() }
-        val target = temporaryFolder.newFolder("target")
-        val targetFile = Paths.get(target.path, "file")
-        createSymbolicLink(targetFile, sourceFile)
+        val source = createNewFile(temporaryFolder, "source/file")
+        val target = createNewFolder(temporaryFolder, "target")
+        val link = getPath(temporaryFolder, "target", "file")
+        createSymbolicLink(link, source)
         val targets = listOf(
-            target.absolutePath
+            target.toString()
         )
         val expected = listOf(
-            Item(targetFile)
+            Node.Link(link, source)
         )
 
         val actual = collectTargetNodes(targets)

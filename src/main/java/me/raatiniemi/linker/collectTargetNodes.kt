@@ -18,9 +18,8 @@
 package me.raatiniemi.linker
 
 import me.raatiniemi.linker.domain.Directory
-import me.raatiniemi.linker.domain.Item
+import me.raatiniemi.linker.domain.Node
 import java.io.File
-import java.nio.file.Files
 
 /**
  * Collect symbolic links from each of the targets.
@@ -30,14 +29,8 @@ import java.nio.file.Files
  * @return List of symbolic link nodes available within the targets.
  */
 internal fun collectTargetNodes(targets: List<String>): List<Directory> {
-    return targets.asSequence()
-        .map { File(it) }
-        .flatMap { file ->
-            file.walk()
-                .map(File::toPath)
-                .filter(Files::isSymbolicLink)
-                .map(Files::readSymbolicLink)
-                .map { Item(it) }
-        }
+    return targets.map { File(it) }
+        .flatMap(::collectNodes)
+        .filterIsInstance<Node.Link>()
         .toList()
 }

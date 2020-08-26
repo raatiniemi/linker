@@ -18,6 +18,7 @@
 package me.raatiniemi.linker
 
 import org.junit.rules.TemporaryFolder
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -47,6 +48,10 @@ internal fun createNewFolder(folder: TemporaryFolder, path: String): Path {
         var prefix = ""
         for (segment in segments.dropLast(1)) {
             prefix = "${prefix}${segment}/"
+            val file = File("${folder.root.absolutePath}/$prefix")
+            if (file.exists()) {
+                continue
+            }
             folder.newFolder(prefix)
         }
     }

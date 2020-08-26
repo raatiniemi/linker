@@ -102,10 +102,17 @@ public class Main {
             @NotNull Configuration configuration,
             @NotNull List<String> excludeDirectories
     ) throws IOException {
-        Map<Path, List<Item>> rawMap = new HashMap<>();
-
         // TODO: Add support for recursive mapping.
         Path source = Paths.get(configuration.getSource());
+        return collectRawSourceNodes(source, excludeDirectories);
+    }
+
+    @NotNull
+    static Map<Path, List<Item>> collectRawSourceNodes(
+            Path source,
+            @NotNull List<String> excludeDirectories
+    ) throws IOException {
+        Map<Path, List<Item>> rawMap = new HashMap<>();
         Files.walk(source, 2)
                 .filter(Files::isDirectory)
                 .filter(path -> {

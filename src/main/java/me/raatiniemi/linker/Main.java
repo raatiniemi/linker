@@ -24,19 +24,18 @@ import me.raatiniemi.linker.domain.Item;
 import me.raatiniemi.linker.domain.LinkMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static me.raatiniemi.linker.CollectRawSourceNodesKt.collectRawSourceNodes;
 import static me.raatiniemi.linker.CollectTargetNodesKt.collectTargetNodes;
 import static me.raatiniemi.linker.ConfigureExcludeDirectoriesKt.configureExcludeDirectories;
 import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
 
 public class Main {
-    public static void main(String... args) throws IOException {
+    public static void main(String... args) {
         Configuration configuration = parseConfigurationFileFromArguments(args);
 
         List<String> excludeDirectories = configureExcludeDirectories(configuration);
@@ -60,7 +59,7 @@ public class Main {
     private static List<Directory> collectSourceNodes(
             @NotNull Configuration configuration,
             @NotNull List<String> excludeDirectories
-    ) throws IOException {
+    ) {
         Map<Path, List<Item>> rawSourceNodes = collectRawSourceNodes(
                 Paths.get(configuration.getSource()),
                 excludeDirectories
@@ -84,75 +83,6 @@ public class Main {
         });
 
         return directories;
-    }
-
-    /**
-     * Store the mapped raw data from the source directory.
-     * <p>
-     * We have to map the raw data before attempting to filter anything,
-     * otherwise we can't handle grouped directories.
-     * <p>
-     * The data is mapped as follows:
-     * <p>
-     * Directory 1 -> []
-     * Directory 2 -> [Directory 3, Directory 4]
-     * <p>
-     * Depending on if the value is empty at the end of the walk determines
-     * whether the directory is a group or single item.
-     */
-    @NotNull
-    static Map<Path, List<Item>> collectRawSourceNodes(
-            Path source,
-            @NotNull List<String> excludeDirectories
-    ) throws IOException {
-        Map<Path, List<Item>> rawMap = new HashMap<>();
-        Files.walk(source, 2)
-                .filter(Files::isDirectory)
-                .filter(path -> {
-                    // When walking with `Files.walk` the source directory is
-                    // listed along with the other directories.
-                    //
-                    // We have to filter away the source directory since we
-                    // only want to map two levels.
-                    try {
-                        return !Files.isSameFile(path, source);
-                    } catch (IOException e) {
-                        return false;
-                    }
-                })
-                .filter(path -> {
-                    // Check if the name of the directory is included within
-                    // the exclude directories.
-                    String filename = path.getFileName()
-                            .toString()
-                            .toLowerCase();
-
-                    return !excludeDirectories.contains(filename);
-                })
-                .sorted()
-                .forEach(path -> {
-                    // Since we are sorting the stream before building the raw
-                    // data, we can safely assume that parent directories will
-                    // appear before its children.
-                    //
-                    // Directory 1
-                    // Directory 2/Directory 3
-                    // Directory 2/Directory 4
-                    //
-                    // If the parent do not exists within the data, we have to
-                    // initialize it with an empty array.
-                    //
-                    // And, then just add the children.
-                    if (!rawMap.containsKey(path.getParent())) {
-                        rawMap.put(path, new ArrayList<>());
-                        return;
-                    }
-
-                    rawMap.get(path.getParent())
-                            .add(new Item(path));
-                });
-
-        return rawMap;
     }
 
     @NotNull

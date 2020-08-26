@@ -17,7 +17,6 @@
 
 package me.raatiniemi.linker
 
-import me.raatiniemi.linker.Main.collectRawSourceNodes
 import me.raatiniemi.linker.domain.Item
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -29,7 +28,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
-class CollectRawSourceNodesTest {
+class CollectRawSourceNodesKtTest {
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 

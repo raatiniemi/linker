@@ -61,7 +61,10 @@ public class Main {
             @NotNull Configuration configuration,
             @NotNull List<String> excludeDirectories
     ) throws IOException {
-        Map<Path, List<Item>> rawSourceNodes = collectRawSourceNodes(configuration, excludeDirectories);
+        Map<Path, List<Item>> rawSourceNodes = collectRawSourceNodes(
+                Paths.get(configuration.getSource()),
+                excludeDirectories
+        );
 
         // Build the mapped structure from the raw data. Depending on whether
         // the item have children the item should be mapped as Item or CollectionItem.
@@ -97,16 +100,6 @@ public class Main {
      * Depending on if the value is empty at the end of the walk determines
      * whether the directory is a group or single item.
      */
-    @NotNull
-    private static Map<Path, List<Item>> collectRawSourceNodes(
-            @NotNull Configuration configuration,
-            @NotNull List<String> excludeDirectories
-    ) throws IOException {
-        // TODO: Add support for recursive mapping.
-        Path source = Paths.get(configuration.getSource());
-        return collectRawSourceNodes(source, excludeDirectories);
-    }
-
     @NotNull
     static Map<Path, List<Item>> collectRawSourceNodes(
             Path source,

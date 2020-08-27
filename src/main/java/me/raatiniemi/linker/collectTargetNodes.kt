@@ -31,6 +31,13 @@ import java.io.File
 internal fun collectTargetNodes(targets: List<String>): List<Directory> {
     return targets.map { File(it) }
         .flatMap(::collectNodes)
-        .filterIsInstance<Node.Link>()
-        .toList()
+        .flatMap(::filterLinks)
+}
+
+private fun filterLinks(node: Node): List<Node> {
+    return when (node) {
+        is Node.Branch -> node.nodes.flatMap { filterLinks(it) }
+        is Node.Leaf -> emptyList()
+        is Node.Link -> listOf(node)
+    }
 }

@@ -97,4 +97,23 @@ class CollectTargetNodesKtTest {
 
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun `collect target nodes with node linked to source in nested folders`() {
+        val source = createNewFile(temporaryFolder, "source/folder/file")
+        val target = createNewFolder(temporaryFolder, "target")
+        createNewFolder(temporaryFolder, "target/folder/subfolder")
+        val link = getPath(temporaryFolder, "target", "folder", "subfolder", "file")
+        createSymbolicLink(link, source)
+        val targets = listOf(
+            target.toString()
+        )
+        val expected = listOf(
+            Node.Link(link, source)
+        )
+
+        val actual = collectTargetNodes(targets)
+
+        assertEquals(expected, actual)
+    }
 }

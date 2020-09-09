@@ -19,7 +19,6 @@ package me.raatiniemi.linker;
 
 import me.raatiniemi.linker.configuration.Configuration;
 import me.raatiniemi.linker.domain.Directory;
-import me.raatiniemi.linker.domain.Item;
 import me.raatiniemi.linker.domain.LinkMap;
 import me.raatiniemi.linker.domain.Node;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +74,7 @@ public class Main {
         List<Directory> directories = new ArrayList<>();
         rawSourceNodes.forEach((path, children) -> {
             if (children.isEmpty()) {
-                directories.add(new Item(path));
+                directories.add(new Node.Leaf(path));
                 return;
             }
 

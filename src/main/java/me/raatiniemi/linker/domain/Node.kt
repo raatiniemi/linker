@@ -26,15 +26,18 @@ import java.util.stream.Collectors
 /**
  * Represents the different states for a given path.
  */
-internal sealed class Node(path: Path): Item(path) {
-    data class Branch(override val path: Path, var nodes: List<Node>) : Node(path) {
+internal sealed class Node : Directory {
+    override val basename: String
+        get() = path.fileName.toString()
+
+    data class Branch(override val path: Path, var nodes: List<Node>) : Node() {
         /**
          * @inheritDoc
          */
         override fun filter(data: List<Directory>): Boolean {
             // Check whether the group have been linked. If the group is linked
             // there is no need to check the subdirectories.
-            if (!super.filter(data)) {
+            if (!excludeFilter(this, data)) {
                 return false
             }
 
@@ -58,7 +61,7 @@ internal sealed class Node(path: Path): Item(path) {
          */
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             val items = nodes.stream()
-                .filter { item: Item ->
+                .filter { item ->
                     val linkMap = linkMaps.stream()
                         .filter { map: LinkMap -> map.match(item.basename) }
                         .findFirst()
@@ -85,7 +88,7 @@ internal sealed class Node(path: Path): Item(path) {
         }
 
         override fun toString(): String {
-            var value = super.toString()
+            var value = basename
 
             // If the group contain any items they should be appended to the value.
             //
@@ -95,7 +98,7 @@ internal sealed class Node(path: Path): Item(path) {
             //     Directory 4
             val items = nodes
                 .stream()
-                .map { obj: Item -> obj.basename }
+                .map { obj -> obj.basename }
                 .collect(Collectors.toList())
 
             if (items.isNotEmpty()) {
@@ -106,7 +109,59 @@ internal sealed class Node(path: Path): Item(path) {
         }
     }
 
-    data class Leaf(override val path: Path) : Node(path)
+    data class Leaf(override val path: Path) : Node() {
+        override fun filter(data: List<Directory>): Boolean {
+            return excludeFilter(this, data)
+        }
 
-    data class Link(override val path: Path, val source: Path) : Node(path)
+        override fun link(linkMaps: Set<LinkMap>): Boolean {
+            // Attempt to find a link map configuration based on the basename.
+            val linkMap = linkMaps.stream()
+                .filter { map: LinkMap -> map.match(this.basename) }
+                .findFirst()
+
+            // If we were unable to find a configuration, i.e. we are unable to
+            // link the item we have to return false.
+            if (!linkMap.isPresent) {
+                return false
+            }
+            val map = linkMap.get()
+
+            // Build the path for the link and target.
+            val link = Paths.get(map.target, this.basename)
+            val target = Paths.get(map.prefix, this.basename)
+
+            // If the symbolic link is created we have to exclude the item from the
+            // filter by returning false.
+            return createSymbolicLink(link, target)
+        }
+    }
+
+    data class Link(override val path: Path, val source: Path) : Node() {
+        override fun filter(data: List<Directory>): Boolean {
+            return excludeFilter(this, data)
+        }
+
+        override fun link(linkMaps: Set<LinkMap>): Boolean {
+            // Attempt to find a link map configuration based on the basename.
+            val linkMap = linkMaps.stream()
+                .filter { map: LinkMap -> map.match(this.basename) }
+                .findFirst()
+
+            // If we were unable to find a configuration, i.e. we are unable to
+            // link the item we have to return false.
+            if (!linkMap.isPresent) {
+                return false
+            }
+            val map = linkMap.get()
+
+            // Build the path for the link and target.
+            val link = Paths.get(map.target, this.basename)
+            val target = Paths.get(map.prefix, this.basename)
+
+            // If the symbolic link is created we have to exclude the item from the
+            // filter by returning false.
+            return createSymbolicLink(link, target)
+        }
+    }
 }

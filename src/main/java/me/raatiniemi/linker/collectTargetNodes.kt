@@ -27,13 +27,13 @@ import java.io.File
  *
  * @return List of symbolic link nodes available within the targets.
  */
-internal fun collectTargetNodes(targets: List<String>): List<Node> {
+internal fun collectTargetNodes(targets: List<String>): List<Node.Link> {
     return targets.map { File(it) }
         .flatMap(::collectNodes)
         .flatMap(::filterLinks)
 }
 
-private fun filterLinks(node: Node): List<Node> {
+private fun filterLinks(node: Node): List<Node.Link> {
     return when (node) {
         is Node.Branch -> node.nodes.flatMap { filterLinks(it) }
         is Node.Leaf -> emptyList()

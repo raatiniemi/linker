@@ -37,7 +37,7 @@ public class Main {
         Configuration configuration = parseConfigurationFileFromArguments(args);
 
         List<String> excludeDirectories = configureExcludeDirectories(configuration);
-        List<Node> targetNodes = collectTargetNodes(configuration.getTargets());
+        List<Node.Link> targetNodes = collectTargetNodes(configuration.getTargets());
         List<Node> sourceNodes = collectSourceNodes(configuration, excludeDirectories);
         List<Node> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
 
@@ -86,7 +86,7 @@ public class Main {
     @NotNull
     private static List<Node> linkSourceNodesIntoTargets(
             @NotNull Configuration configuration,
-            @NotNull List<Node> targetNodes,
+            @NotNull List<Node.Link> targetNodes,
             @NotNull List<Node> sourceNodes
     ) {
         Set<LinkMap> linkMaps = configuration.getLinkMaps();
@@ -102,7 +102,7 @@ public class Main {
                 .collect(Collectors.toList());
     }
 
-    private static void printReportForCollectionSizes(@NotNull List<Node> targetNodes, @NotNull List<Node> sources) {
+    private static void printReportForCollectionSizes(@NotNull List<Node.Link> targetNodes, @NotNull List<Node> sources) {
         // Print the number of targets and unlinked sources.
         System.out.println("Targets: " + targetNodes.size());
         System.out.println("Sources: " + sources.size());

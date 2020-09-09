@@ -34,7 +34,7 @@ class CollectTargetNodesKtTest {
     @Test
     fun `collect target nodes without targets`() {
         val targets = emptyList<String>()
-        val expected = emptyList<Node>()
+        val expected = emptyList<Node.Link>()
 
         val actual = collectTargetNodes(targets)
 
@@ -46,7 +46,7 @@ class CollectTargetNodesKtTest {
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
-        val expected = emptyList<Node>()
+        val expected = emptyList<Node.Link>()
 
         val actual = collectTargetNodes(targets)
 
@@ -59,7 +59,7 @@ class CollectTargetNodesKtTest {
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
-        val expected = emptyList<Node>()
+        val expected = emptyList<Node.Link>()
 
         val actual = collectTargetNodes(targets)
 
@@ -72,7 +72,7 @@ class CollectTargetNodesKtTest {
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
-        val expected = emptyList<Node>()
+        val expected = emptyList<Node.Link>()
 
         val actual = collectTargetNodes(targets)
 

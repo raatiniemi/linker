@@ -17,7 +17,7 @@
 
 package me.raatiniemi.linker
 
-import me.raatiniemi.linker.domain.Item
+import me.raatiniemi.linker.domain.Node
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -42,8 +42,8 @@ import kotlin.collections.set
 internal fun collectRawSourceNodes(
     source: Path,
     excludeDirectories: List<String>
-): Map<Path, MutableList<Item>> {
-    val rawMap: MutableMap<Path, MutableList<Item>> = HashMap()
+): Map<Path, MutableList<Node>> {
+    val rawMap: MutableMap<Path, MutableList<Node>> = HashMap()
     Files.walk(source, 2)
         .filter { path: Path -> Files.isDirectory(path) }
         .filter { path: Path ->
@@ -85,7 +85,7 @@ internal fun collectRawSourceNodes(
                 return@forEach
             }
             rawMap[path.parent]
-                ?.add(Item(path))
+                ?.add(Node.Leaf(path))
         }
 
     return rawMap

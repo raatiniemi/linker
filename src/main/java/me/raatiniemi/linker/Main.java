@@ -18,10 +18,10 @@
 package me.raatiniemi.linker;
 
 import me.raatiniemi.linker.configuration.Configuration;
-import me.raatiniemi.linker.domain.CollectionItem;
 import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.Item;
 import me.raatiniemi.linker.domain.LinkMap;
+import me.raatiniemi.linker.domain.Node;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -60,7 +60,7 @@ public class Main {
             @NotNull Configuration configuration,
             @NotNull List<String> excludeDirectories
     ) {
-        Map<Path, List<Item>> rawSourceNodes = collectRawSourceNodes(
+        Map<Path, List<Node>> rawSourceNodes = collectRawSourceNodes(
                 Paths.get(configuration.getSource()),
                 excludeDirectories
         );
@@ -79,7 +79,7 @@ public class Main {
                 return;
             }
 
-            directories.add(new CollectionItem(path, children));
+            directories.add(new Node.Branch(path, children));
         });
 
         return directories;

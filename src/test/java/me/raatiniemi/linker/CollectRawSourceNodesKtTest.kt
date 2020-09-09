@@ -17,7 +17,7 @@
 
 package me.raatiniemi.linker
 
-import me.raatiniemi.linker.domain.Item
+import me.raatiniemi.linker.domain.Node
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -48,8 +48,8 @@ class CollectRawSourceNodesKtTest {
         createNewFolder(temporaryFolder, "folder")
         val path = temporaryFolder.root.toPath()
         val excludeDirectories = emptyList<String>()
-        val expected = hashMapOf<Path, List<Item>>(
-            Paths.get(temporaryFolder.root.absolutePath, "/folder") to emptyList()
+        val expected = hashMapOf<Path, List<Node>>(
+            Paths.get(temporaryFolder.root.absolutePath, "folder") to emptyList()
         )
 
         val actual = collectRawSourceNodes(path, excludeDirectories)
@@ -63,8 +63,8 @@ class CollectRawSourceNodesKtTest {
         val path = temporaryFolder.root.toPath()
         val excludeDirectories = emptyList<String>()
         val expected = hashMapOf(
-            Paths.get(temporaryFolder.root.absolutePath, "/folder") to listOf(
-                Item(Paths.get("folder-1"))
+            Paths.get(temporaryFolder.root.absolutePath, "folder") to listOf(
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder", "folder-1"))
             )
         )
 
@@ -80,9 +80,9 @@ class CollectRawSourceNodesKtTest {
         val path = temporaryFolder.root.toPath()
         val excludeDirectories = emptyList<String>()
         val expected = hashMapOf(
-            Paths.get(temporaryFolder.root.absolutePath, "/folder") to listOf(
-                Item(Paths.get("folder-1")),
-                Item(Paths.get("folder-2"))
+            Paths.get(temporaryFolder.root.absolutePath, "folder") to listOf(
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder", "folder-1")),
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder", "folder-2"))
             )
         )
 
@@ -97,9 +97,9 @@ class CollectRawSourceNodesKtTest {
         createNewFolder(temporaryFolder, "folder-2")
         val path = temporaryFolder.root.toPath()
         val excludeDirectories = emptyList<String>()
-        val expected = hashMapOf<Path, List<Item>>(
-            Paths.get(temporaryFolder.root.absolutePath, "/folder-1") to emptyList(),
-            Paths.get(temporaryFolder.root.absolutePath, "/folder-2") to emptyList()
+        val expected = hashMapOf<Path, List<Node>>(
+            Paths.get(temporaryFolder.root.absolutePath, "folder-1") to emptyList(),
+            Paths.get(temporaryFolder.root.absolutePath, "folder-2") to emptyList()
         )
 
         val actual = collectRawSourceNodes(path, excludeDirectories)
@@ -112,9 +112,9 @@ class CollectRawSourceNodesKtTest {
         createNewFolder(temporaryFolder, "folder/folder")
         val path = temporaryFolder.root.toPath()
         val excludeDirectories = emptyList<String>()
-        val expected = hashMapOf<Path, List<Item>>(
-            Paths.get(temporaryFolder.root.absolutePath, "/folder") to listOf(
-                Item(Paths.get("folder"))
+        val expected = hashMapOf<Path, List<Node>>(
+            Paths.get(temporaryFolder.root.absolutePath, "folder") to listOf(
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder", "folder"))
             )
         )
 
@@ -131,14 +131,14 @@ class CollectRawSourceNodesKtTest {
         createNewFolder(temporaryFolder, "folder-2/folder-2")
         val path = temporaryFolder.root.toPath()
         val excludeDirectories = emptyList<String>()
-        val expected = hashMapOf<Path, List<Item>>(
-            Paths.get(temporaryFolder.root.absolutePath, "/folder-1") to listOf(
-                Item(Paths.get("folder-1")),
-                Item(Paths.get("folder-2"))
+        val expected = hashMapOf<Path, List<Node>>(
+            Paths.get(temporaryFolder.root.absolutePath, "folder-1") to listOf(
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder-1", "folder-1")),
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder-1", "folder-2"))
             ),
-            Paths.get(temporaryFolder.root.absolutePath, "/folder-2") to listOf(
-                Item(Paths.get("folder-1")),
-                Item(Paths.get("folder-2"))
+            Paths.get(temporaryFolder.root.absolutePath, "folder-2") to listOf(
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder-2", "folder-1")),
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder-2", "folder-2"))
             )
         )
 
@@ -157,11 +157,11 @@ class CollectRawSourceNodesKtTest {
         val excludeDirectories = listOf(
             "folder-2"
         )
-        val expected = hashMapOf<Path, List<Item>>(
-            Paths.get(temporaryFolder.root.absolutePath, "/folder-1") to listOf(
-                Item(Paths.get("folder-1"))
+        val expected = hashMapOf<Path, List<Node>>(
+            Paths.get(temporaryFolder.root.absolutePath, "folder-1") to listOf(
+                Node.Leaf(Paths.get(temporaryFolder.root.absolutePath, "folder-1", "folder-1"))
             ),
-            Paths.get(temporaryFolder.root.absolutePath, "/folder-2/folder-1") to emptyList()
+            Paths.get(temporaryFolder.root.absolutePath, "folder-2", "folder-1") to emptyList()
         )
 
         val actual = collectRawSourceNodes(path, excludeDirectories)

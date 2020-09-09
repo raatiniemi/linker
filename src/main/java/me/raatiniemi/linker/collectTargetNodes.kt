@@ -17,7 +17,6 @@
 
 package me.raatiniemi.linker
 
-import me.raatiniemi.linker.domain.Directory
 import me.raatiniemi.linker.domain.Node
 import java.io.File
 
@@ -28,7 +27,7 @@ import java.io.File
  *
  * @return List of symbolic link nodes available within the targets.
  */
-internal fun collectTargetNodes(targets: List<String>): List<Directory> {
+internal fun collectTargetNodes(targets: List<String>): List<Node> {
     return targets.map { File(it) }
         .flatMap(::collectNodes)
         .flatMap(::filterLinks)

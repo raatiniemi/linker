@@ -26,15 +26,33 @@ import java.util.stream.Collectors
 /**
  * Represents the different states for a given path.
  */
-internal sealed class Node : Directory {
-    override val basename: String
+internal sealed class Node {
+    abstract val path: Path
+
+    val basename: String
         get() = path.fileName.toString()
+
+    /**
+     * Filter item based on the data.
+     *
+     * @param data Data source.
+     * @return false if item is found within data, otherwise true.
+     */
+    abstract fun filter(data: List<Node>): Boolean
+
+    /**
+     * Attempt to link directory if link map configuration is found.
+     *
+     * @param linkMaps Link map configurations.
+     * @return true if item was linked, otherwise false.
+     */
+    abstract fun link(linkMaps: Set<LinkMap>): Boolean
 
     data class Branch(override val path: Path, var nodes: List<Node>) : Node() {
         /**
          * @inheritDoc
          */
-        override fun filter(data: List<Directory>): Boolean {
+        override fun filter(data: List<Node>): Boolean {
             // Check whether the group have been linked. If the group is linked
             // there is no need to check the subdirectories.
             if (!excludeFilter(this, data)) {
@@ -110,7 +128,7 @@ internal sealed class Node : Directory {
     }
 
     data class Leaf(override val path: Path) : Node() {
-        override fun filter(data: List<Directory>): Boolean {
+        override fun filter(data: List<Node>): Boolean {
             return excludeFilter(this, data)
         }
 
@@ -138,7 +156,7 @@ internal sealed class Node : Directory {
     }
 
     data class Link(override val path: Path, val source: Path) : Node() {
-        override fun filter(data: List<Directory>): Boolean {
+        override fun filter(data: List<Node>): Boolean {
             return excludeFilter(this, data)
         }
 

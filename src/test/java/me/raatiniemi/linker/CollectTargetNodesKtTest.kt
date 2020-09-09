@@ -17,7 +17,6 @@
 
 package me.raatiniemi.linker
 
-import me.raatiniemi.linker.domain.Directory
 import me.raatiniemi.linker.domain.Node
 import me.raatiniemi.linker.util.createSymbolicLink
 import org.junit.Assert.assertEquals
@@ -35,7 +34,7 @@ class CollectTargetNodesKtTest {
     @Test
     fun `collect target nodes without targets`() {
         val targets = emptyList<String>()
-        val expected = emptyList<Directory>()
+        val expected = emptyList<Node>()
 
         val actual = collectTargetNodes(targets)
 
@@ -47,7 +46,7 @@ class CollectTargetNodesKtTest {
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
-        val expected = emptyList<Directory>()
+        val expected = emptyList<Node>()
 
         val actual = collectTargetNodes(targets)
 
@@ -60,7 +59,7 @@ class CollectTargetNodesKtTest {
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
-        val expected = emptyList<Directory>()
+        val expected = emptyList<Node>()
 
         val actual = collectTargetNodes(targets)
 
@@ -73,7 +72,7 @@ class CollectTargetNodesKtTest {
         val targets = listOf(
             temporaryFolder.root.absolutePath
         )
-        val expected = emptyList<Directory>()
+        val expected = emptyList<Node>()
 
         val actual = collectTargetNodes(targets)
 

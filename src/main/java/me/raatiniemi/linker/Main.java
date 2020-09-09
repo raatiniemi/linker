@@ -18,7 +18,6 @@
 package me.raatiniemi.linker;
 
 import me.raatiniemi.linker.configuration.Configuration;
-import me.raatiniemi.linker.domain.Directory;
 import me.raatiniemi.linker.domain.LinkMap;
 import me.raatiniemi.linker.domain.Node;
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +37,9 @@ public class Main {
         Configuration configuration = parseConfigurationFileFromArguments(args);
 
         List<String> excludeDirectories = configureExcludeDirectories(configuration);
-        List<Directory> targetNodes = collectTargetNodes(configuration.getTargets());
-        List<Directory> sourceNodes = collectSourceNodes(configuration, excludeDirectories);
-        List<Directory> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
+        List<Node> targetNodes = collectTargetNodes(configuration.getTargets());
+        List<Node> sourceNodes = collectSourceNodes(configuration, excludeDirectories);
+        List<Node> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
 
         printReportForCollectionSizes(targetNodes, sources);
         printReportForUnlinkedNodes(sources);
@@ -55,7 +54,7 @@ public class Main {
     }
 
     @NotNull
-    private static List<Directory> collectSourceNodes(
+    private static List<Node> collectSourceNodes(
             @NotNull Configuration configuration,
             @NotNull List<String> excludeDirectories
     ) {
@@ -71,7 +70,7 @@ public class Main {
         // Directory 2 (CollectionItem)
         //    Directory 3 (Item)
         //    Directory 4 (Item)
-        List<Directory> directories = new ArrayList<>();
+        List<Node> directories = new ArrayList<>();
         rawSourceNodes.forEach((path, children) -> {
             if (children.isEmpty()) {
                 directories.add(new Node.Leaf(path));
@@ -85,10 +84,10 @@ public class Main {
     }
 
     @NotNull
-    private static List<Directory> linkSourceNodesIntoTargets(
+    private static List<Node> linkSourceNodesIntoTargets(
             @NotNull Configuration configuration,
-            @NotNull List<Directory> targetNodes,
-            @NotNull List<Directory> sourceNodes
+            @NotNull List<Node> targetNodes,
+            @NotNull List<Node> sourceNodes
     ) {
         Set<LinkMap> linkMaps = configuration.getLinkMaps();
 
@@ -103,16 +102,16 @@ public class Main {
                 .collect(Collectors.toList());
     }
 
-    private static void printReportForCollectionSizes(@NotNull List<Directory> targetNodes, @NotNull List<Directory> sources) {
+    private static void printReportForCollectionSizes(@NotNull List<Node> targetNodes, @NotNull List<Node> sources) {
         // Print the number of targets and unlinked sources.
         System.out.println("Targets: " + targetNodes.size());
         System.out.println("Sources: " + sources.size());
     }
 
-    private static void printReportForUnlinkedNodes(@NotNull List<Directory> sources) {
+    private static void printReportForUnlinkedNodes(@NotNull List<Node> sources) {
         // Print the unlinked sources.
         sources.stream()
-                .sorted(Comparator.comparing(Directory::getBasename))
+                .sorted(Comparator.comparing(Node::getBasename))
                 .forEach(System.out::println);
     }
 }

@@ -104,27 +104,6 @@ internal sealed class Node {
             this.nodes = items
             return this.nodes.isEmpty()
         }
-
-        override fun toString(): String {
-            var value = basename
-
-            // If the group contain any items they should be appended to the value.
-            //
-            // Directory 1
-            // Directory 2 (CollectionItem)
-            //     Directory 3
-            //     Directory 4
-            val items = nodes
-                .stream()
-                .map { obj -> obj.basename }
-                .collect(Collectors.toList())
-
-            if (items.isNotEmpty()) {
-                val separator = "\n  "
-                value += separator + java.lang.String.join(separator, items)
-            }
-            return value
-        }
     }
 
     data class Leaf(override val path: Path) : Node() {

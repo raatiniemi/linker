@@ -24,13 +24,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.raatiniemi.linker.CollectRawSourceNodesKt.collectRawSourceNodes;
 import static me.raatiniemi.linker.CollectTargetNodesKt.collectTargetNodes;
 import static me.raatiniemi.linker.ConfigureExcludeDirectoriesKt.configureExcludeDirectories;
 import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
+import static me.raatiniemi.linker.domain.NodesKt.print;
 
 public class Main {
     public static void main(String... args) {
@@ -42,7 +46,7 @@ public class Main {
         List<Node> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
 
         printReportForCollectionSizes(targetNodes, sources);
-        printReportForUnlinkedNodes(sources);
+        print(sources);
     }
 
     private static Configuration parseConfigurationFileFromArguments(String[] args) {
@@ -106,12 +110,5 @@ public class Main {
         // Print the number of targets and unlinked sources.
         System.out.println("Targets: " + targetNodes.size());
         System.out.println("Sources: " + sources.size());
-    }
-
-    private static void printReportForUnlinkedNodes(@NotNull List<Node> sources) {
-        // Print the unlinked sources.
-        sources.stream()
-                .sorted(Comparator.comparing(Node::getBasename))
-                .forEach(System.out::println);
     }
 }

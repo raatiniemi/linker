@@ -54,19 +54,13 @@ private fun isLinked(canonicalPath: String, canonicalPathForTargets: List<String
 // Match
 
 internal fun match(node: Node, linkMaps: Set<LinkMap>): Node.Link? {
-    val value = linkMaps.stream()
-        .filter { match(node.basename, it) }
-        .findFirst()
+    return linkMaps.firstOrNull { match(node.basename, it) }
+        ?.let {
+            val link = Paths.get(it.target, node.basename)
+            val target = Paths.get(it.prefix, node.basename)
 
-    if (!value.isPresent) {
-        return null
-    }
-    val linkMap = value.get()
-
-    val link = Paths.get(linkMap.target, node.basename)
-    val target = Paths.get(linkMap.prefix, node.basename)
-
-    return Node.Link(link, target)
+            Node.Link(link, target)
+        }
 }
 
 // Print

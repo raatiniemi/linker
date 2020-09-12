@@ -46,20 +46,20 @@ internal sealed class Node {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             val items = nodes.stream()
                 .filter { item ->
-                    val linkMap = linkMaps.stream()
+                    val value = linkMaps.stream()
                         .filter { match(item.basename, it) }
                         .findFirst()
 
                     // If we were unable to find a configuration, i.e. we are
                     // unable to link the item we have to return false.
-                    if (!linkMap.isPresent) {
+                    if (!value.isPresent) {
                         return@filter true
                     }
-                    val map = linkMap.get()
+                    val linkMap = value.get()
 
                     // Build the path for the link and target.
-                    val link = Paths.get(map.target, item.basename)
-                    val target = Paths.get(map.prefix, this.basename, item.basename)
+                    val link = Paths.get(linkMap.target, item.basename)
+                    val target = Paths.get(linkMap.prefix, this.basename, item.basename)
                     !createSymbolicLink(link, target)
                 }
                 .collect(Collectors.toList())
@@ -75,20 +75,20 @@ internal sealed class Node {
     data class Leaf(override val path: Path) : Node() {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             // Attempt to find a link map configuration based on the basename.
-            val linkMap = linkMaps.stream()
+            val value = linkMaps.stream()
                 .filter { match(basename, it) }
                 .findFirst()
 
             // If we were unable to find a configuration, i.e. we are unable to
             // link the item we have to return false.
-            if (!linkMap.isPresent) {
+            if (!value.isPresent) {
                 return false
             }
-            val map = linkMap.get()
+            val linkMap = value.get()
 
             // Build the path for the link and target.
-            val link = Paths.get(map.target, this.basename)
-            val target = Paths.get(map.prefix, this.basename)
+            val link = Paths.get(linkMap.target, this.basename)
+            val target = Paths.get(linkMap.prefix, this.basename)
 
             // If the symbolic link is created we have to exclude the item from the
             // filter by returning false.
@@ -99,20 +99,20 @@ internal sealed class Node {
     data class Link(override val path: Path, val source: Path) : Node() {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             // Attempt to find a link map configuration based on the basename.
-            val linkMap = linkMaps.stream()
+            val value = linkMaps.stream()
                 .filter { match(basename, it) }
                 .findFirst()
 
             // If we were unable to find a configuration, i.e. we are unable to
             // link the item we have to return false.
-            if (!linkMap.isPresent) {
+            if (!value.isPresent) {
                 return false
             }
-            val map = linkMap.get()
+            val linkMap = value.get()
 
             // Build the path for the link and target.
-            val link = Paths.get(map.target, this.basename)
-            val target = Paths.get(map.prefix, this.basename)
+            val link = Paths.get(linkMap.target, this.basename)
+            val target = Paths.get(linkMap.prefix, this.basename)
 
             // If the symbolic link is created we have to exclude the item from the
             // filter by returning false.

@@ -17,8 +17,13 @@
 
 package me.raatiniemi.linker.domain
 
-internal interface LinkMap {
-    val regex: String
-    val prefix: String
-    val target: String
+import java.util.regex.Pattern
+
+internal fun match(value: String, linkMap: LinkMap): Boolean {
+    if (value.isBlank()) {
+        return false
+    }
+
+    return Pattern.matches(linkMap.regex, value)
 }
+

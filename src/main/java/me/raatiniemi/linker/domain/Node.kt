@@ -47,7 +47,7 @@ internal sealed class Node {
             val items = nodes.stream()
                 .filter { item ->
                     val linkMap = linkMaps.stream()
-                        .filter { map: LinkMap -> map.match(item.basename) }
+                        .filter { match(item.basename, it) }
                         .findFirst()
 
                     // If we were unable to find a configuration, i.e. we are
@@ -76,7 +76,7 @@ internal sealed class Node {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             // Attempt to find a link map configuration based on the basename.
             val linkMap = linkMaps.stream()
-                .filter { map: LinkMap -> map.match(this.basename) }
+                .filter { match(basename, it) }
                 .findFirst()
 
             // If we were unable to find a configuration, i.e. we are unable to
@@ -100,7 +100,7 @@ internal sealed class Node {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             // Attempt to find a link map configuration based on the basename.
             val linkMap = linkMaps.stream()
-                .filter { map: LinkMap -> map.match(this.basename) }
+                .filter { match(basename, it) }
                 .findFirst()
 
             // If we were unable to find a configuration, i.e. we are unable to

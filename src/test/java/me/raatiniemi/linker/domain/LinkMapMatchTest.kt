@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.raatiniemi.linker.configuration
+package me.raatiniemi.linker.domain
 
+import me.raatiniemi.linker.configuration.LinkMapConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,7 +24,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class LinkMapConfigurationTest(
+class LinkMapMatchTest(
     private val expected: Boolean,
     private val regex: String,
     private val match: String
@@ -32,7 +33,7 @@ class LinkMapConfigurationTest(
     fun match() {
         val linkMap = LinkMapConfiguration(regex, "", "")
 
-        assertEquals(expected, linkMap.match(match))
+        assertEquals(expected, match(match, linkMap))
     }
 
     companion object {
@@ -45,6 +46,11 @@ class LinkMapConfigurationTest(
                     false,
                     "",
                     "without-regex"
+                ),
+                arrayOf(
+                    false,
+                    "   ",
+                    "with-blank-regex"
                 ),
                 arrayOf(
                     false,

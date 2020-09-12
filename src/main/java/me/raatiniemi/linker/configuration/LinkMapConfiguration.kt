@@ -18,20 +18,12 @@ package me.raatiniemi.linker.configuration
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import me.raatiniemi.linker.domain.LinkMap
-import java.util.*
-import java.util.regex.Pattern
 
 internal data class LinkMapConfiguration(
     @JsonProperty("regex")
-    private val regex: String,
+    override val regex: String,
     @JsonProperty("prefix")
     override val prefix: String,
     @JsonProperty("target")
     override val target: String
-) : LinkMap {
-    override fun match(text: String): Boolean {
-        return (Objects.nonNull(regex)
-                && regex.isNotEmpty()
-                && Pattern.matches(regex, text))
-    }
-}
+) : LinkMap

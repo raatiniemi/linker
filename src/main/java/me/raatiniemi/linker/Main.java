@@ -22,15 +22,12 @@ import me.raatiniemi.linker.domain.LinkMap;
 import me.raatiniemi.linker.domain.Node;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static me.raatiniemi.linker.CollectRawSourceNodesKt.collectRawSourceNodes;
+import static me.raatiniemi.linker.CollectSourceNodesKt.collectSourceNodes;
 import static me.raatiniemi.linker.CollectTargetNodesKt.collectTargetNodes;
 import static me.raatiniemi.linker.ConfigureExcludeDirectoriesKt.configureExcludeDirectories;
 import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
@@ -43,7 +40,7 @@ public class Main {
 
         List<String> excludeDirectories = configureExcludeDirectories(configuration);
         List<Node.Link> targetNodes = collectTargetNodes(configuration.getTargets());
-        List<Node> sourceNodes = collectSourceNodes(configuration, excludeDirectories);
+        List<Node> sourceNodes = collectSourceNodes(Paths.get(configuration.getSource()), excludeDirectories);
         List<Node> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
 
         printReportForCollectionSizes(targetNodes, sources);
@@ -56,36 +53,6 @@ public class Main {
         }
 
         return parseConfiguration(args[0]);
-    }
-
-    @NotNull
-    private static List<Node> collectSourceNodes(
-            @NotNull Configuration configuration,
-            @NotNull List<String> excludeDirectories
-    ) {
-        Map<Path, List<Node>> rawSourceNodes = collectRawSourceNodes(
-                Paths.get(configuration.getSource()),
-                excludeDirectories
-        );
-
-        // Build the mapped structure from the raw data. Depending on whether
-        // the item have children the item should be mapped as Item or CollectionItem.
-        //
-        // Directory 1 (Item)
-        // Directory 2 (CollectionItem)
-        //    Directory 3 (Item)
-        //    Directory 4 (Item)
-        List<Node> directories = new ArrayList<>();
-        rawSourceNodes.forEach((path, children) -> {
-            if (children.isEmpty()) {
-                directories.add(new Node.Leaf(path));
-                return;
-            }
-
-            directories.add(new Node.Branch(path, children));
-        });
-
-        return directories;
     }
 
     @NotNull

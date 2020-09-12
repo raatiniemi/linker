@@ -24,7 +24,7 @@ import org.junit.runners.JUnit4
 import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
-internal class NodesLinkKtTest {
+internal class NodesMatchKtTest {
     // Leaf
 
     @Test

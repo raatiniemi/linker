@@ -21,6 +21,7 @@ import me.raatiniemi.linker.domain.Node
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Collect nodes from a given [root] directory.
@@ -45,7 +46,12 @@ private fun node(file: File): Node {
     val path = file.toPath()
 
     return when {
-        isSymbolicLink(path) -> Node.Link(path, Files.readSymbolicLink(path))
+        isSymbolicLink(path) -> {
+            val source = Files.readSymbolicLink(path)
+                .let(normalizeLinkSourcePath(path))
+
+            Node.Link(path, source)
+        }
         isDirectory(file) -> Node.Branch(path, collectNodes(file))
         else -> Node.Leaf(path)
     }
@@ -53,6 +59,19 @@ private fun node(file: File): Node {
 
 private fun isSymbolicLink(path: Path): Boolean {
     return Files.isSymbolicLink(path)
+}
+
+private fun normalizeLinkSourcePath(path: Path): (Path) -> Path {
+    return { source ->
+        if (source.contains(Paths.get(".."))) {
+            Paths.get(path.parent.toString(), source.toString())
+                .toFile()
+                .canonicalFile
+                .toPath()
+        } else {
+            source
+        }
+    }
 }
 
 private fun isDirectory(file: File): Boolean {

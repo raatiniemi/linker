@@ -25,6 +25,7 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.nio.file.Files
+import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
 class CollectNodesKtTest {
@@ -116,6 +117,32 @@ class CollectNodesKtTest {
         val expected = listOf(
             Node.Leaf(leaf),
             Node.Link(link, leaf)
+        )
+
+        val actual = collectNodes(temporaryFolder.root)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `collect nodes with relative symbolic link node`() {
+        createNewFolder(temporaryFolder, "targets")
+        val link = getPath(temporaryFolder, "targets", "link")
+        val leaf = createNewFile(temporaryFolder, "sources/leaf")
+        Files.createSymbolicLink(link, Paths.get("..", "sources", "leaf"))
+        val expected = listOf(
+            Node.Branch(
+                getPath(temporaryFolder, "sources"),
+                listOf(
+                    Node.Leaf(leaf)
+                )
+            ),
+            Node.Branch(
+                getPath(temporaryFolder, "targets"),
+                listOf(
+                    Node.Link(link, leaf)
+                )
+            )
         )
 
         val actual = collectNodes(temporaryFolder.root)

@@ -16,7 +16,6 @@
  */
 package me.raatiniemi.linker.domain
 
-import me.raatiniemi.linker.configuration.LinkMapConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,7 +30,7 @@ class LinkMapMatchTest(
 ) {
     @Test
     fun match() {
-        val linkMap = LinkMapConfiguration(regex, "", "")
+        val linkMap = LinkMap(regex, "", "")
 
         assertEquals(expected, match(match, linkMap))
     }

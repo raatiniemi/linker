@@ -17,6 +17,7 @@
 
 package me.raatiniemi.linker.configuration
 
+import me.raatiniemi.linker.domain.LinkMap
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -170,7 +171,7 @@ class ParserKtTest {
                 "*.zip"
             ),
             setOf(
-                LinkMapConfiguration(
+                LinkMap(
                     "(.*)\\.pkg\\.tar\\.xz",
                     "/var/cache/pacman/pkg",
                     "/var/www/archlinux/pkg"

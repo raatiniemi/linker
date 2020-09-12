@@ -17,8 +17,8 @@
 
 package me.raatiniemi.linker.domain
 
-internal interface LinkMap {
-    val regex: String
-    val prefix: String
+internal data class LinkMap(
+    val regex: String,
+    val prefix: String,
     val target: String
-}
+)

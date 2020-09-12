@@ -18,12 +18,8 @@
 package me.raatiniemi.linker.configuration
 
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import me.raatiniemi.linker.domain.LinkMap
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -32,14 +28,7 @@ import java.nio.file.Paths
 private val objectMapper: ObjectMapper by lazy {
     ObjectMapper()
         .also {
-            val resolver = SimpleAbstractTypeResolver()
-            resolver.addMapping(LinkMap::class.java, LinkMapConfiguration::class.java)
-
-            val module = SimpleModule("LinkerModule", Version.unknownVersion())
-            module.setAbstractTypes(resolver)
-
             it.configure(JsonParser.Feature.ALLOW_COMMENTS, true)
-            it.registerModule(module)
             it.registerModule(KotlinModule())
         }
 }

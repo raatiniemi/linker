@@ -24,9 +24,7 @@ import org.junit.runners.JUnit4
 import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
-class NodesKtTest {
-    // Filter
-
+class NodesFilterKtTest {
     @Test
     fun `filter with empty sources and targets`() {
         val sources = emptyList<Node>()
@@ -38,7 +36,7 @@ class NodesKtTest {
         assertEquals(expected, actual)
     }
 
-    // - Branch
+    // Branch
 
     @Test
     fun `filter with source branch`() {
@@ -103,7 +101,7 @@ class NodesKtTest {
         assertEquals(expected, actual)
     }
 
-    // - Leaf
+    // Leaf
 
     @Test
     fun `filter with source leaf`() {
@@ -138,7 +136,7 @@ class NodesKtTest {
         assertEquals(expected, actual)
     }
 
-    // - Link
+    // Link
 
     @Test
     fun `filter with source link`() {

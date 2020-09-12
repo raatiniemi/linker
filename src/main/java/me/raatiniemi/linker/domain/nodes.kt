@@ -18,6 +18,9 @@
 package me.raatiniemi.linker.domain
 
 import java.nio.file.Path
+import java.nio.file.Paths
+
+// Filter
 
 internal fun filter(sources: List<Node>, targets: List<Node.Link>): List<Node> {
     val canonicalPathForTargets = targets.map { canonicalPath(it.source) }
@@ -47,6 +50,26 @@ private fun canonicalPath(path: Path): String {
 private fun isLinked(canonicalPath: String, canonicalPathForTargets: List<String>): Boolean {
     return canonicalPath in canonicalPathForTargets
 }
+
+// Match
+
+internal fun match(node: Node, linkMaps: Set<LinkMap>): Node.Link? {
+    val value = linkMaps.stream()
+        .filter { match(node.basename, it) }
+        .findFirst()
+
+    if (!value.isPresent) {
+        return null
+    }
+    val linkMap = value.get()
+
+    val link = Paths.get(linkMap.target, node.basename)
+    val target = Paths.get(linkMap.prefix, node.basename)
+
+    return Node.Link(link, target)
+}
+
+// Print
 
 internal fun print(nodes: List<Node>) {
     nodes.sortedBy { it.path }

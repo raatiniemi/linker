@@ -74,49 +74,17 @@ internal sealed class Node {
 
     data class Leaf(override val path: Path) : Node() {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
-            // Attempt to find a link map configuration based on the basename.
-            val value = linkMaps.stream()
-                .filter { match(basename, it) }
-                .findFirst()
+            val link = match(this, linkMaps) ?: return false
 
-            // If we were unable to find a configuration, i.e. we are unable to
-            // link the item we have to return false.
-            if (!value.isPresent) {
-                return false
-            }
-            val linkMap = value.get()
-
-            // Build the path for the link and target.
-            val link = Paths.get(linkMap.target, this.basename)
-            val target = Paths.get(linkMap.prefix, this.basename)
-
-            // If the symbolic link is created we have to exclude the item from the
-            // filter by returning false.
-            return createSymbolicLink(link, target)
+            return createSymbolicLink(link.path, link.source)
         }
     }
 
     data class Link(override val path: Path, val source: Path) : Node() {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
-            // Attempt to find a link map configuration based on the basename.
-            val value = linkMaps.stream()
-                .filter { match(basename, it) }
-                .findFirst()
+            val link = match(this, linkMaps) ?: return false
 
-            // If we were unable to find a configuration, i.e. we are unable to
-            // link the item we have to return false.
-            if (!value.isPresent) {
-                return false
-            }
-            val linkMap = value.get()
-
-            // Build the path for the link and target.
-            val link = Paths.get(linkMap.target, this.basename)
-            val target = Paths.get(linkMap.prefix, this.basename)
-
-            // If the symbolic link is created we have to exclude the item from the
-            // filter by returning false.
-            return createSymbolicLink(link, target)
+            return createSymbolicLink(link.path, link.source)
         }
     }
 }

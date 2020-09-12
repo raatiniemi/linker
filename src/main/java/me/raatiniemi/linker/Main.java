@@ -34,6 +34,7 @@ import static me.raatiniemi.linker.CollectRawSourceNodesKt.collectRawSourceNodes
 import static me.raatiniemi.linker.CollectTargetNodesKt.collectTargetNodes;
 import static me.raatiniemi.linker.ConfigureExcludeDirectoriesKt.configureExcludeDirectories;
 import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
+import static me.raatiniemi.linker.domain.NodesKt.filter;
 import static me.raatiniemi.linker.domain.NodesKt.print;
 
 public class Main {
@@ -97,8 +98,8 @@ public class Main {
 
         // List the sources and exclude the items existing within any of the
         // target directories.
-        return sourceNodes.stream()
-                .filter(directory -> directory.filter(targetNodes))
+        return filter(sourceNodes, targetNodes)
+                .stream()
                 .filter(directory ->
                         // Since we want to exclude items that are considered
                         // linked we have to inverse the return value.

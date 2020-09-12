@@ -17,6 +17,37 @@
 
 package me.raatiniemi.linker.domain
 
+import java.nio.file.Path
+
+internal fun filter(sources: List<Node>, targets: List<Node.Link>): List<Node> {
+    val canonicalPathForTargets = targets.map { canonicalPath(it.source) }
+    return sources.flatMap { node ->
+        when (node) {
+            is Node.Branch -> filter(node, canonicalPathForTargets)
+            is Node.Leaf -> filter(node, canonicalPathForTargets)
+            else -> listOf(node)
+        }
+    }
+}
+
+private fun filter(node: Node, canonicalPathForTargets: List<String>): List<Node> {
+    val canonicalPath = canonicalPath(node.path)
+    return if (isLinked(canonicalPath, canonicalPathForTargets)) {
+        emptyList()
+    } else {
+        listOf(node)
+    }
+}
+
+private fun canonicalPath(path: Path): String {
+    return path.toFile()
+        .canonicalPath
+}
+
+private fun isLinked(canonicalPath: String, canonicalPathForTargets: List<String>): Boolean {
+    return canonicalPath in canonicalPathForTargets
+}
+
 internal fun print(nodes: List<Node>) {
     nodes.sortedBy { it.path }
         .map(::print)

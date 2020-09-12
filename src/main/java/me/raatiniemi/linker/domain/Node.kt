@@ -17,7 +17,6 @@
 
 package me.raatiniemi.linker.domain
 
-import me.raatiniemi.linker.filter.excludeFilter
 import me.raatiniemi.linker.util.createSymbolicLink
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -33,14 +32,6 @@ internal sealed class Node {
         get() = path.fileName.toString()
 
     /**
-     * Filter item based on the data.
-     *
-     * @param data Data source.
-     * @return false if item is found within data, otherwise true.
-     */
-    abstract fun filter(data: List<Node>): Boolean
-
-    /**
      * Attempt to link directory if link map configuration is found.
      *
      * @param linkMaps Link map configurations.
@@ -49,31 +40,6 @@ internal sealed class Node {
     abstract fun link(linkMaps: Set<LinkMap>): Boolean
 
     data class Branch(override val path: Path, var nodes: List<Node>) : Node() {
-        /**
-         * @inheritDoc
-         */
-        override fun filter(data: List<Node>): Boolean {
-            // Check whether the group have been linked. If the group is linked
-            // there is no need to check the subdirectories.
-            if (!excludeFilter(this, data)) {
-                return false
-            }
-
-            // The group have not been linked, we have to check if the contained
-            // items have been linked.
-            val items = nodes.stream()
-                .filter { item ->
-                    excludeFilter(item, data)
-                }
-                .collect(Collectors.toList())
-
-            // If the containing items have been linked we can filter the group.
-            //
-            // We need to update the items to only list unlinked items.
-            this.nodes = items
-            return this.nodes.isNotEmpty()
-        }
-
         /**
          * @inheritDoc
          */
@@ -107,10 +73,6 @@ internal sealed class Node {
     }
 
     data class Leaf(override val path: Path) : Node() {
-        override fun filter(data: List<Node>): Boolean {
-            return excludeFilter(this, data)
-        }
-
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             // Attempt to find a link map configuration based on the basename.
             val linkMap = linkMaps.stream()
@@ -135,10 +97,6 @@ internal sealed class Node {
     }
 
     data class Link(override val path: Path, val source: Path) : Node() {
-        override fun filter(data: List<Node>): Boolean {
-            return excludeFilter(this, data)
-        }
-
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             // Attempt to find a link map configuration based on the basename.
             val linkMap = linkMaps.stream()

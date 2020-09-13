@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
 }
 
 private fun parseConfigurationFileFromArguments(args: Array<String>): Configuration {
-    if (0 == args.size || args[0].isEmpty()) {
+    if (args.isEmpty() || args[0].isEmpty()) {
         throw RuntimeException("No configuration file have been supplied")
     }
     return parseConfiguration(args[0])

@@ -30,7 +30,7 @@ internal fun filter(sources: List<Node>, targets: List<Node.Link>): List<Node> {
         when (node) {
             is Node.Branch -> filter(node, canonicalPathForTargets)
             is Node.Leaf -> filter(node, canonicalPathForTargets)
-            else -> listOf(node)
+            is Node.Link -> listOf(node)
         }
     }
 }

@@ -17,6 +17,8 @@
 
 package me.raatiniemi.linker.domain
 
+import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -49,6 +51,20 @@ private fun canonicalPath(path: Path): String {
 
 private fun isLinked(canonicalPath: String, canonicalPathForTargets: List<String>): Boolean {
     return canonicalPath in canonicalPathForTargets
+}
+
+// Create symbolic link
+
+internal fun createSymbolicLink(node: Node.Link): Boolean {
+    return try {
+        println("Creating symbolic link ${node.path} -> ${node.source}")
+
+        Files.createSymbolicLink(node.path, node.source)
+        true
+    } catch (e: IOException) {
+        println("Unable to create symbolic link: $e")
+        false
+    }
 }
 
 // Match

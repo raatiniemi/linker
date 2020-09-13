@@ -18,7 +18,7 @@
 package me.raatiniemi.linker
 
 import me.raatiniemi.linker.domain.Node
-import me.raatiniemi.linker.util.createSymbolicLink
+import me.raatiniemi.linker.domain.createSymbolicLink
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -84,7 +84,7 @@ class CollectTargetNodesKtTest {
         val source = createNewFile(temporaryFolder, "source/file")
         val target = createNewFolder(temporaryFolder, "target")
         val link = getPath(temporaryFolder, "target", "file")
-        createSymbolicLink(link, source)
+        createSymbolicLink(Node.Link(link, source))
         val targets = listOf(
             target.toString()
         )
@@ -103,7 +103,7 @@ class CollectTargetNodesKtTest {
         val target = createNewFolder(temporaryFolder, "target")
         createNewFolder(temporaryFolder, "target/folder/subfolder")
         val link = getPath(temporaryFolder, "target", "folder", "subfolder", "file")
-        createSymbolicLink(link, source)
+        createSymbolicLink(Node.Link(link, source))
         val targets = listOf(
             target.toString()
         )

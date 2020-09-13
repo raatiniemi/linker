@@ -17,7 +17,6 @@
 
 package me.raatiniemi.linker.domain
 
-import me.raatiniemi.linker.util.createSymbolicLink
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Collectors
@@ -60,7 +59,7 @@ internal sealed class Node {
                     // Build the path for the link and target.
                     val link = Paths.get(linkMap.target, item.basename)
                     val target = Paths.get(linkMap.prefix, this.basename, item.basename)
-                    !createSymbolicLink(link, target)
+                    !createSymbolicLink(Link(link, target))
                 }
                 .collect(Collectors.toList())
 
@@ -76,7 +75,7 @@ internal sealed class Node {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             val link = match(this, linkMaps) ?: return false
 
-            return createSymbolicLink(link.path, link.source)
+            return createSymbolicLink(Link(link.path, link.source))
         }
     }
 
@@ -84,7 +83,7 @@ internal sealed class Node {
         override fun link(linkMaps: Set<LinkMap>): Boolean {
             val link = match(this, linkMaps) ?: return false
 
-            return createSymbolicLink(link.path, link.source)
+            return createSymbolicLink(Link(link.path, link.source))
         }
     }
 }

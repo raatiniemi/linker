@@ -18,21 +18,17 @@
 package me.raatiniemi.linker;
 
 import me.raatiniemi.linker.configuration.Configuration;
-import me.raatiniemi.linker.domain.LinkMap;
 import me.raatiniemi.linker.domain.Node;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static me.raatiniemi.linker.CollectSourceNodesKt.collectSourceNodes;
 import static me.raatiniemi.linker.CollectTargetNodesKt.collectTargetNodes;
 import static me.raatiniemi.linker.ConfigureExcludeDirectoriesKt.configureExcludeDirectories;
 import static me.raatiniemi.linker.configuration.ParserKt.parseConfiguration;
-import static me.raatiniemi.linker.domain.NodesKt.filter;
-import static me.raatiniemi.linker.domain.NodesKt.print;
+import static me.raatiniemi.linker.domain.NodesKt.*;
 
 public class Main {
     public static void main(String... args) {
@@ -41,7 +37,7 @@ public class Main {
         List<String> excludeDirectories = configureExcludeDirectories(configuration);
         List<Node.Link> targetNodes = collectTargetNodes(configuration.getTargets());
         List<Node> sourceNodes = collectSourceNodes(Paths.get(configuration.getSource()), excludeDirectories);
-        List<Node> sources = linkSourceNodesIntoTargets(configuration, targetNodes, sourceNodes);
+        List<Node> sources = link(filter(sourceNodes, targetNodes), configuration.getLinkMaps());
 
         printReportForCollectionSizes(targetNodes, sources);
         print(sources);
@@ -53,25 +49,6 @@ public class Main {
         }
 
         return parseConfiguration(args[0]);
-    }
-
-    @NotNull
-    private static List<Node> linkSourceNodesIntoTargets(
-            @NotNull Configuration configuration,
-            @NotNull List<Node.Link> targetNodes,
-            @NotNull List<Node> sourceNodes
-    ) {
-        Set<LinkMap> linkMaps = configuration.getLinkMaps();
-
-        // List the sources and exclude the items existing within any of the
-        // target directories.
-        return filter(sourceNodes, targetNodes)
-                .stream()
-                .filter(directory ->
-                        // Since we want to exclude items that are considered
-                        // linked we have to inverse the return value.
-                        !directory.link(linkMaps))
-                .collect(Collectors.toList());
     }
 
     private static void printReportForCollectionSizes(@NotNull List<Node.Link> targetNodes, @NotNull List<Node> sources) {

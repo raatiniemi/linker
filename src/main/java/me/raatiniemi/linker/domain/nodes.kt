@@ -67,6 +67,50 @@ internal fun createSymbolicLink(node: Node.Link): Boolean {
     }
 }
 
+// Link
+
+internal fun link(nodes: List<Node>, linkMaps: Set<LinkMap>): List<Node> {
+    return nodes.flatMap(link(linkMaps))
+}
+
+private fun link(linkMaps: Set<LinkMap>): (Node) -> List<Node> {
+    return { source ->
+        val link = match(source, linkMaps)
+        if (link != null) {
+            link(link, source)
+        } else {
+            link(linkMaps, source)
+        }
+    }
+}
+
+private fun link(link: Node.Link, source: Node): List<Node> {
+    return if (createSymbolicLink(link)) {
+        emptyList()
+    } else {
+        listOf(source)
+    }
+}
+
+private fun link(linkMaps: Set<LinkMap>, source: Node): List<Node> {
+    return when (source) {
+        is Node.Branch -> {
+            val nodes = link(source.nodes, linkMaps)
+            if (nodes.isNotEmpty()) {
+                listOf(
+                    source.copy(
+                        nodes = nodes
+                    )
+                )
+            } else {
+                emptyList<Node>()
+            }
+        }
+        is Node.Leaf -> listOf(source)
+        is Node.Link -> listOf(source)
+    }
+}
+
 // Match
 
 internal fun match(node: Node, linkMaps: Set<LinkMap>): Node.Link? {

@@ -18,8 +18,6 @@
 package me.raatiniemi.linker.domain
 
 import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.stream.Collectors
 
 /**
  * Represents the different states for a given path.
@@ -30,60 +28,9 @@ internal sealed class Node {
     val basename: String
         get() = path.fileName.toString()
 
-    /**
-     * Attempt to link directory if link map configuration is found.
-     *
-     * @param linkMaps Link map configurations.
-     * @return true if item was linked, otherwise false.
-     */
-    abstract fun link(linkMaps: Set<LinkMap>): Boolean
+    data class Branch(override val path: Path, var nodes: List<Node>) : Node()
 
-    data class Branch(override val path: Path, var nodes: List<Node>) : Node() {
-        /**
-         * @inheritDoc
-         */
-        override fun link(linkMaps: Set<LinkMap>): Boolean {
-            val items = nodes.stream()
-                .filter { item ->
-                    val value = linkMaps.stream()
-                        .filter { match(item.basename, it) }
-                        .findFirst()
+    data class Leaf(override val path: Path) : Node()
 
-                    // If we were unable to find a configuration, i.e. we are
-                    // unable to link the item we have to return false.
-                    if (!value.isPresent) {
-                        return@filter true
-                    }
-                    val linkMap = value.get()
-
-                    // Build the path for the link and target.
-                    val link = Paths.get(linkMap.target, item.basename)
-                    val target = Paths.get(linkMap.prefix, this.basename, item.basename)
-                    !createSymbolicLink(Link(link, target))
-                }
-                .collect(Collectors.toList())
-
-            // If the containing items have been linked we can filter the group.
-            //
-            // We need to update the items to only list unlinked items.
-            this.nodes = items
-            return this.nodes.isEmpty()
-        }
-    }
-
-    data class Leaf(override val path: Path) : Node() {
-        override fun link(linkMaps: Set<LinkMap>): Boolean {
-            val link = match(this, linkMaps) ?: return false
-
-            return createSymbolicLink(Link(link.path, link.source))
-        }
-    }
-
-    data class Link(override val path: Path, val source: Path) : Node() {
-        override fun link(linkMaps: Set<LinkMap>): Boolean {
-            val link = match(this, linkMaps) ?: return false
-
-            return createSymbolicLink(Link(link.path, link.source))
-        }
-    }
+    data class Link(override val path: Path, val source: Path) : Node()
 }

@@ -30,7 +30,7 @@ class LinkMapMatchTest(
 ) {
     @Test
     fun match() {
-        val linkMap = LinkMap(regex, "", "")
+        val linkMap = LinkMap(regex, "")
 
         assertEquals(expected, match(match, linkMap))
     }

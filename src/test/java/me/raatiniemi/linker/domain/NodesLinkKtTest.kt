@@ -38,7 +38,6 @@ class NodesLinkKtTest {
         val linkMaps = setOf(
             LinkMap(
                 regex = "folder",
-                prefix = "sources",
                 target = "targets"
             )
         )
@@ -67,7 +66,6 @@ class NodesLinkKtTest {
         val linkMaps = setOf(
             LinkMap(
                 "without match",
-                "${temporaryFolder.root.absolutePath}/sources",
                 "${temporaryFolder.root.absolutePath}/targets"
             )
         )
@@ -110,7 +108,6 @@ class NodesLinkKtTest {
         val linkMaps = setOf(
             LinkMap(
                 "leaf",
-                "${temporaryFolder.root.absolutePath}/sources",
                 "${temporaryFolder.root.absolutePath}/targets"
             )
         )
@@ -141,7 +138,6 @@ class NodesLinkKtTest {
         val linkMaps = setOf(
             LinkMap(
                 "folder",
-                "${temporaryFolder.root.absolutePath}/sources",
                 "${temporaryFolder.root.absolutePath}/targets"
             )
         )

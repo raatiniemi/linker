@@ -16,6 +16,7 @@
  */
 package me.raatiniemi.linker.configuration
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import me.raatiniemi.linker.domain.LinkMap
 
@@ -29,6 +30,7 @@ internal data class Configuration(
     val targets: List<String>,
     @JsonProperty("excludes")
     val excludes: List<String> = emptyList(),
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonProperty("linkMaps")
     val linkMaps: Set<LinkMap> = emptySet()
 )

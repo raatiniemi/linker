@@ -117,9 +117,7 @@ internal fun match(node: Node, linkMaps: Set<LinkMap>): Node.Link? {
     return linkMaps.firstOrNull { match(node.basename, it) }
         ?.let {
             val link = Paths.get(it.target, node.basename)
-            val target = Paths.get(it.prefix, node.basename)
-
-            Node.Link(link, target)
+            Node.Link(link, node.path)
         }
 }
 

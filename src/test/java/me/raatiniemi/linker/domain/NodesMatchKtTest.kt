@@ -45,7 +45,6 @@ internal class NodesMatchKtTest {
         val linkMaps = setOf(
             LinkMap(
                 regex = "regex",
-                prefix = "prefix",
                 target = "target"
             )
         )
@@ -64,7 +63,6 @@ internal class NodesMatchKtTest {
         val linkMaps = setOf(
             LinkMap(
                 regex = "folder",
-                prefix = "sources",
                 target = "targets"
             )
         )
@@ -102,7 +100,6 @@ internal class NodesMatchKtTest {
         val linkMaps = setOf(
             LinkMap(
                 regex = "regex",
-                prefix = "prefix",
                 target = "target"
             )
         )
@@ -122,7 +119,6 @@ internal class NodesMatchKtTest {
         val linkMaps = setOf(
             LinkMap(
                 regex = "folder-2",
-                prefix = "sources",
                 target = "targets"
             )
         )

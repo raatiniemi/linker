@@ -155,7 +155,6 @@ class ParserKtTest {
                 "linkMaps": [
                     {
                         "regex": "(.*)\\.pkg\\.tar\\.xz",
-                        "prefix": "/var/cache/pacman/pkg",
                         "target": "/var/www/archlinux/pkg"
                     }
                 ]
@@ -173,7 +172,6 @@ class ParserKtTest {
             setOf(
                 LinkMap(
                     "(.*)\\.pkg\\.tar\\.xz",
-                    "/var/cache/pacman/pkg",
                     "/var/www/archlinux/pkg"
                 )
             )

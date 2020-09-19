@@ -19,6 +19,5 @@ package me.raatiniemi.linker.domain
 
 internal data class LinkMap(
     val regex: String,
-    val prefix: String,
     val target: String
 )

@@ -43,7 +43,6 @@ private fun parseConfigurationFileFromArguments(args: Array<String>): Configurat
 }
 
 private fun printReportForCollectionSizes(targetNodes: List<Node.Link>, sources: List<Node>) {
-    // Print the number of targets and unlinked sources.
-    println("Targets: " + targetNodes.size)
-    println("Sources: " + sources.size)
+    println("Targets: ${targetNodes.size}")
+    println("Sources: ${sources.size}")
 }

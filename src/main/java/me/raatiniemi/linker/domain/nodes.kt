@@ -73,12 +73,20 @@ internal fun createSymbolicLink(node: Node.Link): Boolean {
     return try {
         println("Creating symbolic link ${node.path} -> ${node.source}")
 
+        if (needToCreateParentDirectories(node)) {
+            Files.createDirectories(node.path.parent)
+        }
+
         Files.createSymbolicLink(node.path, node.source)
         true
     } catch (e: IOException) {
         println("Unable to create symbolic link: $e")
         false
     }
+}
+
+private fun needToCreateParentDirectories(node: Node.Link): Boolean {
+    return !node.path.parent.toFile().exists()
 }
 
 // Link

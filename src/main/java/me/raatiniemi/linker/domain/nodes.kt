@@ -59,8 +59,15 @@ private fun isLinked(canonicalPath: String, canonicalPathForTargets: List<String
 
 private fun filterBranch(node: Node.Branch, canonicalPathForTargets: List<String>): List<Node> {
     return if (node.nodes.isNotEmpty()) {
-        node.nodes.flatMap {
+        val nodes = node.nodes.flatMap {
             filter(it, canonicalPathForTargets)
+        }
+        if (nodes.isNotEmpty()) {
+            listOf(
+                node.copy(nodes = nodes)
+            )
+        } else {
+            emptyList()
         }
     } else {
         listOf(node)

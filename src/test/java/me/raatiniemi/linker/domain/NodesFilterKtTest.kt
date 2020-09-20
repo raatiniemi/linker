@@ -75,8 +75,13 @@ class NodesFilterKtTest {
         val targets = emptyList<Node.Link>()
         val expected = listOf(
             Node.Branch(
-                Paths.get("sources", "branch", "folder"),
-                emptyList()
+                Paths.get("sources", "branch"),
+                listOf(
+                    Node.Branch(
+                        Paths.get("sources", "branch", "folder"),
+                        emptyList()
+                    )
+                )
             )
         )
 

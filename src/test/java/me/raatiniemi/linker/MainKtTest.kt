@@ -198,4 +198,39 @@ class MainKtTest {
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun `main when link map match both parent and child`() {
+        val file = temporaryFolder.newFile(configurationBasename)
+        file.writeText(
+            """
+            {
+                "source": "${temporaryFolder.root.path}/pacman",
+                "targets": [
+                    "${temporaryFolder.root.path}/archlinux"
+                ],
+                "excludes": [],
+                "linkMaps": [
+                    {
+                        "regex": "name",
+                        "target": "${temporaryFolder.root.path}/archlinux"
+                    }
+                ]
+            }
+            """.trimIndent()
+        )
+        createNewFolder(temporaryFolder, "pacman/name/name")
+        createNewFolder(temporaryFolder, "archlinux")
+        val expected = listOf(
+            Node.Link(
+                getPath(temporaryFolder, "archlinux", "name"),
+                getPath(temporaryFolder, "pacman", "name")
+            )
+        )
+
+        main(arrayOf(configurationPath))
+
+        val actual = collectLinkedFiles()
+        assertEquals(expected, actual)
+    }
 }

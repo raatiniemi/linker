@@ -1,5 +1,5 @@
 # Linker
-![license](https://img.shields.io/badge/license-GPLv2-blue.svg)
+[![license](https://img.shields.io/badge/license-GPLv2-blue.svg)](license)
 
 The application takes a source directory and indexes the containing directories. These directories are then checked against one or more target directories, which source directories do not have a symbolic link within the target directories.
 

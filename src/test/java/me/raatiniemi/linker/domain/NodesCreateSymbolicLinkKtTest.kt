@@ -35,15 +35,15 @@ class NodesCreateSymbolicLinkKtTest {
 
     @Test
     fun `create symbolic link`() {
-        val sources = createNewFolder(temporaryFolder, "sources")
-        val targets = getPath(temporaryFolder, "targets")
-        val node = Node.Link(targets, sources)
+        val source = createNewFolder(temporaryFolder, "sources")
+        val target = getPath(temporaryFolder, "targets")
+        val node = Node.Link(target, source)
         val expected = true
 
         val actual = createSymbolicLink(node)
 
         assertEquals(expected, actual)
-        assertTrue("Symbolic link do not exists", targets.toFile().exists())
-        assertEquals(sources, Files.readSymbolicLink(targets))
+        assertTrue("Symbolic link do not exists", target.toFile().exists())
+        assertEquals(source, Files.readSymbolicLink(target))
     }
 }

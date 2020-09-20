@@ -1,21 +1,27 @@
-# Linker
+# linker
+
 [![license](https://img.shields.io/badge/license-GPLv2-blue.svg)](license)
 [![pipeline status](https://gitlab.com/rahome/linker/badges/master/pipeline.svg)](https://gitlab.com/rahome/linker/-/commits/master)
 [![coverage report](https://gitlab.com/rahome/linker/badges/master/coverage.svg)](https://gitlab.com/rahome/linker/-/commits/master)
 
-The application takes a source directory and indexes the containing directories. These directories are then checked against one or more target directories, which source directories do not have a symbolic link within the target directories.
+The application will index a source directory and compare the index against one
+or more target directories. Based on whether link map configuration exists for
+the node or not, the node will either be linked or printed as unlinked source
+node.
 
 ## Example
 
 ```
-source/directory-1
-source/directory-2
-source/directory-3
-target/directory-1 -> ../source/directory-1
-target/directory-3 -> ../source/directory-2
+/source/directory-1
+/source/directory-2
+/source/directory-3
+/target/directory-1 -> /source/directory-1
+/target/directory-3 -> /source/directory-2
 ```
 
-With the sample directory structure only the `source/directory-3` will be shown as unlinked. Note that the application works with the basename of the source of the symbolic link, i.e. the linked name do not really matters.
+With the sample directory structure only the `/source/directory-3` will be shown
+as unlinked. Note that the application works with the basename of the source of
+the symbolic link, i.e. the linked name do not really matters.
 
 ## How to
 
@@ -24,30 +30,18 @@ Run the application via Gradle: `./gradlew run -Pconfig=path/to/configuration-fi
 Sample configuration file
 ```json
 {
-    // Only one source directory can be supplied.
     "source": "/path/to/source-directory",
-
-    // One or more target directories can be supplied.
     "targets": [
         "/path/to/target-directory-1",
         "/path/to/target-directory-2"
     ],
-
-    // One or more exclude directories can be supplied.
-    //
-    // Also, only the basename of the directory should be supplied.
-    // Full or partial path exclusion is not supported.
     "excludes": [
         "exclude1",
         "exclude2"
     ],
-
-    // One or more link maps can be supplied.
     "linkMaps": [
         {
             "regex": "^(?i)(target[-]item[-]1)",
-
-            "prefix": "../source-directory",
             "target": "/path/to/target-directory-1"
         }
     ]
@@ -56,16 +50,18 @@ Sample configuration file
 
 ### LinkMaps
 
-To enable automatic linking, i.e. the application creates symbolic links based on a regular expression.
+To enable automatic linking, i.e. the application creates symbolic links
+based on a regular expression.
 
 Each configuration item must supply a regex, prefix, and target.
 
 * **regex** matches a basename.
-* **prefix** prepend the link target, can be a relative path from target.
 * **target** is the location to which the link will be created.
 
-The sample configuration will link matching items with the equivalent `ln`-command:
-```
+The sample configuration will link matching items with the equivalent
+`ln`-command:
+
+```sh
 ln -s ../source-directory/target-item-1 /path/to/target-directory-1/target-item-1
 ```
 

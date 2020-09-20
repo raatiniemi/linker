@@ -40,7 +40,11 @@ private fun filter(node: Node, canonicalPathForTargets: List<String>): List<Node
     return if (isLinked(canonicalPath, canonicalPathForTargets)) {
         emptyList()
     } else {
-        listOf(node)
+        when (node) {
+            is Node.Branch -> filterBranch(node, canonicalPathForTargets)
+            is Node.Leaf -> listOf(node)
+            is Node.Link -> listOf(node)
+        }
     }
 }
 
@@ -51,6 +55,16 @@ private fun canonicalPath(path: Path): String {
 
 private fun isLinked(canonicalPath: String, canonicalPathForTargets: List<String>): Boolean {
     return canonicalPath in canonicalPathForTargets
+}
+
+private fun filterBranch(node: Node.Branch, canonicalPathForTargets: List<String>): List<Node> {
+    return if (node.nodes.isNotEmpty()) {
+        node.nodes.flatMap {
+            filter(it, canonicalPathForTargets)
+        }
+    } else {
+        listOf(node)
+    }
 }
 
 // Create symbolic link

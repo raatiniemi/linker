@@ -60,6 +60,32 @@ class NodesFilterKtTest {
     }
 
     @Test
+    fun `filter with nested source branch`() {
+        val sources = listOf<Node>(
+            Node.Branch(
+                Paths.get("sources", "branch"),
+                listOf(
+                    Node.Branch(
+                        Paths.get("sources", "branch", "folder"),
+                        emptyList()
+                    )
+                )
+            )
+        )
+        val targets = emptyList<Node.Link>()
+        val expected = listOf(
+            Node.Branch(
+                Paths.get("sources", "branch", "folder"),
+                emptyList()
+            )
+        )
+
+        val actual = filter(sources, targets)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `filter with linked source branch`() {
         val sources = listOf<Node>(
             Node.Branch(
@@ -71,6 +97,32 @@ class NodesFilterKtTest {
             Node.Link(
                 Paths.get("targets", "branch"),
                 Paths.get("sources", "branch")
+            )
+        )
+        val expected = emptyList<Node>()
+
+        val actual = filter(sources, targets)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `filter with nested linked source branch`() {
+        val sources = listOf<Node>(
+            Node.Branch(
+                Paths.get("sources", "branch"),
+                listOf(
+                    Node.Branch(
+                        Paths.get("sources", "branch", "folder"),
+                        emptyList()
+                    )
+                )
+            )
+        )
+        val targets = listOf(
+            Node.Link(
+                Paths.get("targets", "branch"),
+                Paths.get("sources", "branch", "folder")
             )
         )
         val expected = emptyList<Node>()

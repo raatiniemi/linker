@@ -163,4 +163,39 @@ class MainKtTest {
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun `main with nested source`() {
+        val file = temporaryFolder.newFile(configurationBasename)
+        file.writeText(
+            """
+            {
+                "source": "${temporaryFolder.root.path}/pacman",
+                "targets": [
+                    "${temporaryFolder.root.path}/archlinux"
+                ],
+                "excludes": [],
+                "linkMaps": [
+                    {
+                        "regex": "subfolder",
+                        "target": "${temporaryFolder.root.path}/archlinux/folder"
+                    }
+                ]
+            }
+            """.trimIndent()
+        )
+        createNewFolder(temporaryFolder, "pacman/folder/subfolder")
+        createNewFolder(temporaryFolder, "archlinux/folder")
+        val expected = listOf(
+            Node.Link(
+                getPath(temporaryFolder, "archlinux", "folder", "subfolder"),
+                getPath(temporaryFolder, "pacman", "folder", "subfolder")
+            )
+        )
+
+        main(arrayOf(configurationPath))
+
+        val actual = collectLinkedFiles()
+        assertEquals(expected, actual)
+    }
 }

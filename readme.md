@@ -1,5 +1,7 @@
 # Linker
 [![license](https://img.shields.io/badge/license-GPLv2-blue.svg)](license)
+[![pipeline status](https://gitlab.com/rahome/linker/badges/master/pipeline.svg)](https://gitlab.com/rahome/linker/-/commits/master)
+[![coverage report](https://gitlab.com/rahome/linker/badges/master/coverage.svg)](https://gitlab.com/rahome/linker/-/commits/master)
 
 The application takes a source directory and indexes the containing directories. These directories are then checked against one or more target directories, which source directories do not have a symbolic link within the target directories.
 

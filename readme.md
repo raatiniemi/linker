@@ -53,7 +53,7 @@ Sample configuration file
 To enable automatic linking, i.e. the application creates symbolic links
 based on a regular expression.
 
-Each configuration item must supply a regex, prefix, and target.
+Each configuration item must supply a regex and target.
 
 * **regex** matches a basename.
 * **target** is the location to which the link will be created.

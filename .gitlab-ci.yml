@@ -12,7 +12,7 @@ build:
   extends:
     - .in-gradle-environment
   script:
-    - gradle clean assemble
+    - gradle shadowJar
   artifacts:
     paths:
       - build/libs/*.jar

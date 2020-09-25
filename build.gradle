@@ -21,6 +21,7 @@ plugins {
     id("jacoco")
     id("com.github.johnrengelman.shadow") version("6.0.0")
     id("de.jansauer.printcoverage") version "2.0.0"
+    id("io.gitlab.arturbosch.detekt") version("1.13.1")
 }
 
 group 'me.raatiniemi'
@@ -56,6 +57,23 @@ task(run) {
 
 repositories {
     mavenCentral()
+    jcenter {
+        content {
+            // just allow to include kotlinx projects
+            // detekt needs 'kotlinx-html' for the html report
+            includeGroup "org.jetbrains.kotlinx"
+        }
+    }
+}
+
+detekt {
+    buildUponDefaultConfig = true
+
+    reports {
+        html.enabled = false
+        txt.enabled = false
+        xml.enabled = false
+    }
 }
 
 jar {

@@ -36,8 +36,8 @@ fun main(args: Array<String>) {
 }
 
 private fun parseConfigurationFileFromArguments(args: Array<String>): Configuration {
-    if (args.isEmpty() || args[0].isEmpty()) {
-        throw RuntimeException("No configuration file have been supplied")
+    require(args.isNotEmpty() && args[0].isNotBlank()) {
+        "No configuration file have been supplied"
     }
     return parseConfiguration(args[0])
 }

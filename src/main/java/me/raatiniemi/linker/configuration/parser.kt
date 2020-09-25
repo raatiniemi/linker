@@ -39,7 +39,7 @@ internal fun parseConfiguration(filename: String): Configuration {
 
 private fun parse(file: Path): Configuration {
     if (!Files.exists(file)) {
-        throw RuntimeException("Configuration file do not exist")
+        throw UnableToFindConfigurationFile("Configuration file do not exist")
     }
     val configuration = parseConfigurationFromFile(file)
     return validateConfiguration(configuration)
@@ -49,17 +49,17 @@ private fun parseConfigurationFromFile(file: Path): Configuration {
     return try {
         objectMapper.readValue(Files.newInputStream(file), Configuration::class.java)
     } catch (e: IOException) {
-        throw RuntimeException("Unable to read configuration file", e)
+        throw InvalidConfigurationFile("Unable to read configuration file", e)
     }
 }
 
 private fun validateConfiguration(configuration: Configuration): Configuration {
     if (configuration.source.isEmpty()) {
-        throw RuntimeException("No source directory have been supplied")
+        throw InvalidConfigurationFile("No source directory have been supplied")
     }
 
     if (configuration.targets.isEmpty()) {
-        throw RuntimeException("No target directories have been supplied")
+        throw InvalidConfigurationFile("No target directories have been supplied")
     }
 
     return configuration

@@ -27,7 +27,7 @@ class ParserKtTest {
     @get:Rule
     var folder = TemporaryFolder()
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = UnableToFindConfigurationFile::class)
     fun `parse without file`() {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"
@@ -35,7 +35,7 @@ class ParserKtTest {
         parseConfiguration(filename)
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = InvalidConfigurationFile::class)
     fun `parse with empty configuration`() {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"
@@ -44,7 +44,7 @@ class ParserKtTest {
         parseConfiguration(filename)
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = InvalidConfigurationFile::class)
     fun `parse without key for source`() {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"
@@ -59,7 +59,7 @@ class ParserKtTest {
         parseConfiguration(filename)
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = InvalidConfigurationFile::class)
     fun `parse with empty key for source`() {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"
@@ -75,7 +75,7 @@ class ParserKtTest {
         parseConfiguration(filename)
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = InvalidConfigurationFile::class)
     fun `parse without key for targets`() {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"
@@ -91,7 +91,7 @@ class ParserKtTest {
         parseConfiguration(filename)
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = InvalidConfigurationFile::class)
     fun `parse with empty key for targets`() {
         val basename = "configuration.json"
         val filename = "${folder.root.path}/$basename"

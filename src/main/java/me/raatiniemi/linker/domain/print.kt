@@ -17,13 +17,18 @@
 
 package me.raatiniemi.linker.domain
 
-import java.util.regex.Pattern
-
-internal fun match(value: String, linkMap: LinkMap): Boolean {
-    if (value.isBlank()) {
-        return false
-    }
-
-    return Pattern.matches(linkMap.regex, value)
+internal fun print(nodes: List<Node>) {
+    nodes.sortedBy { it.path }
+        .map(::print)
 }
 
+private fun print(node: Node) {
+    when (node) {
+        is Node.Branch -> {
+            println(node.path)
+            print(node.nodes)
+        }
+        is Node.Leaf -> println(node.path)
+        is Node.Link -> println("${node.path} -> ${node.source}")
+    }
+}

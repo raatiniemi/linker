@@ -4,6 +4,10 @@ stages:
 
 .in-gradle-environment:
   image: gradle:6.5.1-jdk8
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+  variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   tags:
     - docker
 
@@ -12,7 +16,13 @@ build:
   extends:
     - .in-gradle-environment
   script:
-    - gradle shadowJar
+    - gradle --build-cache assemble shadowJar
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
   artifacts:
     paths:
       - build/libs/*.jar
@@ -23,3 +33,9 @@ test:
     - .in-gradle-environment
   script:
     - gradle test printCoverage
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle

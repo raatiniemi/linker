@@ -66,6 +66,8 @@ registry:linker:
     - cat /root/.docker/hub-password | docker login -u $DOCKER_HUB_REGISTRY_USER --password-stdin $DOCKER_HUB_REGISTRY
     - docker push $DOCKER_HUB_REGISTRY_IMAGE:latest
   after_script:
+    - docker logout $CI_REGISTRY
+    - docker logout $DOCKER_HUB_REGISTRY
     - rm -rf /root/.docker
   only:
     - main

@@ -2,6 +2,7 @@ stages:
   - lint
   - build
   - test
+  - registry
 
 .in-gradle-environment:
   image: gradle:6.5.1-jdk8
@@ -47,3 +48,25 @@ test:linker:
     paths:
       - build
       - .gradle
+
+registry:linker:
+  stage: registry
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - main
+    - tags
+  dependencies:
+    - build:linker
+  tags:
+    - docker-cli
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"

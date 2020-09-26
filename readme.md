@@ -3,7 +3,8 @@
 [![license](https://img.shields.io/badge/license-GPLv2-blue.svg)](license)
 [![pipeline status](https://gitlab.com/rahome/linker/badges/main/pipeline.svg)](https://gitlab.com/rahome/linker/-/commits/master)
 [![coverage report](https://gitlab.com/rahome/linker/badges/main/coverage.svg)](https://gitlab.com/rahome/linker/-/commits/master)
-[![Docker Pulls](https://img.shields.io/docker/pulls/raatiniemi/linker.svg)](https://hub.docker.com/r/raatiniemi/linker/)
+[![docker pulls](https://img.shields.io/docker/pulls/raatiniemi/linker.svg)](https://hub.docker.com/r/raatiniemi/linker/)
+[![docker image size](https://img.shields.io/docker/image-size/raatiniemi/linker/latest)](https://hub.docker.com/r/raatiniemi/linker/)
 
 The application will index a source directory and compare the index against one
 or more target directories. Based on whether link map configuration exists for

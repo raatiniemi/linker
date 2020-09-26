@@ -12,14 +12,14 @@ stages:
   tags:
     - docker
 
-lint:
+lint:linker:
   stage: lint
   extends:
     - .in-gradle-environment
   script:
     - gradle detekt
 
-build:
+build:linker:
   stage: build
   extends:
     - .in-gradle-environment
@@ -35,7 +35,7 @@ build:
     paths:
       - build/libs/*.jar
 
-test:
+test:linker:
   stage: test
   extends:
     - .in-gradle-environment

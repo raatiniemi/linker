@@ -19,6 +19,7 @@ lint:linker:
     - .in-gradle-environment
   script:
     - gradle detekt
+  interruptible: true
 
 build:linker:
   stage: build
@@ -26,6 +27,7 @@ build:linker:
     - .in-gradle-environment
   script:
     - gradle --build-cache assemble shadowJar
+  interruptible: true
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
@@ -42,6 +44,7 @@ test:linker:
     - .in-gradle-environment
   script:
     - gradle test printCoverage
+  interruptible: true
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull

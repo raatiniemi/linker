@@ -56,14 +56,12 @@ registry:linker:
     - docker:stable-dind
   before_script:
     - mkdir -p /root/.docker
-    - echo "${CI_REGISTRY_PASSWORD}" > /root/.docker/ci-password
-    - echo "${DOCKER_HUB_REGISTRY_PASSWORD}" > /root/.docker/hub-password
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - echo "${DOCKER_HUB_REGISTRY_PASSWORD}" | docker login -u $DOCKER_HUB_REGISTRY_USER --password-stdin $DOCKER_HUB_REGISTRY
   script:
-    - cat /root/.docker/ci-password | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:latest --tag $DOCKER_HUB_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:latest
-    - cat /root/.docker/hub-password | docker login -u $DOCKER_HUB_REGISTRY_USER --password-stdin $DOCKER_HUB_REGISTRY
     - docker push $DOCKER_HUB_REGISTRY_IMAGE:latest
   after_script:
     - docker logout $CI_REGISTRY

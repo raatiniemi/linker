@@ -64,7 +64,6 @@ registry:linker:
     - docker push $DOCKER_HUB_REGISTRY_IMAGE:latest
   only:
     - main
-    - tags
   dependencies:
     - build:linker
   tags:

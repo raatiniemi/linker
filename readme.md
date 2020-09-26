@@ -1,8 +1,8 @@
 # linker
 
 [![license](https://img.shields.io/badge/license-GPLv2-blue.svg)](license)
-[![pipeline status](https://gitlab.com/rahome/linker/badges/master/pipeline.svg)](https://gitlab.com/rahome/linker/-/commits/master)
-[![coverage report](https://gitlab.com/rahome/linker/badges/master/coverage.svg)](https://gitlab.com/rahome/linker/-/commits/master)
+[![pipeline status](https://gitlab.com/rahome/linker/badges/main/pipeline.svg)](https://gitlab.com/rahome/linker/-/commits/master)
+[![coverage report](https://gitlab.com/rahome/linker/badges/main/coverage.svg)](https://gitlab.com/rahome/linker/-/commits/master)
 
 The application will index a source directory and compare the index against one
 or more target directories. Based on whether link map configuration exists for

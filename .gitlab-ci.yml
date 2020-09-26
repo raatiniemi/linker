@@ -56,7 +56,7 @@ registry:linker:
     - docker:stable-dind
   before_script:
     - mkdir -p /root/.docker
-    - echo "${$CI_REGISTRY_PASSWORD}" > /root/.docker/ci-password
+    - echo "${CI_REGISTRY_PASSWORD}" > /root/.docker/ci-password
     - echo "${DOCKER_HUB_REGISTRY_PASSWORD}" > /root/.docker/hub-password
   script:
     - cat /root/.docker/ci-password | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY

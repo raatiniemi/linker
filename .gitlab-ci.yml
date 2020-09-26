@@ -55,13 +55,18 @@ registry:linker:
   services:
     - docker:stable-dind
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - mkdir -p /root/.docker
+    - echo "${$CI_REGISTRY_PASSWORD}" > /root/.docker/ci-password
+    - echo "${DOCKER_HUB_REGISTRY_PASSWORD}" > /root/.docker/hub-password
   script:
+    - cat /root/.docker/ci-password | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:latest --tag $DOCKER_HUB_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:latest
-    - docker login -u $DOCKER_HUB_REGISTRY_USER -p $DOCKER_HUB_REGISTRY_PASSWORD $DOCKER_HUB_REGISTRY
+    - cat /root/.docker/hub-password | docker login -u $DOCKER_HUB_REGISTRY_USER --password-stdin $DOCKER_HUB_REGISTRY
     - docker push $DOCKER_HUB_REGISTRY_IMAGE:latest
+  after_script:
+    - rm -rf /root/.docker
   only:
     - main
   dependencies:

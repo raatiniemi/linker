@@ -8,11 +8,6 @@ stages:
   image: gradle:6.5.1-jdk14
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    paths:
-      - build
-      - .gradle
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   tags:
@@ -33,6 +28,12 @@ build:linker:
   script:
     - gradle --build-cache assemble shadowJar
   interruptible: true
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
   artifacts:
     paths:
       - build/libs/*.jar
@@ -44,6 +45,12 @@ test:linker:
   script:
     - gradle test printCoverage
   interruptible: true
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle
 
 registry:linker:
   stage: registry

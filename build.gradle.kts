@@ -19,14 +19,17 @@ plugins {
     kotlin("jvm") version "1.4.20"
     id("java")
 
+    id("com.cinnober.gradle.semver-git") version "3.0.0" apply false
     jacoco
     id("de.jansauer.printcoverage") version "2.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.13.1"
     id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
+ext.set("nextVersion", "patch")
+apply(plugin = "com.cinnober.gradle.semver-git")
+
 group = "me.raatiniemi"
-version = "0.0.1"
 
 repositories {
     mavenCentral()
@@ -71,7 +74,7 @@ tasks.withType<JacocoReport> {
 tasks.withType<Jar> {
     manifest {
         attributes["Implementation-Title"] = "Linker"
-        attributes["Implementation-Version"] = archiveVersion
+        attributes["Implementation-Version"] = project.version
         attributes["Main-Class"] = "me.raatiniemi.linker.MainKt"
     }
 }

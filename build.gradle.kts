@@ -74,7 +74,7 @@ tasks.withType<JacocoReport> {
 tasks.withType<Jar> {
     manifest {
         attributes["Implementation-Title"] = "Linker"
-        attributes["Implementation-Version"] = archiveVersion
+        attributes["Implementation-Version"] = project.version
         attributes["Main-Class"] = "me.raatiniemi.linker.MainKt"
     }
 }

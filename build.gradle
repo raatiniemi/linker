@@ -24,8 +24,8 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version("1.13.1")
 }
 
-group 'me.raatiniemi'
-version '0.0.1'
+group "me.raatiniemi"
+version "0.0.1"
 
 compileKotlin {
     kotlinOptions {
@@ -79,9 +79,9 @@ detekt {
 jar {
     manifest {
         attributes(
-                'Implementation-Title': 'Linker',
-                'Implementation-Version': archiveVersion,
-                'Main-Class': "me.raatiniemi.linker.MainKt"
+                "Implementation-Title": "Linker",
+                "Implementation-Version": archiveVersion,
+                "Main-Class": "me.raatiniemi.linker.MainKt"
         )
     }
 }

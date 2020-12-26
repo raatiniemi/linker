@@ -27,9 +27,14 @@ the symbolic link, i.e. the linked name do not really matters.
 
 ## How to
 
-Run the application via Gradle: `./gradlew run -Pconfig=path/to/configuration-file`
+In order to build the application, run `./gradlew build shadowJar`. This will
+produce a JAR which will be located within the `build/libs` directory, with the
+name `linker-$version-all.jar`. *Note that you need to swap the `$version` with
+the actual version.* To run this JAR, with the necessary configuration, use the
+following `java -jar build/libs/linker-$version-all.jar configuration.json`.
 
-Sample configuration file
+Sample configuration file:
+
 ```json
 {
     "source": "/path/to/source-directory",

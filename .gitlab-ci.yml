@@ -5,7 +5,7 @@ stages:
   - registry
 
 .in-gradle-environment:
-  image: gradle:6.5.1-jdk8
+  image: gradle:6.5.1-jdk14
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   variables:

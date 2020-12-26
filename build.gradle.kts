@@ -50,7 +50,7 @@ detekt {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
     testImplementation("junit:junit:4.11")

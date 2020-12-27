@@ -5,7 +5,7 @@ RUN set -x \
   && mkdir -p /etc/linker \
   && mkdir -p /opt/linker
 
-ARG JAR_FILE=build/libs/*-all.jar
+ARG JAR_FILE=cli/build/libs/*-all.jar
 COPY ${JAR_FILE} /opt/linker/app.jar
 
 VOLUME ["/etc/linker"]

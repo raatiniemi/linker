@@ -17,19 +17,14 @@
 
 plugins {
     kotlin("jvm") version "1.4.20"
-    id("java")
 
     id("com.cinnober.gradle.semver-git") version "3.0.0" apply false
-    jacoco
-    id("de.jansauer.printcoverage") version "2.0.0"
+    id("de.jansauer.printcoverage") version "2.0.0" apply false
     id("io.gitlab.arturbosch.detekt") version "1.13.1"
-    id("com.github.johnrengelman.shadow") version "6.0.0"
+    id("com.github.johnrengelman.shadow") version "6.0.0" apply false
 }
 
-ext.set("nextVersion", "patch")
-apply(plugin = "com.cinnober.gradle.semver-git")
-
-group = "me.raatiniemi"
+group = "me.raatiniemi.linker"
 
 repositories {
     mavenCentral()
@@ -44,6 +39,9 @@ repositories {
 
 detekt {
     buildUponDefaultConfig = true
+    input = files(
+        "cli/src"
+    )
 
     reports {
         html.enabled = false
@@ -52,29 +50,26 @@ detekt {
     }
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
-
-    testImplementation("junit:junit:4.11")
-}
-
-tasks.withType<Test> {
-    finalizedBy(tasks.withType<JacocoReport>())
-}
-
-tasks.withType<JacocoReport> {
-    dependsOn(tasks.withType<Test>())
-
-    reports {
-        xml.isEnabled = true
+allprojects {
+    repositories {
+        mavenCentral()
     }
-}
 
-tasks.withType<Jar> {
-    manifest {
-        attributes["Implementation-Title"] = "Linker"
-        attributes["Implementation-Version"] = project.version
-        attributes["Main-Class"] = "me.raatiniemi.linker.MainKt"
+    ext.set("nextVersion", "patch")
+    apply(plugin = "com.cinnober.gradle.semver-git")
+    apply(plugin = "jacoco")
+    apply(plugin = "de.jansauer.printcoverage")
+    apply(plugin = "com.github.johnrengelman.shadow")
+
+    tasks.withType<Test> {
+        finalizedBy(tasks.withType<JacocoReport>())
+    }
+
+    tasks.withType<JacocoReport> {
+        dependsOn(tasks.withType<Test>())
+
+        reports {
+            xml.isEnabled = true
+        }
     }
 }

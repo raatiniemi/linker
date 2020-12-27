@@ -21,38 +21,41 @@ lint:linker:
     - gradle detekt
   interruptible: true
 
-build:linker:
+build:cli:
   stage: build
   extends:
     - .in-gradle-environment
   script:
-    - gradle --build-cache assemble shadowJar
+    - gradle --build-cache cli:assemble cli:shadowJar
   interruptible: true
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
     paths:
-      - build
       - .gradle
+      - build
+      - cli/build
   artifacts:
     paths:
-      - build/libs/*.jar
+      - cli/build/libs/*.jar
 
-test:linker:
+test:cli:
   stage: test
   extends:
     - .in-gradle-environment
   script:
-    - gradle test printCoverage
+    - gradle cli:test cli:printCoverage
+  coverage: '/^Coverage:\s*?(\d+(?:\.\d+)?)%/'
   interruptible: true
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
     paths:
-      - build
       - .gradle
+      - build
+      - cli/build
 
-registry:linker:
+registry:cli:
   stage: registry
   image: docker:stable
   services:

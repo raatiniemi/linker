@@ -84,7 +84,7 @@ registry:cli:
   only:
     - main
   dependencies:
-    - build:linker
+    - build:cli
   tags:
     - docker-cli
   variables:

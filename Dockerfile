@@ -1,4 +1,4 @@
-FROM openjdk:14-alpine
+FROM openjdk:15-alpine
 LABEL maintainer="Tobias Raatiniemi <raatiniemi@gmail.com>"
 
 RUN set -x \

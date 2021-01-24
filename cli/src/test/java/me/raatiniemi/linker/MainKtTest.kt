@@ -18,6 +18,7 @@
 package me.raatiniemi.linker
 
 import me.raatiniemi.linker.domain.Node
+import me.raatiniemi.linker.domain.createSymbolicLink
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -48,6 +49,11 @@ class MainKtTest {
             .walkTopDown()
             .map { it.toPath() }
             .filter { Files.isSymbolicLink(it) }
+            .filter {
+                Files.readSymbolicLink(it)
+                    .toFile()
+                    .exists()
+            }
             .map { path ->
                 Node.Link(
                     path,
@@ -227,6 +233,36 @@ class MainKtTest {
                 getPath(temporaryFolder, "pacman", "name")
             )
         )
+
+        main(arrayOf(configurationPath))
+
+        val actual = collectLinkedFiles()
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `main when link source do not exists`() {
+        val file = temporaryFolder.newFile(configurationBasename)
+        file.writeText(
+            """
+            {
+                "source": "${temporaryFolder.root.path}/pacman",
+                "targets": [
+                    "${temporaryFolder.root.path}/archlinux"
+                ],
+                "excludes": [],
+                "linkMaps": []
+            }
+            """.trimIndent()
+        )
+        createNewFolder(temporaryFolder, "archlinux")
+        createSymbolicLink(
+            Node.Link(
+                getPath(temporaryFolder, "archlinux", "name"),
+                getPath(temporaryFolder, "pacman", "name")
+            )
+        )
+        val expected = emptyList<Node.Link>()
 
         main(arrayOf(configurationPath))
 

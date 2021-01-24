@@ -20,6 +20,7 @@ package me.raatiniemi.linker
 import me.raatiniemi.linker.domain.Node
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -39,7 +40,11 @@ internal fun collectNodes(root: File): List<Node> {
 }
 
 private fun exclude(rootPath: Path, path: Path): Boolean {
-    return !Files.isSameFile(rootPath, path)
+    return try {
+        !Files.isSameFile(rootPath, path)
+    } catch (e: NoSuchFileException) {
+        false
+    }
 }
 
 private fun node(file: File): Node {

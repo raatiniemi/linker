@@ -10,4 +10,4 @@ COPY ${JAR_FILE} /opt/linker/app.jar
 
 VOLUME ["/etc/linker"]
 
-ENTRYPOINT ["java", "-jar", "/opt/linker/app.jar", "/etc/linker/configuration.json"]
+ENTRYPOINT ["java", "-jar", "/opt/linker/app.jar", "-c", "/etc/linker/configuration.json"]

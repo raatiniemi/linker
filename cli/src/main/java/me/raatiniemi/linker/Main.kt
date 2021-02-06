@@ -16,6 +16,8 @@
  */
 package me.raatiniemi.linker
 
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 import me.raatiniemi.linker.configuration.Configuration
 import me.raatiniemi.linker.configuration.parseConfiguration
 import me.raatiniemi.linker.domain.Node
@@ -36,10 +38,19 @@ fun main(args: Array<String>) {
 }
 
 private fun parseConfigurationFileFromArguments(args: Array<String>): Configuration {
-    require(args.isNotEmpty() && args[0].isNotBlank()) {
-        "No configuration file have been supplied"
+    val parser = ArgParser("linker")
+    val configurationPath by parser.option(
+        type = ArgType.String,
+        fullName = "configuration",
+        shortName = "c",
+        description = "Path to configuration file"
+    )
+    parser.parse(args)
+
+    val filename = checkNotNull(configurationPath) {
+        "No configuration path is available"
     }
-    return parseConfiguration(args[0])
+    return parseConfiguration(filename)
 }
 
 private fun printReportForCollectionSizes(targetNodes: List<Node.Link>, sources: List<Node>) {

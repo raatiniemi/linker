@@ -66,9 +66,39 @@ class MainKtTest {
             .toList()
     }
 
-    @Test(expected = RuntimeException::class)
+    @Test(expected = IllegalStateException::class)
     fun `main without configuration`() {
         main(emptyArray())
+    }
+
+    @Test
+    fun `main with full name configuration`() {
+        with(temporaryFolder.newFile(configurationBasename)) {
+            writeText(
+                """
+                {
+                    "source": "${temporaryFolder.root.path}/pacman",
+                    "targets": [
+                        "${temporaryFolder.root.path}/archlinux"
+                    ],
+                    "excludes": [],
+                    "linkMaps": [
+                        {
+                            "regex": "(.*)\\.pkg\\.tar\\.zst",
+                            "target": "${temporaryFolder.root.path}/archlinux"
+                        }
+                    ]
+                }
+                """.trimIndent()
+            )
+        }
+        val args = arrayOf("--configuration", configurationPath)
+        val expected = emptyList<Node.Link>()
+
+        main(args)
+
+        val actual = collectLinkedFiles()
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -92,9 +122,10 @@ class MainKtTest {
                 """.trimIndent()
             )
         }
+        val args = arrayOf("-c", configurationPath)
         val expected = emptyList<Node.Link>()
 
-        main(arrayOf(configurationPath))
+        main(args)
 
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)
@@ -122,6 +153,7 @@ class MainKtTest {
         )
         createNewFile(temporaryFolder, "pacman/name.pkg.tar.zst")
         createNewFolder(temporaryFolder, "archlinux")
+        val args = arrayOf("-c", configurationPath)
         val expected = listOf(
             Node.Link(
                 getPath(temporaryFolder, "archlinux", "name.pkg.tar.zst"),
@@ -129,7 +161,7 @@ class MainKtTest {
             )
         )
 
-        main(arrayOf(configurationPath))
+        main(args)
 
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)
@@ -157,6 +189,7 @@ class MainKtTest {
         )
         createNewFolder(temporaryFolder, "pacman/folder")
         createNewFolder(temporaryFolder, "archlinux")
+        val args = arrayOf("-c", configurationPath)
         val expected = listOf(
             Node.Link(
                 getPath(temporaryFolder, "archlinux", "folder"),
@@ -164,7 +197,7 @@ class MainKtTest {
             )
         )
 
-        main(arrayOf(configurationPath))
+        main(args)
 
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)
@@ -192,6 +225,7 @@ class MainKtTest {
         )
         createNewFolder(temporaryFolder, "pacman/folder/subfolder")
         createNewFolder(temporaryFolder, "archlinux/folder")
+        val args = arrayOf("-c", configurationPath)
         val expected = listOf(
             Node.Link(
                 getPath(temporaryFolder, "archlinux", "folder", "subfolder"),
@@ -199,7 +233,7 @@ class MainKtTest {
             )
         )
 
-        main(arrayOf(configurationPath))
+        main(args)
 
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)
@@ -227,6 +261,7 @@ class MainKtTest {
         )
         createNewFolder(temporaryFolder, "pacman/name/name")
         createNewFolder(temporaryFolder, "archlinux")
+        val args = arrayOf("-c", configurationPath)
         val expected = listOf(
             Node.Link(
                 getPath(temporaryFolder, "archlinux", "name"),
@@ -234,7 +269,7 @@ class MainKtTest {
             )
         )
 
-        main(arrayOf(configurationPath))
+        main(args)
 
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)
@@ -262,9 +297,10 @@ class MainKtTest {
                 getPath(temporaryFolder, "pacman", "name")
             )
         )
+        val args = arrayOf("-c", configurationPath)
         val expected = emptyList<Node.Link>()
 
-        main(arrayOf(configurationPath))
+        main(args)
 
         val actual = collectLinkedFiles()
         assertEquals(expected, actual)

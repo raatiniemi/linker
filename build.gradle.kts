@@ -53,6 +53,7 @@ detekt {
 allprojects {
     repositories {
         mavenCentral()
+        maven("https://kotlin.bintray.com/kotlinx/")
     }
 
     ext.set("nextVersion", "patch")

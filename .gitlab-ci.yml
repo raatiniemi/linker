@@ -13,6 +13,16 @@ stages:
   tags:
     - docker
 
+.in-rust-environment:
+  image: rustlang/rust:nightly
+  before_script:
+    - rustc --version
+    - cargo --version
+    - rustup --version
+    - rustup component add llvm-tools-preview
+  tags:
+    - docker
+
 lint:linker:
   stage: lint
   extends:
@@ -39,6 +49,17 @@ build:cli:
     paths:
       - cli/build/libs/*.jar
 
+build:app:
+  stage: build
+  extends:
+    - .in-rust-environment
+  script: |
+    cd app && cargo build --verbose
+  artifacts:
+    paths:
+      - ./app/target
+    expire_in: 2 hours
+
 test:cli:
   stage: test
   extends:
@@ -54,6 +75,15 @@ test:cli:
       - .gradle
       - build
       - cli/build
+
+test:app:
+  stage: test
+  extends:
+    - .in-rust-environment
+  script: |
+    cd app && cargo test --workspace --verbose
+  needs:
+    - build:app
 
 registry:cli:
   stage: registry

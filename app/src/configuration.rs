@@ -1,7 +1,9 @@
+use std::fs;
+
 use json::JsonValue;
 
 #[derive(Default, Eq, PartialEq, Clone, Debug)]
-struct Configuration {
+pub struct Configuration {
     source: Option<String>,
     targets: Vec<String>,
     excludes: Vec<String>,
@@ -9,9 +11,16 @@ struct Configuration {
 }
 
 #[derive(Eq, PartialEq, Clone, Debug)]
-struct LinkMap {
+pub struct LinkMap {
     regex: String,
     target: String,
+}
+
+pub fn read_configuration(path: &str) -> Configuration {
+    let data = fs::read_to_string(path)
+        .expect(&format!("Unable to read configuration file at path {}", path).as_str());
+
+    return parse_configuration(data.as_str());
 }
 
 fn parse_configuration(configuration: &str) -> Configuration {

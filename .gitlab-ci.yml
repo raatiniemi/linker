@@ -81,9 +81,17 @@ test:app:
   extends:
     - .in-rust-environment
   script: |
-    cd app && cargo test --workspace --verbose
+    apt-get update -qq && apt-get install -y -qq lcov --no-install-recommends
+    cd app
+    cargo install --color=always --force grcov
+    cargo test --workspace --verbose
+    grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o coverage.info
+    lcov -l coverage.info
+  coverage: '/Total:\|\s*(\d+\.\d+)%/'
   needs:
     - build:app
+  variables:
+    LLVM_PROFILE_FILE: "app-%p-%m.profraw"
 
 registry:cli:
   stage: registry

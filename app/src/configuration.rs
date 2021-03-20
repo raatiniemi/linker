@@ -4,6 +4,7 @@ use json::JsonValue;
 struct Configuration {
     source: Option<String>,
     targets: Vec<String>,
+    excludes: Vec<String>,
 }
 
 fn parse_configuration(configuration: &str) -> Configuration {
@@ -15,6 +16,7 @@ fn parse_configuration(configuration: &str) -> Configuration {
     return Configuration {
         source: map_source(&data),
         targets: map_targets(&data),
+        excludes: map_excludes(&data),
     };
 }
 
@@ -42,6 +44,22 @@ fn map_valid_targets(value: &Vec<JsonValue>) -> Vec<String> {
     value.iter()
         .map(|v| {
             v.as_str().expect("Invalid value in target configuration")
+                .to_string()
+        })
+        .collect()
+}
+
+fn map_excludes(data: &JsonValue) -> Vec<String> {
+    match data["excludes"] {
+        JsonValue::Array(ref value) => map_valid_excludes(value),
+        _ => Vec::new()
+    }
+}
+
+fn map_valid_excludes(value: &Vec<JsonValue>) -> Vec<String> {
+    value.iter()
+        .map(|v| {
+            v.as_str().expect("Invalid value in exclude configuration")
                 .to_string()
         })
         .collect()
@@ -84,6 +102,7 @@ mod tests {
         let expected: Configuration = Configuration {
             source: None,
             targets: Vec::new(),
+            excludes: Vec::new(),
         };
 
         let actual = parse_configuration(&configuration);
@@ -101,6 +120,7 @@ mod tests {
         let expected: Configuration = Configuration {
             source: Some("/tmp".to_string()),
             targets: Vec::new(),
+            excludes: Vec::new(),
         };
 
         let actual = parse_configuration(&configuration);
@@ -119,6 +139,7 @@ mod tests {
         let expected: Configuration = Configuration {
             source: Some("/tmp".to_string()),
             targets: Vec::new(),
+            excludes: Vec::new(),
         };
 
         let actual = parse_configuration(&configuration);
@@ -140,6 +161,35 @@ mod tests {
             source: Some("/var/cache/pacman/pkg".to_string()),
             targets: [
                 "/var/www/archlinux/pkg".to_string()
+            ].to_vec(),
+            excludes: Vec::new(),
+        };
+
+        let actual = parse_configuration(&configuration);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
+    fn parse_configuration_with_full_configuration() {
+        let configuration: &str = r#"
+        {
+            "source": "/var/cache/pacman/pkg",
+            "targets": [
+                "/var/www/archlinux/pkg"
+            ],
+            "excludes": [
+                "*zip"
+            ]
+        }
+        "#;
+        let expected: Configuration = Configuration {
+            source: Some("/var/cache/pacman/pkg".to_string()),
+            targets: [
+                "/var/www/archlinux/pkg".to_string()
+            ].to_vec(),
+            excludes: [
+                "*zip".to_string()
             ].to_vec(),
         };
 

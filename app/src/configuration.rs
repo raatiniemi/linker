@@ -20,7 +20,15 @@ pub fn read_configuration(path: &str) -> Configuration {
     let data = fs::read_to_string(path)
         .expect(&format!("Unable to read configuration file at path {}", path).as_str());
 
-    return parse_configuration(data.as_str());
+    let configuration = parse_configuration(data.as_str());
+    if configuration.source.is_none() {
+        panic!("Configuration is missing valid source")
+    }
+    if configuration.targets.is_empty() {
+        panic!("Configuration is missing valid targets")
+    }
+
+    return configuration;
 }
 
 fn parse_configuration(configuration: &str) -> Configuration {

@@ -4,7 +4,7 @@ use json::JsonValue;
 
 #[derive(Default, Eq, PartialEq, Clone, Debug)]
 pub struct Configuration {
-    source: Option<String>,
+    pub source: Option<String>,
     targets: Vec<String>,
     excludes: Vec<String>,
     link_maps: Vec<LinkMap>,

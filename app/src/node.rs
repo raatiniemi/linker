@@ -1,5 +1,5 @@
-use std::path::{Path, PathBuf};
 use std::fs;
+use std::path::{Path, PathBuf};
 
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Debug)]
 pub enum Node {
@@ -58,9 +58,11 @@ fn transform_to_node(path: &PathBuf, s: Option<&str>) -> Option<Node> {
 mod tests {
     extern crate tempdir;
 
-    use super::*;
-    use tempdir::TempDir;
     use std::fs::File;
+
+    use tempdir::TempDir;
+
+    use super::*;
 
     fn create_temporary_directory() -> TempDir {
         TempDir::new("node")

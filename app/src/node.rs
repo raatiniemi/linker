@@ -7,7 +7,7 @@ pub enum Node {
     Leaf(String),
 }
 
-pub fn collect_nodes(path: &Path) -> Vec<Node> {
+pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
     let directory = fs::read_dir(path);
     if directory.is_err() {
         eprintln!("Unable to read \"{:?}\" directory: {:?}", path.to_str().unwrap(), directory.err().unwrap());
@@ -44,7 +44,7 @@ fn transform_to_node(path: &PathBuf, s: Option<&str>) -> Option<Node> {
     match s {
         Some(v) => {
             let node = if path.is_dir() {
-                Node::Branch(v.to_string(), collect_nodes(&path))
+                Node::Branch(v.to_string(), collect_nodes(path))
             } else {
                 Node::Leaf(v.to_string())
             };
@@ -67,7 +67,7 @@ mod tests {
             .expect("Unable to create temporary directory")
     }
 
-    fn create_file_in_directory(directory: &Path, basename: &str) -> String {
+    fn create_file_in_directory(directory: &PathBuf, basename: &str) -> String {
         File::create(directory.join(basename))
             .expect("Unable to create file with basename");
 
@@ -87,12 +87,22 @@ mod tests {
     }
 
     #[test]
-    fn collect_nodes_with_empty_directory() {
-        let directory = create_temporary_directory();
-        let path = directory.path();
+    fn collect_nodes_without_directory() {
+        let path = PathBuf::from("/tmp/should-not-exists");
         let expected: Vec<Node> = Vec::new();
 
-        let actual = collect_nodes(path);
+        let actual = collect_nodes(&path);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
+    fn collect_nodes_with_empty_directory() {
+        let directory = create_temporary_directory();
+        let path = PathBuf::from(directory.path());
+        let expected: Vec<Node> = Vec::new();
+
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -100,12 +110,12 @@ mod tests {
     #[test]
     fn collect_nodes_with_leaf() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let expected = [
-            Node::Leaf(create_file_in_directory(path, "leaf"))
+            Node::Leaf(create_file_in_directory(&path, "leaf"))
         ].to_vec();
 
-        let actual = collect_nodes(path);
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -113,13 +123,13 @@ mod tests {
     #[test]
     fn collect_nodes_with_leaves() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let expected = [
-            Node::Leaf(create_file_in_directory(path, "leaf-1")),
-            Node::Leaf(create_file_in_directory(path, "leaf-2"))
+            Node::Leaf(create_file_in_directory(&path, "leaf-1")),
+            Node::Leaf(create_file_in_directory(&path, "leaf-2"))
         ].to_vec();
 
-        let actual = collect_nodes(path);
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -127,7 +137,7 @@ mod tests {
     #[test]
     fn collect_nodes_with_branch() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let expected = [
             Node::Branch(
                 create_directory_at_path(&path.join("branch")),
@@ -135,7 +145,7 @@ mod tests {
             )
         ].to_vec();
 
-        let actual = collect_nodes(path);
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -143,7 +153,7 @@ mod tests {
     #[test]
     fn collect_nodes_with_branches() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let expected = [
             Node::Branch(
                 create_directory_at_path(&path.join("branch-1")),
@@ -155,7 +165,7 @@ mod tests {
             )
         ].to_vec();
 
-        let actual = collect_nodes(path);
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -163,19 +173,18 @@ mod tests {
     #[test]
     fn collect_nodes_with_branch_containing_leaf() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let branch = create_directory_at_path(&path.join("branch"));
-        let branch_path = Path::new(&branch);
         let expected = [
             Node::Branch(
                 branch.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(branch_path, "leaf"))
+                    Node::Leaf(create_file_in_directory(&path.join("branch"), "leaf"))
                 ].to_vec(),
             )
         ].to_vec();
 
-        let actual = collect_nodes(path);
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -183,25 +192,25 @@ mod tests {
     #[test]
     fn collect_nodes_with_branches_containing_leaf() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let branch_first = create_directory_at_path(&path.join("branch-1"));
         let branch_second = create_directory_at_path(&path.join("branch-2"));
         let expected = [
             Node::Branch(
                 branch_first.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(Path::new(&branch_first), "leaf"))
+                    Node::Leaf(create_file_in_directory(&path.join("branch-1"), "leaf"))
                 ].to_vec(),
             ),
             Node::Branch(
                 branch_second.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(Path::new(&branch_second), "leaf"))
+                    Node::Leaf(create_file_in_directory(&path.join("branch-2"), "leaf"))
                 ].to_vec(),
             )
         ].to_vec();
 
-        let actual = collect_nodes(path);
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -209,20 +218,19 @@ mod tests {
     #[test]
     fn collect_nodes_with_branch_containing_leaves() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let branch = create_directory_at_path(&path.join("branch"));
-        let branch_path = Path::new(&branch);
         let expected = [
             Node::Branch(
                 branch.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(branch_path, "leaf-1")),
-                    Node::Leaf(create_file_in_directory(branch_path, "leaf-2")),
+                    Node::Leaf(create_file_in_directory(&path.join("branch"), "leaf-1")),
+                    Node::Leaf(create_file_in_directory(&path.join("branch"), "leaf-2")),
                 ].to_vec(),
             )
         ].to_vec();
 
-        let actual = collect_nodes(directory.path());
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }
@@ -230,29 +238,27 @@ mod tests {
     #[test]
     fn collect_nodes_with_branches_containing_leaves() {
         let directory = create_temporary_directory();
-        let path = directory.path();
+        let path = PathBuf::from(directory.path());
         let branch_first = create_directory_at_path(&path.join("branch-1"));
-        let branch_first_path = Path::new(&branch_first);
         let branch_second = create_directory_at_path(&path.join("branch-2"));
-        let branch_second_path = Path::new(&branch_second);
         let expected = [
             Node::Branch(
                 branch_first.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(branch_first_path, "leaf-1")),
-                    Node::Leaf(create_file_in_directory(branch_first_path, "leaf-2")),
+                    Node::Leaf(create_file_in_directory(&path.join("branch-1"), "leaf-1")),
+                    Node::Leaf(create_file_in_directory(&path.join("branch-1"), "leaf-2")),
                 ].to_vec(),
             ),
             Node::Branch(
                 branch_second.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(branch_second_path, "leaf-1")),
-                    Node::Leaf(create_file_in_directory(branch_second_path, "leaf-2")),
+                    Node::Leaf(create_file_in_directory(&path.join("branch-2"), "leaf-1")),
+                    Node::Leaf(create_file_in_directory(&path.join("branch-2"), "leaf-2")),
                 ].to_vec(),
             )
         ].to_vec();
 
-        let actual = collect_nodes(directory.path());
+        let actual = collect_nodes(&path);
 
         assert_eq!(expected, actual)
     }

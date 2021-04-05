@@ -1,8 +1,8 @@
 use std::env;
+use std::path::PathBuf;
 
 use crate::configuration::read_configuration;
 use crate::node::collect_nodes;
-use std::path::PathBuf;
 
 mod configuration;
 mod node;

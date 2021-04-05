@@ -69,14 +69,13 @@ mod tests {
             .expect("Unable to create temporary directory")
     }
 
-    fn create_file_in_directory(directory: &PathBuf, basename: &str) -> String {
-        File::create(directory.join(basename))
-            .expect("Unable to create file with basename");
+    fn create_file(path: &PathBuf) -> String {
+        File::create(path)
+            .expect(&format!("Unable to create file at: {:?}", path.to_str()));
 
-        directory.to_str()
+        path.to_str()
             .map(|v| v.to_string())
-            .map(|v| v + "/" + basename)
-            .expect("Unable to build path for file")
+            .expect(&format!("Unable to build path for file at: {:?}", path.to_str()))
     }
 
     fn create_directory_at_path(path: &Path) -> String {
@@ -114,7 +113,7 @@ mod tests {
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let expected = [
-            Node::Leaf(create_file_in_directory(&path, "leaf"))
+            Node::Leaf(create_file(&path.join("leaf")))
         ].to_vec();
 
         let actual = collect_nodes(&path);
@@ -127,8 +126,8 @@ mod tests {
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let expected = [
-            Node::Leaf(create_file_in_directory(&path, "leaf-1")),
-            Node::Leaf(create_file_in_directory(&path, "leaf-2"))
+            Node::Leaf(create_file(&path.join("leaf-1"))),
+            Node::Leaf(create_file(&path.join("leaf-2")))
         ].to_vec();
 
         let actual = collect_nodes(&path);
@@ -181,7 +180,7 @@ mod tests {
             Node::Branch(
                 branch.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(&path.join("branch"), "leaf"))
+                    Node::Leaf(create_file(&path.join("branch").join("leaf")))
                 ].to_vec(),
             )
         ].to_vec();
@@ -201,13 +200,13 @@ mod tests {
             Node::Branch(
                 branch_first.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(&path.join("branch-1"), "leaf"))
+                    Node::Leaf(create_file(&path.join("branch-1").join("leaf")))
                 ].to_vec(),
             ),
             Node::Branch(
                 branch_second.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(&path.join("branch-2"), "leaf"))
+                    Node::Leaf(create_file(&path.join("branch-2").join("leaf")))
                 ].to_vec(),
             )
         ].to_vec();
@@ -226,8 +225,8 @@ mod tests {
             Node::Branch(
                 branch.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(&path.join("branch"), "leaf-1")),
-                    Node::Leaf(create_file_in_directory(&path.join("branch"), "leaf-2")),
+                    Node::Leaf(create_file(&path.join("branch").join("leaf-1"))),
+                    Node::Leaf(create_file(&path.join("branch").join("leaf-2"))),
                 ].to_vec(),
             )
         ].to_vec();
@@ -247,15 +246,15 @@ mod tests {
             Node::Branch(
                 branch_first.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(&path.join("branch-1"), "leaf-1")),
-                    Node::Leaf(create_file_in_directory(&path.join("branch-1"), "leaf-2")),
+                    Node::Leaf(create_file(&path.join("branch-1").join("leaf-1"))),
+                    Node::Leaf(create_file(&path.join("branch-1").join("leaf-2"))),
                 ].to_vec(),
             ),
             Node::Branch(
                 branch_second.clone(),
                 [
-                    Node::Leaf(create_file_in_directory(&path.join("branch-2"), "leaf-1")),
-                    Node::Leaf(create_file_in_directory(&path.join("branch-2"), "leaf-2")),
+                    Node::Leaf(create_file(&path.join("branch-2").join("leaf-1"))),
+                    Node::Leaf(create_file(&path.join("branch-2").join("leaf-2"))),
                 ].to_vec(),
             )
         ].to_vec();

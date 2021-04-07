@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Debug)]
 pub enum Node {
@@ -69,6 +69,7 @@ mod tests {
     extern crate tempdir;
 
     use std::fs::File;
+    use std::path::Path;
     use std::os::unix::fs as unix_fs;
 
     use tempdir::TempDir;

@@ -6,7 +6,7 @@ use json::JsonValue;
 pub struct Configuration {
     pub source: Option<String>,
     targets: Vec<String>,
-    excludes: Vec<String>,
+    pub excludes: Vec<String>,
     link_maps: Vec<LinkMap>,
 }
 

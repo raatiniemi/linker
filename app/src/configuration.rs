@@ -114,6 +114,7 @@ fn map_valid_link_maps(value: &Vec<JsonValue>) -> Vec<LinkMap> {
         .collect()
 }
 
+//noinspection DuplicatedCode
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -223,7 +224,6 @@ mod tests {
         assert_eq!(expected, actual)
     }
 
-    //noinspection DuplicatedCode
     #[test]
     fn parse_configuration_without_link_map_regex_configuration() {
         let configuration: &str = r#"
@@ -258,7 +258,6 @@ mod tests {
         assert_eq!(expected, actual)
     }
 
-    //noinspection DuplicatedCode
     #[test]
     fn parse_configuration_without_link_map_target_configuration() {
         let configuration: &str = r#"
@@ -293,7 +292,6 @@ mod tests {
         assert_eq!(expected, actual)
     }
 
-    //noinspection DuplicatedCode
     #[test]
     fn parse_configuration_with_empty_link_map_regex_configuration() {
         let configuration: &str = r#"
@@ -329,7 +327,6 @@ mod tests {
         assert_eq!(expected, actual)
     }
 
-    //noinspection DuplicatedCode
     #[test]
     fn parse_configuration_with_empty_link_map_target_configuration() {
         let configuration: &str = r#"

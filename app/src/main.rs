@@ -2,12 +2,13 @@ use std::env;
 use std::path::PathBuf;
 
 use crate::configuration::read_configuration;
+use crate::collect_nodes::collect_nodes;
 use crate::filter_source_nodes::filter_source_nodes;
 use crate::filter_target_nodes::filter_target_nodes;
-use crate::node::collect_nodes;
 
 mod configuration;
 mod node;
+mod collect_nodes;
 mod filter_source_nodes;
 mod filter_target_nodes;
 

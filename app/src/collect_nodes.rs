@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 use crate::node::Node;
 
 pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
@@ -43,10 +43,7 @@ fn transform_to_node(path: &PathBuf, s: Option<&str>) -> Option<Node> {
                 .file_type();
 
             let node = if file_type.is_symlink() {
-                let source = fs::read_link(v)
-                    .expect(&format!("Unable to read link: {:?}", path.to_str()));
-
-                Node::Link(v.to_string(), source.to_str().unwrap().to_string())
+                Node::Link(v.to_string(), normalize_link_source(v))
             } else if file_type.is_dir() {
                 Node::Branch(v.to_string(), collect_nodes(path))
             } else {
@@ -56,6 +53,27 @@ fn transform_to_node(path: &PathBuf, s: Option<&str>) -> Option<Node> {
         }
         None => None
     }
+}
+
+fn normalize_link_source(v: &str) -> String {
+    let source = fs::read_link(v)
+        .map(|s| s.to_str()
+            .expect(&format!("Unable to transform link to str: {:?}", v))
+            .to_owned())
+        .expect(&format!("Unable to read link: {:?}", v));
+
+    let canonical_path = fs::canonicalize(
+        Path::new(v)
+            .parent()
+            .map(|p| p.to_owned())
+            .map(|p| p.join(source))
+            .expect(&format!("Unable to build parent path for: {:?}", v))
+    );
+
+    canonical_path.expect(&format!("Unable to read canonicalized path: {:?}", v))
+        .to_str()
+        .expect(&format!("Unable to transform canonicalized path to str: {:?}", v))
+        .to_string()
 }
 
 //noinspection DuplicatedCode
@@ -424,6 +442,44 @@ mod tests {
                     Node::Leaf(leaf_fourth.clone()),
                     Node::Link(link_third, leaf_third),
                     Node::Link(link_fourth, leaf_fourth),
+                ].to_vec(),
+            )
+        ].to_vec();
+
+        let actual = collect_nodes(&path);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
+    fn collect_nodes_with_branches_containing_relative_links() {
+        let directory = create_temporary_directory();
+        let path = PathBuf::from(directory.path());
+        let source_branch = create_directory_at_path(&path.join("sources"));
+        let leaf_first = create_file(&path.join("sources").join("leaf-1"));
+        let leaf_second = create_file(&path.join("sources").join("leaf-2"));
+        let target_branch = create_directory_at_path(&path.join("targets"));
+        let link_first = create_link(
+            "../sources/leaf-1",
+            &path.join("targets").join("link-1"),
+        );
+        let link_second = create_link(
+            "../sources/leaf-2",
+            &path.join("targets").join("link-2"),
+        );
+        let expected = [
+            Node::Branch(
+                source_branch.clone(),
+                [
+                    Node::Leaf(leaf_first.clone()),
+                    Node::Leaf(leaf_second.clone()),
+                ].to_vec(),
+            ),
+            Node::Branch(
+                target_branch.clone(),
+                [
+                    Node::Link(link_first, leaf_first.to_owned()),
+                    Node::Link(link_second, leaf_second.to_owned()),
                 ].to_vec(),
             )
         ].to_vec();

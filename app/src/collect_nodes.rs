@@ -70,9 +70,9 @@ fn normalize_link_source(v: &str) -> String {
             .expect(&format!("Unable to build parent path for: {:?}", v))
     );
 
-    canonical_path.expect(&format!("Unable to read canonicalized path: {:?}", v))
+    canonical_path.expect(&format!("Unable to read canonical path: {:?}", v))
         .to_str()
-        .expect(&format!("Unable to transform canonicalized path to str: {:?}", v))
+        .expect(&format!("Unable to transform canonical path to str: {:?}", v))
         .to_string()
 }
 

@@ -5,13 +5,15 @@ use crate::configuration::{read_configuration, Configuration};
 use crate::collect_nodes::collect_nodes;
 use crate::filter_source_nodes::filter_source_nodes;
 use crate::filter_target_nodes::filter_target_nodes;
-use crate::node::{filter, Node};
+use crate::filter::filter;
+use crate::node::Node;
 
 mod configuration;
 mod node;
 mod collect_nodes;
 mod filter_source_nodes;
 mod filter_target_nodes;
+mod filter;
 
 fn main() {
     match env::args().nth(1) {

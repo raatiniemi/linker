@@ -5,6 +5,7 @@ use crate::configuration::{read_configuration, Configuration};
 use crate::collect_nodes::collect_nodes;
 use crate::filter_source_nodes::filter_source_nodes;
 use crate::filter_target_nodes::filter_target_nodes;
+use crate::match_link_maps::match_link_maps;
 use crate::filter::filter;
 use crate::node::Node;
 
@@ -14,6 +15,7 @@ mod collect_nodes;
 mod filter_source_nodes;
 mod filter_target_nodes;
 mod filter;
+mod match_link_maps;
 
 fn main() {
     match env::args().nth(1) {
@@ -25,6 +27,7 @@ fn main() {
             let target_nodes = collect_and_filter_target_nodes(&configuration);
             filter(&source_nodes, &target_nodes)
                 .iter()
+                .flat_map(|n| match_link_maps(n, &configuration.link_maps))
                 .for_each(|n| println!("{:?}", n));
         }
         _ => panic!("No path for configuration is available")

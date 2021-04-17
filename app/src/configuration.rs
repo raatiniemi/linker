@@ -7,13 +7,13 @@ pub struct Configuration {
     pub source: Option<String>,
     pub targets: Vec<String>,
     pub excludes: Vec<String>,
-    link_maps: Vec<LinkMap>,
+    pub link_maps: Vec<LinkMap>,
 }
 
 #[derive(Eq, PartialEq, Clone, Debug)]
 pub struct LinkMap {
-    regex: String,
-    target: String,
+    pub regex: String,
+    pub target: String,
 }
 
 pub fn read_configuration(path: &str) -> Configuration {

@@ -51,7 +51,7 @@ private fun link(linkMaps: Set<LinkMap>, source: Node): List<Node> {
                     )
                 )
             } else {
-                emptyList<Node>()
+                emptyList()
             }
         }
         is Node.Leaf -> listOf(source)

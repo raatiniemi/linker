@@ -18,26 +18,32 @@ package me.raatiniemi.linker
 
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
-import me.raatiniemi.linker.configuration.Configuration
 import me.raatiniemi.linker.configuration.parseConfiguration
 import me.raatiniemi.linker.domain.Node
+import me.raatiniemi.linker.domain.dryRunLink
 import me.raatiniemi.linker.domain.filter
 import me.raatiniemi.linker.domain.link
 import me.raatiniemi.linker.domain.print
 import java.nio.file.Paths
+import kotlin.io.println
 
 fun main(args: Array<String>) {
-    val configuration = parseConfigurationFileFromArguments(args)
-    val excludeDirectories = configureExcludeDirectories(configuration)
-    val targetNodes = collectTargetNodes(configuration.targets)
-    val sourceNodes = collectSourceNodes(Paths.get(configuration.source), excludeDirectories)
-    val sources = link(filter(sourceNodes, targetNodes), configuration.linkMaps)
+    val arguments = parseArguments(args)
+    val excludeDirectories = configureExcludeDirectories(arguments.configuration)
+    val targetNodes = collectTargetNodes(arguments.configuration.targets)
+    val sourceNodes = collectSourceNodes(Paths.get(arguments.configuration.source), excludeDirectories)
+    val nodes = filter(sourceNodes, targetNodes)
+    val sources = if (arguments.dryRun) {
+        dryRunLink(nodes, arguments.configuration.linkMaps)
+    } else {
+        link(nodes, arguments.configuration.linkMaps)
+    }
 
     printReportForCollectionSizes(targetNodes, sources)
     print(sources)
 }
 
-private fun parseConfigurationFileFromArguments(args: Array<String>): Configuration {
+private fun parseArguments(args: Array<String>): Arguments {
     val parser = ArgParser("linker")
     val configurationPath by parser.option(
         type = ArgType.String,
@@ -45,12 +51,20 @@ private fun parseConfigurationFileFromArguments(args: Array<String>): Configurat
         shortName = "c",
         description = "Path to configuration file"
     )
+    val dryRun by parser.option(
+        type = ArgType.Boolean,
+        fullName = "dry-run",
+        description = "Run without performing any actual changes"
+    )
     parser.parse(args)
 
     val filename = checkNotNull(configurationPath) {
         "No configuration path is available"
     }
-    return parseConfiguration(filename)
+    return Arguments(
+        configuration = parseConfiguration(filename),
+        dryRun = dryRun ?: false
+    )
 }
 
 private fun printReportForCollectionSizes(targetNodes: List<Node.Link>, sources: List<Node>) {

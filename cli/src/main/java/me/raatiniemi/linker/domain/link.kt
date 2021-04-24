@@ -18,25 +18,30 @@
 package me.raatiniemi.linker.domain
 
 internal fun link(nodes: List<Node>, linkMaps: Set<LinkMap>): List<Node> {
-    return nodes.flatMap(link(linkMaps))
+    return nodes.flatMap(link(linkMaps, ::createSymbolicLink))
 }
 
-private fun link(linkMaps: Set<LinkMap>): (Node) -> List<Node> {
+internal fun dryRunLink(nodes: List<Node>, linkMaps: Set<LinkMap>): List<Node> {
+    return nodes.flatMap(
+        link(linkMaps) {
+            println("Creating symbolic link ${it.path} -> ${it.source}")
+            true
+        }
+    )
+}
+
+private fun link(linkMaps: Set<LinkMap>, createSymbolicLink: (Node.Link) -> Boolean): (Node) -> List<Node> {
     return { source ->
         val link = match(source, linkMaps)
         if (link != null) {
-            link(link, source)
+            if (createSymbolicLink(link)) {
+                emptyList()
+            } else {
+                listOf(source)
+            }
         } else {
             link(linkMaps, source)
         }
-    }
-}
-
-private fun link(link: Node.Link, source: Node): List<Node> {
-    return if (createSymbolicLink(link)) {
-        emptyList()
-    } else {
-        listOf(source)
     }
 }
 

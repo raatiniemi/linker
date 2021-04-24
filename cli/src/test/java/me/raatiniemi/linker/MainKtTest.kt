@@ -276,6 +276,37 @@ class MainKtTest {
     }
 
     @Test
+    fun `main with dry run`() {
+        val file = temporaryFolder.newFile(configurationBasename)
+        file.writeText(
+            """
+            {
+                "source": "${temporaryFolder.root.path}/pacman",
+                "targets": [
+                    "${temporaryFolder.root.path}/archlinux"
+                ],
+                "excludes": [],
+                "linkMaps": [
+                    {
+                        "regex": "name",
+                        "target": "${temporaryFolder.root.path}/archlinux"
+                    }
+                ]
+            }
+            """.trimIndent()
+        )
+        createNewFolder(temporaryFolder, "pacman/name/name")
+        createNewFolder(temporaryFolder, "archlinux")
+        val args = arrayOf("--dry-run", "-c", configurationPath)
+        val expected = emptyList<Node>()
+
+        main(args)
+
+        val actual = collectLinkedFiles()
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `main when link source do not exists`() {
         val file = temporaryFolder.newFile(configurationBasename)
         file.writeText(

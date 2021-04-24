@@ -32,6 +32,8 @@ class NodesLinkKtTest {
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 
+    // Link
+
     @Test
     fun `link without nodes`() {
         val nodes = emptyList<Node>()
@@ -133,6 +135,137 @@ class NodesLinkKtTest {
 
     @Test
     fun `link with link map for parent`() {
+        val source = createNewFile(temporaryFolder, "sources/folder/leaf")
+        createNewFolder(temporaryFolder, "targets")
+        val linkMaps = setOf(
+            LinkMap(
+                "folder",
+                "${temporaryFolder.root.absolutePath}/targets"
+            )
+        )
+        val nodes = listOf(
+            Node.Branch(
+                path = getPath(temporaryFolder, "sources"),
+                nodes = listOf(
+                    Node.Branch(
+                        path = getPath(temporaryFolder, "sources", "folder"),
+                        nodes = listOf(
+                            Node.Leaf(source)
+                        )
+                    )
+                )
+            )
+        )
+        val expected = emptyList<Node>()
+
+        val actual = link(nodes, linkMaps)
+
+        assertEquals(expected, actual)
+    }
+
+    // Dry run link
+
+    @Test
+    fun `dry run link without nodes`() {
+        val nodes = emptyList<Node>()
+        val linkMaps = setOf(
+            LinkMap(
+                regex = "folder",
+                target = "targets"
+            )
+        )
+        val expected = emptyList<Node>()
+
+        val actual = dryRunLink(nodes, linkMaps)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `dry run link without link maps`() {
+        val nodes = emptyList<Node>()
+        val linkMaps = emptySet<LinkMap>()
+        val expected = emptyList<Node>()
+
+        val actual = dryRunLink(nodes, linkMaps)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `dry run link without matching link map`() {
+        val source = createNewFile(temporaryFolder, "sources/folder/leaf")
+        createNewFolder(temporaryFolder, "targets")
+        val linkMaps = setOf(
+            LinkMap(
+                "without match",
+                "${temporaryFolder.root.absolutePath}/targets"
+            )
+        )
+        val nodes = listOf(
+            Node.Branch(
+                path = getPath(temporaryFolder, "sources"),
+                nodes = listOf(
+                    Node.Branch(
+                        path = getPath(temporaryFolder, "sources", "folder"),
+                        nodes = listOf(
+                            Node.Leaf(source)
+                        )
+                    )
+                )
+            )
+        )
+        val expected = listOf(
+            Node.Branch(
+                path = getPath(temporaryFolder, "sources"),
+                nodes = listOf(
+                    Node.Branch(
+                        path = getPath(temporaryFolder, "sources", "folder"),
+                        nodes = listOf(
+                            Node.Leaf(source)
+                        )
+                    )
+                )
+            )
+        )
+
+        val actual = dryRunLink(nodes, linkMaps)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `dry run link with link map for leaf`() {
+        val source = createNewFile(temporaryFolder, "sources/folder/leaf")
+        createNewFolder(temporaryFolder, "targets")
+        val linkMaps = setOf(
+            LinkMap(
+                "leaf",
+                "${temporaryFolder.root.absolutePath}/targets"
+            )
+        )
+        val nodes = listOf(
+            Node.Branch(
+                path = getPath(temporaryFolder, "sources"),
+                nodes = listOf(
+                    Node.Branch(
+                        path = getPath(temporaryFolder, "sources", "folder"),
+                        nodes = listOf(
+                            Node.Leaf(source)
+                        )
+                    )
+                )
+            )
+        )
+        val expected = emptyList<Node>()
+
+        val actual = link(nodes, linkMaps)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `dry run link with link map for parent`() {
         val source = createNewFile(temporaryFolder, "sources/folder/leaf")
         createNewFolder(temporaryFolder, "targets")
         val linkMaps = setOf(

@@ -16,6 +16,7 @@ mod filter_source_nodes;
 mod filter_target_nodes;
 mod filter;
 mod match_link_maps;
+mod link;
 
 fn main() {
     let matches = App::new("linker")

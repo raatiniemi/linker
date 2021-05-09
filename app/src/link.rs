@@ -4,6 +4,17 @@ use std::os::unix::fs as unix_fs;
 use std::path::{PathBuf, Path};
 use std::str::FromStr;
 
+pub fn dry_run_create_link_for_node(node: &Node) -> bool {
+    return match node {
+        Node::Leaf(_) => false,
+        Node::Link(target, source) => {
+            println!("{}", format!("Creating symbolic link ${:?} -> {:?}", target, source));
+            true
+        }
+        Node::Branch(_, _) => false,
+    };
+}
+
 pub fn create_link_for_node(node: &Node) -> bool {
     return match node {
         Node::Leaf(_) => false,
@@ -62,7 +73,7 @@ fn create_directory(value: Option<&Path>) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::node::Node;
-    use crate::link::create_link_for_node;
+    use crate::link::{create_link_for_node, dry_run_create_link_for_node};
     use tempdir::TempDir;
     use std::path::{PathBuf, Path};
     use std::fs::File;
@@ -89,6 +100,49 @@ mod tests {
         path.to_str()
             .map(|v| v.to_string())
             .expect("Unable to build path for directory")
+    }
+
+    // Create link (dry run)
+    // - Leaf
+
+    #[test]
+    fn dry_run_create_link_for_node_with_leaf() {
+        let node = Node::Leaf("/tmp/leaf".to_string());
+        let expected = false;
+
+        let actual = dry_run_create_link_for_node(&node);
+
+        assert_eq!(expected, actual)
+    }
+
+    // - Link
+
+    #[test]
+    fn dry_run_create_link_for_node_with_link() {
+        let node = Node::Link(
+            "/tmp/link".to_string(),
+            "/tmp/leaf".to_string(),
+        );
+        let expected = true;
+
+        let actual = dry_run_create_link_for_node(&node);
+
+        assert_eq!(expected, actual)
+    }
+
+    // - Branch
+
+    #[test]
+    fn dry_run_create_link_for_node_with_branch() {
+        let node = Node::Branch(
+            "/tmp/branch".to_string(),
+            vec![],
+        );
+        let expected = false;
+
+        let actual = dry_run_create_link_for_node(&node);
+
+        assert_eq!(expected, actual)
     }
 
     // Create link

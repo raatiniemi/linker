@@ -7,7 +7,8 @@ use crate::filter_target_nodes::filter_target_nodes;
 use crate::match_link_maps::match_link_maps;
 use crate::filter::filter;
 use crate::node::Node;
-use clap::{App, Arg};
+use crate::arguments::collect_and_parse_arguments;
+use std::env;
 
 mod configuration;
 mod node;
@@ -17,37 +18,19 @@ mod filter_target_nodes;
 mod filter;
 mod match_link_maps;
 mod link;
+mod arguments;
 
 fn main() {
-    let matches = App::new("linker")
-        .author("Tobias Raatiniemi <raatiniemi@gmail.com>")
-        .arg(Arg::with_name("dry-run")
-            .long("dry-run")
-            .value_name("dry_run")
-            .help("Run without performing any actual changes")
-            .takes_value(false))
-        .arg(Arg::with_name("configuration")
-            .short("c")
-            .long("configuration")
-            .value_name("configuration")
-            .help("Path to configuration file")
-            .takes_value(true))
-        .get_matches();
+    let arguments = collect_and_parse_arguments(env::args_os());
+    let configuration = read_configuration(&arguments.configuration);
+    println!("{:?}", configuration);
 
-    match matches.value_of("configuration") {
-        Some(path) => {
-            let configuration = read_configuration(&path);
-            println!("{:?}", configuration);
-
-            let source_nodes = collect_and_filter_source_nodes(&configuration);
-            let target_nodes = collect_and_filter_target_nodes(&configuration);
-            filter(&source_nodes, &target_nodes)
-                .iter()
-                .flat_map(|n| match_link_maps(n, &configuration.link_maps))
-                .for_each(|n| println!("{:?}", n));
-        }
-        _ => panic!("No path for configuration is available")
-    };
+    let source_nodes = collect_and_filter_source_nodes(&configuration);
+    let target_nodes = collect_and_filter_target_nodes(&configuration);
+    filter(&source_nodes, &target_nodes)
+        .iter()
+        .flat_map(|n| match_link_maps(n, &configuration.link_maps))
+        .for_each(|n| println!("{:?}", n));
 }
 
 fn collect_and_filter_source_nodes(configuration: &Configuration) -> Vec<Node> {

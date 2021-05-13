@@ -23,6 +23,8 @@ stages:
   tags:
     - docker
 
+# stage: lint
+
 lint:linker:
   stage: lint
   extends:
@@ -30,6 +32,8 @@ lint:linker:
   script:
     - gradle detekt
   interruptible: true
+
+# stage: build
 
 build:cli:
   stage: build
@@ -60,6 +64,8 @@ build:app:
       - ./app/target
     expire_in: 2 hours
 
+# stage: test
+
 test:cli:
   stage: test
   extends:
@@ -84,6 +90,8 @@ test:app:
     cd app && cargo test --verbose
   needs:
     - build:app
+
+# stage: registry
 
 registry:cli:
   stage: registry

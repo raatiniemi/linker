@@ -58,10 +58,10 @@ build:app:
   extends:
     - .in-rust-environment
   script: |
-    cd app && cargo build --verbose
+    cargo build --verbose
   artifacts:
     paths:
-      - ./app/target
+      - ./target
     expire_in: 2 hours
 
 # stage: test
@@ -87,7 +87,7 @@ test:app:
   extends:
     - .in-rust-environment
   script: |
-    cd app && cargo test --verbose
+    cargo test --verbose
   needs:
     - build:app
 

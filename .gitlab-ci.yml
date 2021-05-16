@@ -17,7 +17,7 @@ include:
     - docker
 
 .in-rust-environment:
-  image: rustlang/rust:nightly
+  image: rust:alpine
   before_script:
     - rustc --version
     - cargo --version

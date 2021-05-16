@@ -115,4 +115,5 @@ registry:app:
     - build:app
     - test:app
   variables:
+    DOCKER_TAG_PREFIX: "rust-"
     DOCKER_FILE: "docker/rust/Dockerfile"

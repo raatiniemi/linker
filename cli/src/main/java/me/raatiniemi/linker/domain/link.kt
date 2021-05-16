@@ -18,37 +18,39 @@
 package me.raatiniemi.linker.domain
 
 internal fun link(nodes: List<Node>, linkMaps: Set<LinkMap>): List<Node> {
-    return nodes.flatMap(link(linkMaps, ::createSymbolicLink))
+    return link(nodes, linkMaps, ::createSymbolicLink)
 }
 
 internal fun dryRunLink(nodes: List<Node>, linkMaps: Set<LinkMap>): List<Node> {
-    return nodes.flatMap(
-        link(linkMaps) {
-            println("Creating symbolic link ${it.path} -> ${it.source}")
-            true
-        }
-    )
+    return link(nodes, linkMaps) {
+        println("Creating symbolic link ${it.path} -> ${it.source}")
+        true
+    }
 }
 
-private fun link(linkMaps: Set<LinkMap>, createSymbolicLink: (Node.Link) -> Boolean): (Node) -> List<Node> {
+private fun link(nodes: List<Node>, linkMaps: Set<LinkMap>, createLink: (Node.Link) -> Boolean): List<Node> {
+    return nodes.flatMap(link(linkMaps, createLink))
+}
+
+private fun link(linkMaps: Set<LinkMap>, createLink: (Node.Link) -> Boolean): (Node) -> List<Node> {
     return { source ->
         val link = match(source, linkMaps)
         if (link != null) {
-            if (createSymbolicLink(link)) {
+            if (createLink(link)) {
                 emptyList()
             } else {
                 listOf(source)
             }
         } else {
-            link(linkMaps, source)
+            link(linkMaps, source, createLink)
         }
     }
 }
 
-private fun link(linkMaps: Set<LinkMap>, source: Node): List<Node> {
+private fun link(linkMaps: Set<LinkMap>, source: Node, createLink: (Node.Link) -> Boolean): List<Node> {
     return when (source) {
         is Node.Branch -> {
-            val nodes = link(source.nodes, linkMaps)
+            val nodes = link(source.nodes, linkMaps, createLink)
             if (nodes.isNotEmpty()) {
                 listOf(
                     source.copy(

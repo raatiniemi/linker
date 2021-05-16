@@ -20,6 +20,7 @@ package me.raatiniemi.linker
 import me.raatiniemi.linker.domain.Node
 import me.raatiniemi.linker.domain.createSymbolicLink
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -296,13 +297,46 @@ class MainKtTest {
             """.trimIndent()
         )
         createNewFolder(temporaryFolder, "pacman/name/name")
-        createNewFolder(temporaryFolder, "archlinux")
+        val targetDirectory = createNewFolder(temporaryFolder, "archlinux")
         val args = arrayOf("--dry-run", "-c", configurationPath)
         val expected = emptyList<Node>()
 
         main(args)
 
         val actual = collectLinkedFiles()
+        assertFalse(Paths.get(targetDirectory.toString(), "name").toFile().exists())
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `main with nested nodes dry run`() {
+        val file = temporaryFolder.newFile(configurationBasename)
+        file.writeText(
+            """
+            {
+                "source": "${temporaryFolder.root.path}/pacman",
+                "targets": [
+                    "${temporaryFolder.root.path}/archlinux"
+                ],
+                "excludes": [],
+                "linkMaps": [
+                    {
+                        "regex": "name-2",
+                        "target": "${temporaryFolder.root.path}/archlinux"
+                    }
+                ]
+            }
+            """.trimIndent()
+        )
+        createNewFolder(temporaryFolder, "pacman/name-1/name-2")
+        val targetDirectory = createNewFolder(temporaryFolder, "archlinux")
+        val args = arrayOf("--dry-run", "-c", configurationPath)
+        val expected = emptyList<Node>()
+
+        main(args)
+
+        val actual = collectLinkedFiles()
+        assertFalse(Paths.get(targetDirectory.toString(), "name-2").toFile().exists())
         assertEquals(expected, actual)
     }
 

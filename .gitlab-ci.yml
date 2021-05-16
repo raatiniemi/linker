@@ -104,3 +104,5 @@ registry:cli:
     - main
   dependencies:
     - build:cli
+  variables:
+    DOCKER_FILE: "docker/jdk/Dockerfile"

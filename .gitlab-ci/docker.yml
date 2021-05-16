@@ -9,7 +9,7 @@
     - echo "${DOCKER_REGISTRY_PASSWORD}" | docker login -u "${DOCKER_REGISTRY_USER}" --password-stdin "${DOCKER_REGISTRY}"
   script: |
     docker pull "${DOCKER_REGISTRY_IMAGE}:${DOCKER_TAG_PREFIX}latest" || true
-    docker build --cache-from "${DOCKER_REGISTRY_IMAGE}:${DOCKER_TAG_PREFIX}latest" --tag "${DOCKER_REGISTRY_IMAGE}:${CI_COMMIT_SHA}" "${DOCKER_PATH}"
+    docker build --cache-from "${DOCKER_REGISTRY_IMAGE}:${DOCKER_TAG_PREFIX}latest" --tag "${DOCKER_REGISTRY_IMAGE}:${CI_COMMIT_SHA}" -f "${DOCKER_FILE}" .
     docker tag "${DOCKER_REGISTRY_IMAGE}:${CI_COMMIT_SHA}" "${DOCKER_REGISTRY_IMAGE}:${DOCKER_TAG_PREFIX}latest"
     docker push "${DOCKER_REGISTRY_IMAGE}:${DOCKER_TAG_PREFIX}latest"
     if [ -n "${CI_COMMIT_TAG}" ]; then
@@ -27,7 +27,7 @@
     DOCKER_REGISTRY_PASSWORD: "${CI_REGISTRY_PASSWORD}"
     DOCKER_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
     DOCKER_TAG_PREFIX: ""
-    DOCKER_PATH: "."
+    DOCKER_FILE: "Dockerfile"
     DOCKER_HOST: tcp://docker:2376
     DOCKER_TLS_CERTDIR: "/certs"
 # yamllint enable rule:line-length

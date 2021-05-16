@@ -63,6 +63,7 @@ build:app:
     - .in-rust-environment
   script: |
     cargo build --release --verbose
+  interruptible: true
   needs: []
   artifacts:
     paths:
@@ -95,6 +96,7 @@ test:app:
     - .in-rust-environment
   script: |
     cargo test --verbose
+  interruptible: true
   needs: []
 
 # stage: registry

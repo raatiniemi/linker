@@ -5,7 +5,7 @@ stages:
   - registry
 
 include:
-  - '/.gitlab-ci/docker.yml'
+  - "/.gitlab-ci/docker.yml"
 
 .in-gradle-environment:
   image: gradle:6.7.0-jdk15
@@ -45,6 +45,7 @@ build:cli:
   script:
     - gradle --build-cache cli:assemble cli:shadowJar
   interruptible: true
+  needs: []
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
@@ -62,6 +63,7 @@ build:app:
     - .in-rust-environment
   script: |
     cargo build --release --verbose
+  needs: []
   artifacts:
     paths:
       - ./target
@@ -77,7 +79,7 @@ test:cli:
     - gradle cli:test cli:printCoverage
   coverage: '/^Coverage:\s*?(\d+(?:\.\d+)?)%/'
   interruptible: true
-  dependencies:
+  needs:
     - build:cli
   cache:
     key: "$CI_COMMIT_REF_NAME"
@@ -93,6 +95,7 @@ test:app:
     - .in-rust-environment
   script: |
     cargo test --verbose
+  needs: []
 
 # stage: registry
 
@@ -102,7 +105,8 @@ registry:cli:
     - .docker-registry
   only:
     - main
-  dependencies:
+  needs:
+    - build:cli
     - test:cli
   variables:
     DOCKER_FILE: "docker/jdk/Dockerfile"
@@ -111,7 +115,7 @@ registry:app:
   stage: registry
   extends:
     - .docker-registry
-  dependencies:
+  needs:
     - build:app
     - test:app
   variables:

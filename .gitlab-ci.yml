@@ -61,7 +61,7 @@ build:app:
   extends:
     - .in-rust-environment
   script: |
-    cargo build --verbose
+    cargo build --release --verbose
   artifacts:
     paths:
       - ./target
@@ -93,8 +93,6 @@ test:app:
     - .in-rust-environment
   script: |
     cargo test --verbose
-  needs:
-    - build:app
 
 # stage: registry
 
@@ -108,3 +106,13 @@ registry:cli:
     - test:cli
   variables:
     DOCKER_FILE: "docker/jdk/Dockerfile"
+
+registry:app:
+  stage: registry
+  extends:
+    - .docker-registry
+  dependencies:
+    - build:app
+    - test:app
+  variables:
+    DOCKER_FILE: "docker/rust/Dockerfile"

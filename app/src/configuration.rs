@@ -87,6 +87,7 @@ fn map_valid_excludes(value: &Vec<JsonValue>) -> Vec<String> {
             v.as_str().expect("Invalid value in exclude configuration")
                 .to_string()
         })
+        .map(|v| v.to_lowercase())
         .collect()
 }
 

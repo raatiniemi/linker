@@ -24,7 +24,7 @@ fn recursive_exclusion_for_node(node: &Node, excludes: &Vec<String>) -> Node {
 fn exclude(node: &Node, excludes: &Vec<String>) -> bool {
     let value = extract_basename_from_node(node);
     return match value {
-        Some(basename) => !excludes.contains(&basename),
+        Some(basename) => !excludes.contains(&basename.to_lowercase()),
         None => {
             eprintln!("Unable to extract basename from {:?}", node);
             true
@@ -113,10 +113,45 @@ mod tests {
     }
 
     #[test]
+    fn filter_source_nodes_when_excluding_uppercase_leaf() {
+        let nodes: Vec<Node> = [
+            Node::Leaf("/var/tmp/LEAF-1".to_string()),
+            Node::Leaf("/var/tmp/LEAF-2".to_string()),
+        ].to_vec();
+        let excludes: Vec<String> = [
+            "leaf-1".to_string()
+        ].to_vec();
+        let expected: Vec<Node> = [
+            Node::Leaf("/var/tmp/LEAF-2".to_string())
+        ].to_vec();
+
+        let actual = filter_source_nodes(&nodes, &excludes);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
     fn filter_source_nodes_when_excluding_leaves() {
         let nodes: Vec<Node> = [
             Node::Leaf("/var/tmp/leaf-1".to_string()),
             Node::Leaf("/var/tmp/leaf-2".to_string()),
+        ].to_vec();
+        let excludes: Vec<String> = [
+            "leaf-1".to_string(),
+            "leaf-2".to_string(),
+        ].to_vec();
+        let expected: Vec<Node> = Vec::new();
+
+        let actual = filter_source_nodes(&nodes, &excludes);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
+    fn filter_source_nodes_when_excluding_uppercase_leaves() {
+        let nodes: Vec<Node> = [
+            Node::Leaf("/var/tmp/LEAF-1".to_string()),
+            Node::Leaf("/var/tmp/LEAF-2".to_string()),
         ].to_vec();
         let excludes: Vec<String> = [
             "leaf-1".to_string(),
@@ -180,10 +215,45 @@ mod tests {
     }
 
     #[test]
+    fn filter_source_nodes_when_excluding_uppercase_link() {
+        let nodes: Vec<Node> = [
+            Node::Link("/var/tmp/LINK-1".to_string(), "/var/tmp/leaf-1".to_string()),
+            Node::Link("/var/tmp/LINK-2".to_string(), "/var/tmp/leaf-2".to_string()),
+        ].to_vec();
+        let excludes: Vec<String> = [
+            "link-1".to_string()
+        ].to_vec();
+        let expected: Vec<Node> = [
+            Node::Link("/var/tmp/LINK-2".to_string(), "/var/tmp/leaf-2".to_string()),
+        ].to_vec();
+
+        let actual = filter_source_nodes(&nodes, &excludes);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
     fn filter_source_nodes_when_excluding_links() {
         let nodes: Vec<Node> = [
             Node::Link("/var/tmp/link-1".to_string(), "/var/tmp/leaf-1".to_string()),
             Node::Link("/var/tmp/link-2".to_string(), "/var/tmp/leaf-2".to_string()),
+        ].to_vec();
+        let excludes: Vec<String> = [
+            "link-1".to_string(),
+            "link-2".to_string(),
+        ].to_vec();
+        let expected: Vec<Node> = Vec::new();
+
+        let actual = filter_source_nodes(&nodes, &excludes);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
+    fn filter_source_nodes_when_excluding_uppercase_links() {
+        let nodes: Vec<Node> = [
+            Node::Link("/var/tmp/LINK-1".to_string(), "/var/tmp/leaf-1".to_string()),
+            Node::Link("/var/tmp/LINK-2".to_string(), "/var/tmp/leaf-2".to_string()),
         ].to_vec();
         let excludes: Vec<String> = [
             "link-1".to_string(),
@@ -404,6 +474,33 @@ mod tests {
     }
 
     #[test]
+    fn filter_source_nodes_when_excluding_uppercase_branch() {
+        let nodes: Vec<Node> = [
+            Node::Branch(
+                "/var/tmp/BRANCH-1".to_string(),
+                Vec::new(),
+            ),
+            Node::Branch(
+                "/var/tmp/BRANCH-2".to_string(),
+                Vec::new(),
+            ),
+        ].to_vec();
+        let excludes: Vec<String> = [
+            "branch-2".to_string()
+        ].to_vec();
+        let expected: Vec<Node> = [
+            Node::Branch(
+                "/var/tmp/BRANCH-1".to_string(),
+                Vec::new(),
+            ),
+        ].to_vec();
+
+        let actual = filter_source_nodes(&nodes, &excludes);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
     fn filter_source_nodes_when_excluding_branch_with_child() {
         let nodes: Vec<Node> = [
             Node::Branch(
@@ -424,12 +521,57 @@ mod tests {
     }
 
     #[test]
+    fn filter_source_nodes_when_excluding_uppercase_branch_with_child() {
+        let nodes: Vec<Node> = [
+            Node::Branch(
+                "/var/tmp/BRANCH".to_string(),
+                [
+                    Node::Leaf("/var/tmp/BRANCH/leaf".to_string()),
+                ].to_vec(),
+            ),
+        ].to_vec();
+        let excludes: Vec<String> = [
+            "branch".to_string()
+        ].to_vec();
+        let expected: Vec<Node> = Vec::new();
+
+        let actual = filter_source_nodes(&nodes, &excludes);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
     fn filter_source_nodes_when_excluding_child_in_branch() {
         let nodes: Vec<Node> = [
             Node::Branch(
                 "/var/tmp/branch".to_string(),
                 [
                     Node::Leaf("/var/tmp/branch/leaf".to_string()),
+                ].to_vec(),
+            ),
+        ].to_vec();
+        let excludes: Vec<String> = [
+            "leaf".to_string()
+        ].to_vec();
+        let expected: Vec<Node> = [
+            Node::Branch(
+                "/var/tmp/branch".to_string(),
+                Vec::new(),
+            ),
+        ].to_vec();
+
+        let actual = filter_source_nodes(&nodes, &excludes);
+
+        assert_eq!(expected, actual)
+    }
+
+    #[test]
+    fn filter_source_nodes_when_excluding_uppercase_child_in_branch() {
+        let nodes: Vec<Node> = [
+            Node::Branch(
+                "/var/tmp/branch".to_string(),
+                [
+                    Node::Leaf("/var/tmp/branch/LEAF".to_string()),
                 ].to_vec(),
             ),
         ].to_vec();

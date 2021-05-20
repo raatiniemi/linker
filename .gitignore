@@ -1,5 +1,7 @@
 # Custom
 configuration.json
+*.profraw
+*.info
 
 # Rust.gitignore
 ## ref: https://github.com/github/gitignore/blob/master/Rust.gitignore

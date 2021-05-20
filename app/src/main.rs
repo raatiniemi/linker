@@ -25,8 +25,10 @@ fn main() {
     let arguments = collect_and_parse_arguments(env::args_os());
     let configuration = read_configuration(&arguments.configuration);
 
-    run(&arguments, &configuration).iter()
-        .for_each(|n| println!("{:?}", n));
+    let mut remaining_nodes = run(&arguments, &configuration);
+    remaining_nodes.sort();
+    remaining_nodes.iter()
+        .for_each(|v| print(v.to_owned()));
 }
 
 fn run(arguments: &Arguments, configuration: &Configuration) -> Vec<Node> {
@@ -91,6 +93,19 @@ fn create_node_link(node: &Node, create_link: fn(&Node) -> bool) -> Vec<Node> {
         [].to_vec()
     } else {
         [node.to_owned()].to_vec()
+    }
+}
+
+fn print(node: Node) {
+    match node {
+        Node::Leaf(path) => println!("{:?}", path),
+        Node::Link(target, _) => println!("{:?}", target),
+        Node::Branch(path, mut nodes) => {
+            println!("{:?}", path);
+            nodes.sort();
+            nodes.iter()
+                .for_each(|v| print(v.to_owned()));
+        }
     }
 }
 

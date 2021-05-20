@@ -92,6 +92,7 @@ test:cli:
 
 test:app:
   stage: test
+  image: rustlang/rust:nightly
   extends:
     - .in-rust-environment
   script: |

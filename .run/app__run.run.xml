@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="app::run" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="run" />
-    <option name="workingDirectory" value="file://$PROJECT_DIR$/app" />
+    <option name="command" value="run -- --dry-run -c ../configuration.json" />
+    <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <option name="channel" value="STABLE" />
     <option name="requiredFeatures" value="true" />
     <option name="allFeatures" value="false" />

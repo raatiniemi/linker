@@ -1,13 +1,15 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="app::test" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="test " />
-    <option name="workingDirectory" value="file://$PROJECT_DIR$/app" />
-    <option name="channel" value="STABLE" />
+    <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+    <option name="channel" value="NIGHTLY" />
     <option name="requiredFeatures" value="true" />
-    <option name="allFeatures" value="false" />
+    <option name="allFeatures" value="true" />
     <option name="emulateTerminal" value="false" />
     <option name="backtrace" value="SHORT" />
-    <envs />
+    <envs>
+      <env name="RUSTFLAGS" value="-Zinstrument-coverage" />
+    </envs>
     <option name="isRedirectInput" value="false" />
     <option name="redirectInputPath" value="" />
     <method v="2">

@@ -1,17 +1,17 @@
 use crate::node::Node;
 
-pub fn filter_source_nodes(nodes: &Vec<Node>, excludes: &Vec<String>) -> Vec<Node> {
+pub fn filter_source_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
     return recursive_exclusion_for_nodes(nodes, excludes);
 }
 
-fn recursive_exclusion_for_nodes(nodes: &Vec<Node>, excludes: &Vec<String>) -> Vec<Node> {
+fn recursive_exclusion_for_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
     return nodes.iter()
         .map(|n| recursive_exclusion_for_node(n, excludes))
         .filter(|n| exclude(n, excludes))
         .collect();
 }
 
-fn recursive_exclusion_for_node(node: &Node, excludes: &Vec<String>) -> Node {
+fn recursive_exclusion_for_node(node: &Node, excludes: &[String]) -> Node {
     return match node {
         Node::Branch(path, nodes) => {
             Node::Branch(path.clone(), recursive_exclusion_for_nodes(nodes, &excludes))
@@ -21,7 +21,7 @@ fn recursive_exclusion_for_node(node: &Node, excludes: &Vec<String>) -> Node {
     };
 }
 
-fn exclude(node: &Node, excludes: &Vec<String>) -> bool {
+fn exclude(node: &Node, excludes: &[String]) -> bool {
     let value = extract_basename_from_node(node);
     return match value {
         Some(basename) => !excludes.contains(&basename.to_lowercase()),

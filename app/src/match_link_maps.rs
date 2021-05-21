@@ -4,7 +4,7 @@ use std::path::MAIN_SEPARATOR;
 use regex::Regex;
 use std::str::FromStr;
 
-pub fn match_link_maps(node: &Node, link_maps: &Vec<LinkMap>) -> Option<Node> {
+pub fn match_link_maps(node: &Node, link_maps: &[LinkMap]) -> Option<Node> {
     return match node {
         Node::Leaf(path) => find_link_map_match(path, link_maps),
         Node::Link(_, _) => None,
@@ -12,7 +12,7 @@ pub fn match_link_maps(node: &Node, link_maps: &Vec<LinkMap>) -> Option<Node> {
     };
 }
 
-fn find_link_map_match(path: &String, link_maps: &Vec<LinkMap>) -> Option<Node> {
+fn find_link_map_match(path: &String, link_maps: &[LinkMap]) -> Option<Node> {
     if path.is_empty() {
         return None;
     }

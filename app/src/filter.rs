@@ -1,6 +1,6 @@
 use crate::node::Node;
 
-pub fn filter(sources: &Vec<Node>, targets: &Vec<Node>) -> Vec<Node> {
+pub fn filter(sources: &[Node], targets: &[Node]) -> Vec<Node> {
     let source_path_for_targets = extract_source_path_for_targets(targets);
     return sources.iter()
         .flat_map(|n| filter_linked_nodes(&n, &source_path_for_targets))
@@ -9,7 +9,7 @@ pub fn filter(sources: &Vec<Node>, targets: &Vec<Node>) -> Vec<Node> {
 
 /// Extracts the source path from targets. As the targets should only be `Node::Link`
 /// it's the only type that we'll handle.
-fn extract_source_path_for_targets(targets: &Vec<Node>) -> Vec<String> {
+fn extract_source_path_for_targets(targets: &[Node]) -> Vec<String> {
     targets.iter()
         .flat_map(|n| {
             match n {
@@ -21,7 +21,7 @@ fn extract_source_path_for_targets(targets: &Vec<Node>) -> Vec<String> {
         .collect()
 }
 
-fn filter_linked_nodes(node: &Node, source_path_for_targets: &Vec<String>) -> Vec<Node> {
+fn filter_linked_nodes(node: &Node, source_path_for_targets: &[String]) -> Vec<Node> {
     if is_linked(node, source_path_for_targets) {
         Vec::new()
     } else {
@@ -32,7 +32,7 @@ fn filter_linked_nodes(node: &Node, source_path_for_targets: &Vec<String>) -> Ve
     }
 }
 
-fn is_linked(node: &Node, source_path_for_targets: &Vec<String>) -> bool {
+fn is_linked(node: &Node, source_path_for_targets: &[String]) -> bool {
     match node {
         Node::Leaf(path) => source_path_for_targets.contains(path),
         Node::Link(_, source) => source_path_for_targets.contains(source),
@@ -40,7 +40,7 @@ fn is_linked(node: &Node, source_path_for_targets: &Vec<String>) -> bool {
     }
 }
 
-fn filter_branch(node: &Node, source_path_for_targets: &Vec<String>) -> Vec<Node> {
+fn filter_branch(node: &Node, source_path_for_targets: &[String]) -> Vec<Node> {
     return match node {
         Node::Branch(path, nodes) => {
             if !nodes.is_empty() {

@@ -1,6 +1,6 @@
 use crate::node::Node;
 
-pub fn filter_target_nodes(nodes: &Vec<Node>) -> Vec<Node> {
+pub fn filter_target_nodes(nodes: &[Node]) -> Vec<Node> {
     return nodes.iter()
         .flat_map(|n| filter_links(n))
         .collect();

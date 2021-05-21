@@ -66,7 +66,7 @@ fn collect_and_filter_target_nodes(configuration: &Configuration) -> Vec<Node> {
     filter_target_nodes(&target_nodes)
 }
 
-fn link_nodes_matching_link_maps(link_maps: &Vec<LinkMap>, sources: &Vec<Node>, create_link: fn(&Node) -> bool) -> Vec<Node> {
+fn link_nodes_matching_link_maps(link_maps: &[LinkMap], sources: &[Node], create_link: fn(&Node) -> bool) -> Vec<Node> {
     sources.iter()
         .flat_map(|source| {
             match match_link_maps(&source, &link_maps) {

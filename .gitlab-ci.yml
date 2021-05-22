@@ -19,7 +19,6 @@ include:
 .in-rust-environment:
   image: rust:alpine
   before_script:
-    - apk add musl-dev
     - rustc --version
     - cargo --version
     - rustup --version
@@ -63,6 +62,7 @@ build:app:
   extends:
     - .in-rust-environment
   script: |
+    apk add musl-dev
     cargo build --release --verbose
   interruptible: true
   needs: []

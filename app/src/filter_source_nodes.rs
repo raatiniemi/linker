@@ -1,11 +1,12 @@
 use crate::node::Node;
+use rayon::prelude::*;
 
 pub fn filter_source_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
     return recursive_exclusion_for_nodes(nodes, excludes);
 }
 
 fn recursive_exclusion_for_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
-    return nodes.iter()
+    return nodes.par_iter()
         .map(|n| recursive_exclusion_for_node(n, excludes))
         .filter(|n| exclude(n, excludes))
         .collect();

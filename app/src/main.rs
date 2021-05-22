@@ -13,6 +13,7 @@ use std::env;
 use opentelemetry::global;
 use opentelemetry::sdk::trace;
 use opentelemetry::trace::Tracer;
+use rayon::prelude::*;
 
 mod configuration;
 mod node;
@@ -85,7 +86,7 @@ fn collect_and_filter_target_nodes(tracer: &trace::Tracer, configuration: &Confi
 }
 
 fn link_nodes_matching_link_maps(link_maps: &[LinkMap], sources: &[Node], create_link: fn(&Node) -> bool) -> Vec<Node> {
-    sources.iter()
+    sources.par_iter()
         .flat_map(|source| {
             match match_link_maps(&source, &link_maps) {
                 Some(n) => create_node_link(&n, create_link),
@@ -121,7 +122,7 @@ fn print(node: Node) {
         Node::Branch(path, mut nodes) => {
             println!("{:?}", path);
             nodes.sort();
-            nodes.iter()
+            nodes.par_iter()
                 .for_each(|v| print(v.to_owned()));
         }
     }

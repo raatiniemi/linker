@@ -1,6 +1,7 @@
 use std::fs;
 use std::path::{PathBuf, Path};
 use crate::node::Node;
+use rayon::prelude::*;
 
 pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
     let directory = fs::read_dir(path);
@@ -25,7 +26,7 @@ pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
 }
 
 fn collect_and_transform_nodes(entries: Vec<PathBuf>) -> Vec<Node> {
-    let mut nodes = entries.iter()
+    let mut nodes = entries.par_iter()
         .map(|v| transform_to_node(v, v.to_str()))
         .filter(|v| v.is_some())
         .map(|v| v.unwrap())

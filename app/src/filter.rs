@@ -2,11 +2,12 @@ use opentelemetry::sdk::trace;
 use opentelemetry::trace::Tracer;
 
 use crate::node::Node;
+use rayon::prelude::*;
 
 pub fn filter(tracer: &trace::Tracer, sources: &[Node], targets: &[Node]) -> Vec<Node> {
     tracer.in_span("filter", |_| {
         let source_path_for_targets = extract_source_path_for_targets(targets);
-        sources.iter()
+        sources.par_iter()
             .flat_map(|n| filter_linked_nodes(&n, &source_path_for_targets))
             .collect()
     })
@@ -15,7 +16,7 @@ pub fn filter(tracer: &trace::Tracer, sources: &[Node], targets: &[Node]) -> Vec
 /// Extracts the source path from targets. As the targets should only be `Node::Link`
 /// it's the only type that we'll handle.
 fn extract_source_path_for_targets(targets: &[Node]) -> Vec<String> {
-    targets.iter()
+    targets.par_iter()
         .flat_map(|n| {
             match n {
                 Node::Leaf(_) => Vec::new(),
@@ -49,7 +50,7 @@ fn filter_branch(node: &Node, source_path_for_targets: &[String]) -> Vec<Node> {
     return match node {
         Node::Branch(path, nodes) => {
             if !nodes.is_empty() {
-                let remaining_nodes: Vec<Node> = nodes.iter()
+                let remaining_nodes: Vec<Node> = nodes.par_iter()
                     .flat_map(|n| filter_linked_nodes(n, source_path_for_targets))
                     .collect();
                 if !remaining_nodes.is_empty() {

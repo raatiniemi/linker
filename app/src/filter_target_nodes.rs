@@ -1,16 +1,19 @@
 use crate::node::Node;
+use rayon::prelude::*;
 
 pub fn filter_target_nodes(nodes: &[Node]) -> Vec<Node> {
-    return nodes.iter()
+    return nodes.par_iter()
         .flat_map(|n| filter_links(n))
         .collect();
 }
 
 fn filter_links(node: &Node) -> Vec<Node> {
     return match node {
-        Node::Branch(_, children) => children.iter()
-            .flat_map(|n| filter_links(n))
-            .collect(),
+        Node::Branch(_, children) => {
+            children.par_iter()
+                .flat_map(|n| filter_links(n))
+                .collect()
+        }
         Node::Leaf(_) => Vec::new(),
         Node::Link(_, _) => [
             node.to_owned()

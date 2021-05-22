@@ -10,6 +10,9 @@ use crate::filter::filter;
 use crate::node::Node;
 use crate::arguments::{collect_and_parse_arguments, Arguments};
 use std::env;
+use opentelemetry::global;
+use opentelemetry::sdk::trace;
+use opentelemetry::trace::Tracer;
 
 mod configuration;
 mod node;
@@ -22,48 +25,63 @@ mod link;
 mod arguments;
 
 fn main() {
-    let arguments = collect_and_parse_arguments(env::args_os());
-    let configuration = read_configuration(&arguments.configuration);
+    global::set_text_map_propagator(opentelemetry_jaeger::Propagator::new());
+    let tracer = opentelemetry_jaeger::new_pipeline()
+        .install_simple()
+        .expect("Unable to install open telemetry pipeline");
 
-    let mut remaining_nodes = run(&arguments, &configuration);
-    remaining_nodes.sort();
-    remaining_nodes.iter()
-        .for_each(|v| print(v.to_owned()));
+    tracer.in_span("execution", |_| {
+        let arguments = collect_and_parse_arguments(&tracer, env::args_os());
+        let configuration = read_configuration(&tracer, &arguments.configuration);
+
+        let mut remaining_nodes = run(&tracer, &arguments, &configuration);
+        remaining_nodes.sort();
+        remaining_nodes.iter()
+            .for_each(|v| print(v.to_owned()));
+    });
+
+    global::shutdown_tracer_provider();
 }
 
-fn run(arguments: &Arguments, configuration: &Configuration) -> Vec<Node> {
-    let source_nodes = collect_and_filter_source_nodes(&configuration);
-    let target_nodes = collect_and_filter_target_nodes(&configuration);
-    let nodes = filter(&source_nodes, &target_nodes);
+fn run(tracer: &trace::Tracer, arguments: &Arguments, configuration: &Configuration) -> Vec<Node> {
+    let source_nodes = collect_and_filter_source_nodes(&tracer, &configuration);
+    let target_nodes = collect_and_filter_target_nodes(&tracer, &configuration);
+    let nodes = filter(&tracer, &source_nodes, &target_nodes);
 
-    link_nodes_matching_link_maps(
-        &configuration.link_maps,
-        &nodes,
-        if arguments.dry_run {
-            dry_run_create_link_for_node
-        } else {
-            create_link_for_node
-        },
-    )
+    tracer.in_span("link_nodes_matching_link_maps", |_| {
+        link_nodes_matching_link_maps(
+            &configuration.link_maps,
+            &nodes,
+            if arguments.dry_run {
+                dry_run_create_link_for_node
+            } else {
+                create_link_for_node
+            },
+        )
+    })
 }
 
-fn collect_and_filter_source_nodes(configuration: &Configuration) -> Vec<Node> {
-    let source_nodes = configuration.source.clone()
-        .map(|v| PathBuf::from(v.as_str()))
-        .map(|v| collect_nodes(&v))
-        .expect(&format!("Unable to read path for sources from configuration"));
+fn collect_and_filter_source_nodes(tracer: &trace::Tracer, configuration: &Configuration) -> Vec<Node> {
+    tracer.in_span("collect_and_filter_source_nodes", |_| {
+        let source_nodes = configuration.source.clone()
+            .map(|v| PathBuf::from(v.as_str()))
+            .map(|v| collect_nodes(&v))
+            .expect(&format!("Unable to read path for sources from configuration"));
 
-    filter_source_nodes(&source_nodes, &configuration.excludes)
+        filter_source_nodes(&source_nodes, &configuration.excludes)
+    })
 }
 
-fn collect_and_filter_target_nodes(configuration: &Configuration) -> Vec<Node> {
-    let target_nodes = &configuration.targets.clone()
-        .iter()
-        .map(|v| PathBuf::from(v.as_str()))
-        .flat_map(|v| collect_nodes(&v))
-        .collect::<Vec<Node>>();
+fn collect_and_filter_target_nodes(tracer: &trace::Tracer, configuration: &Configuration) -> Vec<Node> {
+    tracer.in_span("collect_and_filter_target_nodes", |_| {
+        let target_nodes = &configuration.targets.clone()
+            .iter()
+            .map(|v| PathBuf::from(v.as_str()))
+            .flat_map(|v| collect_nodes(&v))
+            .collect::<Vec<Node>>();
 
-    filter_target_nodes(&target_nodes)
+        filter_target_nodes(&target_nodes)
+    })
 }
 
 fn link_nodes_matching_link_maps(link_maps: &[LinkMap], sources: &[Node], create_link: fn(&Node) -> bool) -> Vec<Node> {
@@ -123,6 +141,7 @@ mod tests {
     use crate::configuration::{Configuration, LinkMap};
     use crate::collect_nodes::collect_nodes;
     use crate::node::Node;
+    use opentelemetry::sdk::export::trace::stdout;
 
     fn create_temporary_directory() -> TempDir {
         TempDir::new("linker")
@@ -156,18 +175,20 @@ mod tests {
     #[test]
     #[should_panic]
     fn run_with_empty_configuration_file() {
+        let tracer = stdout::new_pipeline().install_simple();
         let arguments = Arguments {
             configuration: "/etc/linker/configuration.json".to_string(),
             dry_run: false,
         };
         let configuration = Configuration::default();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
     }
 
     #[test]
     #[should_panic]
     fn run_without_source_path() {
+        let tracer = stdout::new_pipeline().install_simple();
         let arguments = Arguments {
             configuration: "/etc/linker/configuration.json".to_string(),
             dry_run: false,
@@ -179,13 +200,14 @@ mod tests {
             link_maps: [].to_vec(),
         };
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
     }
 
     // Run
 
     #[test]
     fn run_with_leaf_source() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -217,7 +239,7 @@ mod tests {
             ),
         ].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);
@@ -225,6 +247,7 @@ mod tests {
 
     #[test]
     fn run_with_branch_source() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -256,7 +279,7 @@ mod tests {
             ),
         ].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);
@@ -264,6 +287,7 @@ mod tests {
 
     #[test]
     fn run_with_nested_sources() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -296,7 +320,7 @@ mod tests {
             ),
         ].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);
@@ -304,6 +328,7 @@ mod tests {
 
     #[test]
     fn run_when_link_map_match_both_parent_and_child() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -336,7 +361,7 @@ mod tests {
             ),
         ].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);
@@ -346,6 +371,7 @@ mod tests {
 
     #[test]
     fn dry_run_with_leaf_source() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -372,7 +398,7 @@ mod tests {
         };
         let expected: Vec<Node> = [].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);
@@ -380,6 +406,7 @@ mod tests {
 
     #[test]
     fn dry_run_with_branch_source() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -406,7 +433,7 @@ mod tests {
         };
         let expected: Vec<Node> = [].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);
@@ -414,6 +441,7 @@ mod tests {
 
     #[test]
     fn dry_run_with_nested_sources() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -441,7 +469,7 @@ mod tests {
         };
         let expected: Vec<Node> = [].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);
@@ -449,6 +477,7 @@ mod tests {
 
     #[test]
     fn dry_run_when_link_map_match_both_parent_and_child() {
+        let tracer = stdout::new_pipeline().install_simple();
         let directory = create_temporary_directory();
         let path = PathBuf::from(directory.path());
         let arguments = Arguments {
@@ -476,7 +505,7 @@ mod tests {
         };
         let expected: Vec<Node> = [].to_vec();
 
-        run(&arguments, &configuration);
+        run(&tracer, &arguments, &configuration);
 
         let actual = collect_nodes(&targets_path);
         assert_eq!(expected, actual);

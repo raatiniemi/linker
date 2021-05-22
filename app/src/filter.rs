@@ -1,10 +1,15 @@
+use opentelemetry::sdk::trace;
+use opentelemetry::trace::Tracer;
+
 use crate::node::Node;
 
-pub fn filter(sources: &[Node], targets: &[Node]) -> Vec<Node> {
-    let source_path_for_targets = extract_source_path_for_targets(targets);
-    return sources.iter()
-        .flat_map(|n| filter_linked_nodes(&n, &source_path_for_targets))
-        .collect();
+pub fn filter(tracer: &trace::Tracer, sources: &[Node], targets: &[Node]) -> Vec<Node> {
+    tracer.in_span("filter", |_| {
+        let source_path_for_targets = extract_source_path_for_targets(targets);
+        sources.iter()
+            .flat_map(|n| filter_linked_nodes(&n, &source_path_for_targets))
+            .collect()
+    })
 }
 
 /// Extracts the source path from targets. As the targets should only be `Node::Link`
@@ -65,14 +70,16 @@ fn filter_branch(node: &Node, source_path_for_targets: &[String]) -> Vec<Node> {
 mod tests {
     use crate::node::Node;
     use crate::filter::filter;
+    use opentelemetry::sdk::export::trace::stdout;
 
     #[test]
     fn filter_without_sources_and_targets() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = Vec::new();
         let targets: Vec<Node> = Vec::new();
         let expected: Vec<Node> = Vec::new();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }
@@ -81,6 +88,7 @@ mod tests {
 
     #[test]
     fn filter_with_source_leaf() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = [
             Node::Leaf("/var/tmp/leaf".to_string()),
         ].to_vec();
@@ -89,13 +97,14 @@ mod tests {
             Node::Leaf("/var/tmp/leaf".to_string()),
         ].to_vec();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }
 
     #[test]
     fn filter_with_linked_source_leaf() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = [
             Node::Leaf("/var/tmp/leaf".to_string()),
         ].to_vec();
@@ -107,7 +116,7 @@ mod tests {
         ].to_vec();
         let expected: Vec<Node> = Vec::new();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }
@@ -116,6 +125,7 @@ mod tests {
 
     #[test]
     fn filter_with_source_link() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = [
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
         ].to_vec();
@@ -124,7 +134,7 @@ mod tests {
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
         ].to_vec();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }
@@ -133,6 +143,7 @@ mod tests {
 
     #[test]
     fn filter_with_source_branch() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = [
             Node::Branch(
                 "/var/tmp/branch".to_string(),
@@ -147,13 +158,14 @@ mod tests {
             ),
         ].to_vec();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }
 
     #[test]
     fn filter_with_nested_source_branch() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = [
             Node::Branch(
                 "/var/tmp/branch".to_string(),
@@ -178,13 +190,14 @@ mod tests {
             ),
         ].to_vec();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }
 
     #[test]
     fn filter_with_linked_source_branch() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = [
             Node::Branch(
                 "/var/tmp/branch".to_string(),
@@ -204,13 +217,14 @@ mod tests {
         ].to_vec();
         let expected: Vec<Node> = Vec::new();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }
 
     #[test]
     fn filter_with_nested_linked_source_branch() {
+        let tracer = stdout::new_pipeline().install_simple();
         let sources: Vec<Node> = [
             Node::Branch(
                 "/var/tmp/branch".to_string(),
@@ -230,7 +244,7 @@ mod tests {
         ].to_vec();
         let expected: Vec<Node> = Vec::new();
 
-        let actual = filter(&sources, &targets);
+        let actual = filter(&tracer, &sources, &targets);
 
         assert_eq!(expected, actual)
     }

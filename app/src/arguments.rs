@@ -18,6 +18,8 @@
 use clap::{App, Arg};
 use std::env::ArgsOs;
 use std::ffi::OsString;
+use opentelemetry::sdk::trace;
+use opentelemetry::trace::Tracer;
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct Arguments {
@@ -25,8 +27,10 @@ pub struct Arguments {
     pub dry_run: bool,
 }
 
-pub fn collect_and_parse_arguments(args: ArgsOs) -> Arguments {
-    parse_arguments(collect_arguments(args))
+pub fn collect_and_parse_arguments(tracer: &trace::Tracer, args: ArgsOs) -> Arguments {
+    tracer.in_span("collect_and_parse_arguments", |_| {
+        parse_arguments(collect_arguments(args))
+    })
 }
 
 fn collect_arguments(args: ArgsOs) -> Vec<OsString> {

@@ -1,19 +1,20 @@
+use std::env;
 use std::path::PathBuf;
 
-use crate::configuration::{read_configuration, Configuration, LinkMap};
-use crate::collect_nodes::collect_nodes;
-use crate::link::{create_link_for_node, dry_run_create_link_for_node};
-use crate::filter_source_nodes::filter_source_nodes;
-use crate::filter_target_nodes::filter_target_nodes;
-use crate::match_link_maps::match_link_maps;
-use crate::filter::filter;
-use crate::node::Node;
-use crate::arguments::{collect_and_parse_arguments, Arguments};
-use std::env;
 use opentelemetry::global;
 use opentelemetry::sdk::trace;
 use opentelemetry::trace::Tracer;
 use rayon::prelude::*;
+
+use crate::arguments::{Arguments, collect_and_parse_arguments};
+use crate::collect_nodes::collect_nodes;
+use crate::configuration::{Configuration, LinkMap, read_configuration};
+use crate::filter::filter;
+use crate::filter_source_nodes::filter_source_nodes;
+use crate::filter_target_nodes::filter_target_nodes;
+use crate::link::{create_link_for_node, dry_run_create_link_for_node};
+use crate::match_link_maps::match_link_maps;
+use crate::node::Node;
 
 mod configuration;
 mod node;
@@ -132,18 +133,18 @@ fn print(node: Node) {
 //noinspection DuplicatedCode
 #[cfg(test)]
 mod tests {
-    use crate::arguments::Arguments;
-    use crate::run;
-
     use std::fs;
-
-    use tempdir::TempDir;
-    use std::path::{PathBuf, Path};
     use std::fs::File;
-    use crate::configuration::{Configuration, LinkMap};
-    use crate::collect_nodes::collect_nodes;
-    use crate::node::Node;
+    use std::path::{Path, PathBuf};
+
     use opentelemetry::sdk::export::trace::stdout;
+    use tempdir::TempDir;
+
+    use crate::arguments::Arguments;
+    use crate::collect_nodes::collect_nodes;
+    use crate::configuration::{Configuration, LinkMap};
+    use crate::node::Node;
+    use crate::run;
 
     fn create_temporary_directory() -> TempDir {
         TempDir::new("linker")

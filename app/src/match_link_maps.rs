@@ -1,8 +1,10 @@
-use crate::node::Node;
-use crate::configuration::LinkMap;
 use std::path::MAIN_SEPARATOR;
-use regex::Regex;
 use std::str::FromStr;
+
+use regex::Regex;
+
+use crate::configuration::LinkMap;
+use crate::node::Node;
 
 pub fn match_link_maps(node: &Node, link_maps: &[LinkMap]) -> Option<Node> {
     return match node {
@@ -47,9 +49,9 @@ fn is_link_map_match(basename: &str, link_map: &&LinkMap) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use crate::node::Node;
-    use crate::match_link_maps::match_link_maps;
     use crate::configuration::LinkMap;
+    use crate::match_link_maps::match_link_maps;
+    use crate::node::Node;
 
     // Leaf
 

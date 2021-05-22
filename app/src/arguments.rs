@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use clap::{App, Arg};
 use std::env::ArgsOs;
 use std::ffi::OsString;
+
+use clap::{App, Arg};
 use opentelemetry::sdk::trace;
 use opentelemetry::trace::Tracer;
 
@@ -63,8 +64,9 @@ fn parse_arguments(args: Vec<OsString>) -> Arguments {
 
 #[cfg(test)]
 mod tests {
-    use crate::arguments::{Arguments, parse_arguments};
     use std::ffi::OsString;
+
+    use crate::arguments::{Arguments, parse_arguments};
 
     fn transform_and_parse_arguments(arguments: Vec<&str>) -> Arguments {
         parse_arguments(

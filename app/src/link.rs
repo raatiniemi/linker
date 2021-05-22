@@ -1,8 +1,9 @@
-use crate::node::Node;
 use std::fs;
 use std::os::unix::fs as unix_fs;
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
+
+use crate::node::Node;
 
 pub fn dry_run_create_link_for_node(node: &Node) -> bool {
     return match node {
@@ -72,12 +73,14 @@ fn create_directory(value: Option<&Path>) -> bool {
 //noinspection DuplicatedCode
 #[cfg(test)]
 mod tests {
-    use crate::node::Node;
-    use crate::link::{create_link_for_node, dry_run_create_link_for_node};
-    use tempdir::TempDir;
-    use std::path::{PathBuf, Path};
-    use std::fs::File;
     use std::fs;
+    use std::fs::File;
+    use std::path::{Path, PathBuf};
+
+    use tempdir::TempDir;
+
+    use crate::link::{create_link_for_node, dry_run_create_link_for_node};
+    use crate::node::Node;
 
     fn create_temporary_directory() -> TempDir {
         TempDir::new("node")

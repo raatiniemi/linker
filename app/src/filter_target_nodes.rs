@@ -1,5 +1,6 @@
-use crate::node::Node;
 use rayon::prelude::*;
+
+use crate::node::Node;
 
 pub fn filter_target_nodes(nodes: &[Node]) -> Vec<Node> {
     return nodes.par_iter()

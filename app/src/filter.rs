@@ -1,8 +1,8 @@
 use opentelemetry::sdk::trace;
 use opentelemetry::trace::Tracer;
+use rayon::prelude::*;
 
 use crate::node::Node;
-use rayon::prelude::*;
 
 pub fn filter(tracer: &trace::Tracer, sources: &[Node], targets: &[Node]) -> Vec<Node> {
     tracer.in_span("filter", |_| {
@@ -69,9 +69,10 @@ fn filter_branch(node: &Node, source_path_for_targets: &[String]) -> Vec<Node> {
 //noinspection DuplicatedCode
 #[cfg(test)]
 mod tests {
-    use crate::node::Node;
-    use crate::filter::filter;
     use opentelemetry::sdk::export::trace::stdout;
+
+    use crate::filter::filter;
+    use crate::node::Node;
 
     #[test]
     fn filter_without_sources_and_targets() {

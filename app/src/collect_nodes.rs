@@ -1,7 +1,9 @@
 use std::fs;
-use std::path::{PathBuf, Path};
-use crate::node::Node;
+use std::path::{Path, PathBuf};
+
 use rayon::prelude::*;
+
+use crate::node::Node;
 
 pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
     let directory = fs::read_dir(path);
@@ -83,8 +85,8 @@ mod tests {
     extern crate tempdir;
 
     use std::fs::File;
-    use std::path::Path;
     use std::os::unix::fs as unix_fs;
+    use std::path::Path;
 
     use tempdir::TempDir;
 

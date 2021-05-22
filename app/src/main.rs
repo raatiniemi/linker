@@ -77,7 +77,7 @@ fn collect_and_filter_source_nodes(tracer: &trace::Tracer, configuration: &Confi
 fn collect_and_filter_target_nodes(tracer: &trace::Tracer, configuration: &Configuration) -> Vec<Node> {
     tracer.in_span("collect_and_filter_target_nodes", |_| {
         let target_nodes = &configuration.targets.clone()
-            .iter()
+            .par_iter()
             .map(|v| PathBuf::from(v.as_str()))
             .flat_map(|v| collect_nodes(&v))
             .collect::<Vec<Node>>();

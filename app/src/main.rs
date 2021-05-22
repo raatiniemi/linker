@@ -28,6 +28,7 @@ mod arguments;
 fn main() {
     global::set_text_map_propagator(opentelemetry_jaeger::Propagator::new());
     let tracer = opentelemetry_jaeger::new_pipeline()
+        .with_service_name("linker")
         .install_simple()
         .expect("Unable to install open telemetry pipeline");
 

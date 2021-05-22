@@ -19,6 +19,7 @@ include:
 .in-rust-environment:
   image: rust:alpine
   before_script:
+    - apk add musl-dev
     - rustc --version
     - cargo --version
     - rustup --version

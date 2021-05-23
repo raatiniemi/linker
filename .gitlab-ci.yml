@@ -17,7 +17,7 @@ include:
     - docker
 
 .in-rust-environment:
-  image: rust:alpine
+  image: rust:slim-buster
   before_script:
     - rustc --version
     - cargo --version
@@ -62,7 +62,6 @@ build:app:
   extends:
     - .in-rust-environment
   script: |
-    apk add musl-dev
     cargo build --release --verbose
   interruptible: true
   needs: []
@@ -93,7 +92,7 @@ test:cli:
 
 test:app:
   stage: test
-  image: rustlang/rust:nightly
+  image: rustlang/rust:nightly-slim
   extends:
     - .in-rust-environment
   script: |

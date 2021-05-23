@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM debian:buster-slim
 LABEL maintainer="Tobias Raatiniemi <raatiniemi@gmail.com>"
 
 RUN set -x \

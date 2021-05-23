@@ -51,12 +51,17 @@ fn run(tracer: &trace::Tracer, arguments: &Arguments, configuration: &Configurat
     let target_nodes = collect_and_filter_target_nodes(&tracer, &configuration);
     let nodes = filter(&tracer, &source_nodes, &target_nodes);
 
-    let create_link = if arguments.dry_run {
-        dry_run_create_link_for_node
-    } else {
-        create_link_for_node
-    };
-    link_nodes_matching_configuration_parallel(&tracer, &nodes, &configuration.link_maps, create_link)
+    tracer.in_span("link_nodes_matching_link_maps", |_| {
+        link_nodes_matching_configuration(
+            &nodes,
+            &configuration.link_maps,
+            if arguments.dry_run {
+                dry_run_create_link_for_node
+            } else {
+                create_link_for_node
+            },
+        )
+    })
 }
 
 fn collect_and_filter_source_nodes(tracer: &trace::Tracer, configuration: &Configuration) -> Vec<Node> {
@@ -82,25 +87,8 @@ fn collect_and_filter_target_nodes(tracer: &trace::Tracer, configuration: &Confi
     })
 }
 
-fn link_nodes_matching_configuration_parallel(
-    tracer: &trace::Tracer,
-    nodes: &[Node],
-    link_maps: &[LinkMap],
-    create_link: fn(&Node) -> bool,
-) -> Vec<Node> {
-    tracer.in_span("link_nodes_matching_link_maps", |_| {
-        nodes.par_iter()
-            .flat_map(|v| link_node_matching_configuration(&v, &link_maps, create_link))
-            .collect::<Vec<Node>>()
-    })
-}
-
-fn link_nodes_matching_configuration_sequential(
-    nodes: &[Node],
-    link_maps: &[LinkMap],
-    create_link: fn(&Node) -> bool,
-) -> Vec<Node> {
-    nodes.iter()
+fn link_nodes_matching_configuration(nodes: &[Node], link_maps: &[LinkMap], create_link: fn(&Node) -> bool) -> Vec<Node> {
+    nodes.par_iter()
         .flat_map(|v| link_node_matching_configuration(&v, &link_maps, create_link))
         .collect::<Vec<Node>>()
 }
@@ -116,7 +104,7 @@ fn link_node_matching_configuration(
             Node::Leaf(_) => [nodes.to_owned()].to_vec(),
             Node::Link(_, _) => [nodes.to_owned()].to_vec(),
             Node::Branch(path, nodes) => {
-                let remaining_nodes = link_nodes_matching_configuration_sequential(&nodes, link_maps, create_link);
+                let remaining_nodes = link_nodes_matching_configuration(&nodes, link_maps, create_link);
                 if !remaining_nodes.is_empty() {
                     [Node::Branch(path.to_owned(), remaining_nodes)].to_vec()
                 } else {

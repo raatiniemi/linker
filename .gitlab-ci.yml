@@ -5,7 +5,7 @@ stages:
   - registry
 
 include:
-  - "/.gitlab-ci/docker.yml"
+  - local: '/.gitlab-ci/docker.yml'
 
 .in-gradle-environment:
   image: gradle:6.7.0-jdk15
@@ -35,6 +35,11 @@ lint:linker:
   script:
     - gradle detekt
   interruptible: true
+
+lint:docker:
+  stage: lint
+  extends:
+    - .docker-lint
 
 # stage: build
 

@@ -96,6 +96,7 @@ test:cli:
       - build
       - cli/build
 
+# yamllint disable rule:line-length
 test:app:
   stage: test
   image: rustlang/rust:nightly-slim
@@ -112,6 +113,7 @@ test:app:
   needs: []
   variables:
     RUSTFLAGS: "-Zinstrument-coverage"
+# yamllint enable rule:line-length
 
 # stage: registry
 

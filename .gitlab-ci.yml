@@ -145,6 +145,8 @@ registry:app:
   stage: registry
   extends:
     - .docker-registry
+  only:
+    - main
   needs:
     - build:app
     - test:app

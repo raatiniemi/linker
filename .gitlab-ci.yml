@@ -136,8 +136,9 @@ registry:cli:
   only:
     - main
   needs:
-    - build:cli
-    - test:cli
+    - job: build:cli
+    - job: test:cli
+      artifacts: false
   variables:
     DOCKER_FILE: "docker/jdk/Dockerfile"
 
@@ -148,8 +149,9 @@ registry:app:
   only:
     - main
   needs:
-    - build:app
-    - test:app
+    - job: build:app
+    - job: test:app
+      artifacts: false
   variables:
     DOCKER_TAG_PREFIX: "rust-"
     DOCKER_FILE: "docker/rust/Dockerfile"

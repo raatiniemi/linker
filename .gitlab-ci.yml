@@ -39,7 +39,7 @@ lint:docker:
 
 # stage: build
 
-build:app:
+build:cli:
   stage: build
   extends:
     - .in-rust-environment
@@ -55,7 +55,7 @@ build:app:
 # stage: test
 
 # yamllint disable rule:line-length
-test:app:
+test:cli:
   stage: test
   image: rustlang/rust:nightly-slim
   extends:
@@ -82,8 +82,9 @@ registry:app:
   only:
     - main
   needs:
-    - job: build:app
-    - job: test:app
+    - job: build:cli
+    - job: test:cli
       artifacts: false
   variables:
-    DOCKER_FILE: "docker/app/Dockerfile"
+    DOCKER_TAG_PREFIX: 'cli-'
+    DOCKER_FILE: "docker/cli/Dockerfile"

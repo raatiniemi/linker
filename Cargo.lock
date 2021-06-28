@@ -21,19 +21,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "app"
-version = "0.0.1"
-dependencies = [
- "clap",
- "json",
- "opentelemetry",
- "opentelemetry-jaeger",
- "rayon",
- "regex",
- "tempdir",
-]
-
-[[package]]
 name = "async-trait"
 version = "0.1.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -98,6 +85,19 @@ dependencies = [
  "textwrap",
  "unicode-width",
  "vec_map",
+]
+
+[[package]]
+name = "cli"
+version = "0.0.1"
+dependencies = [
+ "clap",
+ "json",
+ "opentelemetry",
+ "opentelemetry-jaeger",
+ "rayon",
+ "regex",
+ "tempdir",
 ]
 
 [[package]]

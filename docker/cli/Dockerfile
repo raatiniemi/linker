@@ -5,9 +5,9 @@ RUN set -x \
   && mkdir -p /etc/linker \
   && mkdir -p /opt/linker
 
-COPY target/release/app /opt/linker/app
+COPY target/release/cli /opt/linker/cli
 
-ENTRYPOINT ["/opt/linker/app"]
+ENTRYPOINT ["/opt/linker/cli"]
 
 VOLUME ["/etc/linker"]
 

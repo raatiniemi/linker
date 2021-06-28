@@ -70,7 +70,7 @@ test:cli:
   interruptible: true
   needs: []
   variables:
-    RUSTFLAGS: "-Zinstrument-coverage"
+    RUSTFLAGS: '-Zinstrument-coverage'
 # yamllint enable rule:line-length
 
 # stage: registry
@@ -87,4 +87,4 @@ registry:app:
       artifacts: false
   variables:
     DOCKER_TAG_PREFIX: 'cli-'
-    DOCKER_FILE: "docker/cli/Dockerfile"
+    DOCKER_FILE: 'docker/cli/Dockerfile'

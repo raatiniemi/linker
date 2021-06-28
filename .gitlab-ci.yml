@@ -7,16 +7,7 @@ stages:
 
 include:
   - local: '/.gitlab-ci/docker.yml'
-
-.in-rust-environment:
-  image: rust:slim-buster
-  before_script:
-    - rustc --version
-    - cargo --version
-    - rustup --version
-    - rustup component add llvm-tools-preview
-  tags:
-    - docker
+  - local: '/.gitlab-ci/rust.yml'
 
 # stage: lint
 
@@ -42,10 +33,7 @@ lint:docker:
 build:cli:
   stage: build
   extends:
-    - .in-rust-environment
-  script: |
-    cargo build --release --verbose
-  interruptible: true
+    - .rust-build
   needs: []
   artifacts:
     paths:
@@ -54,24 +42,11 @@ build:cli:
 
 # stage: test
 
-# yamllint disable rule:line-length
 test:cli:
   stage: test
-  image: rustlang/rust:nightly-slim
   extends:
-    - .in-rust-environment
-  script: |
-    apt-get update -qq && apt-get install -y -qq lcov --no-install-recommends
-    cargo install --color=always --force grcov
-    cargo test --workspace --verbose
-    grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore "/*" -o coverage.info
-    lcov -l coverage.info
-  coverage: '/Total:\|\s*(\d+\.\d+)%/'
-  interruptible: true
+    - .rust-test
   needs: []
-  variables:
-    RUSTFLAGS: '-Zinstrument-coverage'
-# yamllint enable rule:line-length
 
 # stage: registry
 

@@ -74,7 +74,7 @@ ln -s ../source-directory/target-item-1 /path/to/target-directory-1/target-item-
 
 ```
 linker
-Copyright (C) 2020 raatiniemi
+Copyright (C) 2021 raatiniemi
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

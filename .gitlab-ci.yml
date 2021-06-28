@@ -8,15 +8,6 @@ stages:
 include:
   - local: '/.gitlab-ci/docker.yml'
 
-.in-gradle-environment:
-  image: gradle:6.7.0-jdk15
-  before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
-  variables:
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-  tags:
-    - docker
-
 .in-rust-environment:
   image: rust:slim-buster
   before_script:
@@ -41,39 +32,12 @@ lint:yaml:
   tags:
     - docker
 
-lint:linker:
-  stage: lint
-  extends:
-    - .in-gradle-environment
-  script:
-    - gradle detekt
-  interruptible: true
-
 lint:docker:
   stage: lint
   extends:
     - .docker-lint
 
 # stage: build
-
-build:cli:
-  stage: build
-  extends:
-    - .in-gradle-environment
-  script:
-    - gradle --build-cache cli:assemble cli:shadowJar
-  interruptible: true
-  needs: []
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: push
-    paths:
-      - .gradle
-      - build
-      - cli/build
-  artifacts:
-    paths:
-      - cli/build/libs/*.jar
 
 build:app:
   stage: build
@@ -89,24 +53,6 @@ build:app:
     expire_in: 2 hours
 
 # stage: test
-
-test:cli:
-  stage: test
-  extends:
-    - .in-gradle-environment
-  script:
-    - gradle cli:test cli:printCoverage
-  coverage: '/^Coverage:\s*?(\d+(?:\.\d+)?)%/'
-  interruptible: true
-  needs:
-    - build:cli
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: pull
-    paths:
-      - .gradle
-      - build
-      - cli/build
 
 # yamllint disable rule:line-length
 test:app:
@@ -129,19 +75,6 @@ test:app:
 
 # stage: registry
 
-registry:cli:
-  stage: registry
-  extends:
-    - .docker-registry
-  only:
-    - main
-  needs:
-    - job: build:cli
-    - job: test:cli
-      artifacts: false
-  variables:
-    DOCKER_FILE: "docker/jdk/Dockerfile"
-
 registry:app:
   stage: registry
   extends:
@@ -153,5 +86,4 @@ registry:app:
     - job: test:app
       artifacts: false
   variables:
-    DOCKER_TAG_PREFIX: "rust-"
-    DOCKER_FILE: "docker/rust/Dockerfile"
+    DOCKER_FILE: "docker/app/Dockerfile"

@@ -33,9 +33,9 @@ fn filter_links(node: &Node) -> Vec<Node> {
                 .collect()
         }
         Node::Leaf(_) => Vec::new(),
-        Node::Link(_, _) => [
+        Node::Link(_, _) => vec![
             node.to_owned()
-        ].to_vec(),
+        ],
     };
 }
 
@@ -57,9 +57,9 @@ mod tests {
 
     #[test]
     fn filter_target_nodes_with_leaf() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf".to_string())
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_target_nodes(&nodes);
@@ -69,10 +69,10 @@ mod tests {
 
     #[test]
     fn filter_target_nodes_with_leaves() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf-1".to_string()),
             Node::Leaf("/var/tmp/leaf-2".to_string()),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_target_nodes(&nodes);
@@ -82,12 +82,12 @@ mod tests {
 
     #[test]
     fn filter_target_nodes_with_link() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter_target_nodes(&nodes);
 
@@ -96,18 +96,18 @@ mod tests {
 
     #[test]
     fn filter_target_nodes_with_nested_link() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf".to_string()),
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Link("/var/tmp/branch/link".to_string(), "/var/tmp/leaf".to_string())
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Link("/var/tmp/branch/link".to_string(), "/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter_target_nodes(&nodes);
 
@@ -116,9 +116,9 @@ mod tests {
 
     #[test]
     fn filter_target_nodes_with_branch() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch("/var/tmp/branch".to_string(), Vec::new())
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_target_nodes(&nodes);
@@ -128,10 +128,10 @@ mod tests {
 
     #[test]
     fn filter_target_nodes_with_branches() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch("/var/tmp/branch-1".to_string(), Vec::new()),
             Node::Branch("/var/tmp/branch-2".to_string(), Vec::new()),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_target_nodes(&nodes);

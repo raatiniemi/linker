@@ -83,13 +83,13 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_leaf() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf".to_string())
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf".to_string())
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -98,15 +98,15 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_leaves() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf-1".to_string()),
             Node::Leaf("/var/tmp/leaf-2".to_string()),
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf-1".to_string()),
             Node::Leaf("/var/tmp/leaf-2".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -115,16 +115,16 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_leaf() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf-1".to_string()),
             Node::Leaf("/var/tmp/leaf-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "leaf-1".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf-2".to_string())
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -133,16 +133,16 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_uppercase_leaf() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/LEAF-1".to_string()),
             Node::Leaf("/var/tmp/LEAF-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "leaf-1".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Leaf("/var/tmp/LEAF-2".to_string())
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -151,14 +151,14 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_leaves() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf-1".to_string()),
             Node::Leaf("/var/tmp/leaf-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "leaf-1".to_string(),
             "leaf-2".to_string(),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_source_nodes(&nodes, &excludes);
@@ -168,14 +168,14 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_uppercase_leaves() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Leaf("/var/tmp/LEAF-1".to_string()),
             Node::Leaf("/var/tmp/LEAF-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "leaf-1".to_string(),
             "leaf-2".to_string(),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_source_nodes(&nodes, &excludes);
@@ -185,13 +185,13 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_link() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -200,15 +200,15 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_links() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Link("/var/tmp/link-1".to_string(), "/var/tmp/leaf-1".to_string()),
             Node::Link("/var/tmp/link-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Link("/var/tmp/link-1".to_string(), "/var/tmp/leaf-1".to_string()),
             Node::Link("/var/tmp/link-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -217,16 +217,16 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_link() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Link("/var/tmp/link-1".to_string(), "/var/tmp/leaf-1".to_string()),
             Node::Link("/var/tmp/link-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "link-1".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Link("/var/tmp/link-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -235,16 +235,16 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_uppercase_link() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Link("/var/tmp/LINK-1".to_string(), "/var/tmp/leaf-1".to_string()),
             Node::Link("/var/tmp/LINK-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "link-1".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Link("/var/tmp/LINK-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -253,14 +253,14 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_links() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Link("/var/tmp/link-1".to_string(), "/var/tmp/leaf-1".to_string()),
             Node::Link("/var/tmp/link-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "link-1".to_string(),
             "link-2".to_string(),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_source_nodes(&nodes, &excludes);
@@ -270,14 +270,14 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_uppercase_links() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Link("/var/tmp/LINK-1".to_string(), "/var/tmp/leaf-1".to_string()),
             Node::Link("/var/tmp/LINK-2".to_string(), "/var/tmp/leaf-2".to_string()),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "link-1".to_string(),
             "link-2".to_string(),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_source_nodes(&nodes, &excludes);
@@ -287,19 +287,19 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_without_empty_branch() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
                 Vec::new(),
             )
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
                 Vec::new(),
             )
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -308,23 +308,23 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_branch_and_child() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch/leaf".to_string())
-                ].to_vec(),
+                ],
             )
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch/leaf".to_string())
-                ].to_vec(),
+                ],
             )
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -333,25 +333,25 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_branch_and_children() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch/leaf-1".to_string()),
                     Node::Leaf("/var/tmp/branch/leaf-2".to_string()),
-                ].to_vec(),
+                ],
             )
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch/leaf-1".to_string()),
                     Node::Leaf("/var/tmp/branch/leaf-2".to_string()),
-                ].to_vec(),
+                ],
             )
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -360,7 +360,7 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_empty_branches() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
                 Vec::new(),
@@ -369,9 +369,9 @@ mod tests {
                 "/var/tmp/branch-2".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
                 Vec::new(),
@@ -380,7 +380,7 @@ mod tests {
                 "/var/tmp/branch-2".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -389,35 +389,35 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_branches_and_child() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-1/leaf-1".to_string())
-                ].to_vec(),
+                ],
             ),
             Node::Branch(
                 "/var/tmp/branch-2".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-2/leaf-2".to_string())
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-1/leaf-1".to_string())
-                ].to_vec(),
+                ],
             ),
             Node::Branch(
                 "/var/tmp/branch-2".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-2/leaf-2".to_string())
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -426,39 +426,39 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_with_branches_and_children() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-1/leaf-1".to_string()),
                     Node::Leaf("/var/tmp/branch-1/leaf-2".to_string()),
-                ].to_vec(),
+                ],
             ),
             Node::Branch(
                 "/var/tmp/branch-2".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-2/leaf-3".to_string()),
                     Node::Leaf("/var/tmp/branch-2/leaf-4".to_string()),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
+        ];
         let excludes: Vec<String> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-1/leaf-1".to_string()),
                     Node::Leaf("/var/tmp/branch-1/leaf-2".to_string()),
-                ].to_vec(),
+                ],
             ),
             Node::Branch(
                 "/var/tmp/branch-2".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch-2/leaf-3".to_string()),
                     Node::Leaf("/var/tmp/branch-2/leaf-4".to_string()),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -467,7 +467,7 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_branch() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
                 Vec::new(),
@@ -476,16 +476,16 @@ mod tests {
                 "/var/tmp/branch-2".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "branch-2".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch-1".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -494,7 +494,7 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_uppercase_branch() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/BRANCH-1".to_string(),
                 Vec::new(),
@@ -503,16 +503,16 @@ mod tests {
                 "/var/tmp/BRANCH-2".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "branch-2".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/BRANCH-1".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -521,17 +521,17 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_branch_with_child() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch/leaf".to_string()),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "branch".to_string()
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_source_nodes(&nodes, &excludes);
@@ -541,17 +541,17 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_uppercase_branch_with_child() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/BRANCH".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/BRANCH/leaf".to_string()),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "branch".to_string()
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter_source_nodes(&nodes, &excludes);
@@ -561,23 +561,23 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_child_in_branch() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch/leaf".to_string()),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "leaf".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 
@@ -586,23 +586,23 @@ mod tests {
 
     #[test]
     fn filter_source_nodes_when_excluding_uppercase_child_in_branch() {
-        let nodes: Vec<Node> = [
+        let nodes: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Leaf("/var/tmp/branch/LEAF".to_string()),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
-        let excludes: Vec<String> = [
+        ];
+        let excludes: Vec<String> = vec![
             "leaf".to_string()
-        ].to_vec();
-        let expected: Vec<Node> = [
+        ];
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
 
         let actual = filter_source_nodes(&nodes, &excludes);
 

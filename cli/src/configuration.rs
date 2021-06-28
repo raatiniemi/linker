@@ -234,9 +234,9 @@ mod tests {
         "#;
         let expected: Configuration = Configuration {
             source: Some("/var/cache/pacman/pkg".to_string()),
-            targets: [
+            targets: vec![
                 "/var/www/archlinux/pkg".to_string()
-            ].to_vec(),
+            ],
             excludes: Vec::new(),
             link_maps: Vec::new(),
         };
@@ -266,12 +266,12 @@ mod tests {
         "#;
         let expected: Configuration = Configuration {
             source: Some("/var/cache/pacman/pkg".to_string()),
-            targets: [
+            targets: vec![
                 "/var/www/archlinux/pkg".to_string()
-            ].to_vec(),
-            excludes: [
+            ],
+            excludes: vec![
                 "*zip".to_string()
-            ].to_vec(),
+            ],
             link_maps: Vec::new(),
         };
 
@@ -300,12 +300,12 @@ mod tests {
         "#;
         let expected: Configuration = Configuration {
             source: Some("/var/cache/pacman/pkg".to_string()),
-            targets: [
+            targets: vec![
                 "/var/www/archlinux/pkg".to_string()
-            ].to_vec(),
-            excludes: [
+            ],
+            excludes: vec![
                 "*zip".to_string()
-            ].to_vec(),
+            ],
             link_maps: Vec::new(),
         };
 
@@ -335,12 +335,12 @@ mod tests {
         "#;
         let expected: Configuration = Configuration {
             source: Some("/var/cache/pacman/pkg".to_string()),
-            targets: [
+            targets: vec![
                 "/var/www/archlinux/pkg".to_string()
-            ].to_vec(),
-            excludes: [
+            ],
+            excludes: vec![
                 "*zip".to_string()
-            ].to_vec(),
+            ],
             link_maps: Vec::new(),
         };
 
@@ -370,12 +370,12 @@ mod tests {
         "#;
         let expected: Configuration = Configuration {
             source: Some("/var/cache/pacman/pkg".to_string()),
-            targets: [
+            targets: vec![
                 "/var/www/archlinux/pkg".to_string()
-            ].to_vec(),
-            excludes: [
+            ],
+            excludes: vec![
                 "*zip".to_string()
-            ].to_vec(),
+            ],
             link_maps: Vec::new(),
         };
 
@@ -405,18 +405,18 @@ mod tests {
         "#;
         let expected: Configuration = Configuration {
             source: Some("/var/cache/pacman/pkg".to_string()),
-            targets: [
+            targets: vec![
                 "/var/www/archlinux/pkg".to_string()
-            ].to_vec(),
-            excludes: [
+            ],
+            excludes: vec![
                 "*zip".to_string()
-            ].to_vec(),
-            link_maps: [
+            ],
+            link_maps: vec![
                 LinkMap {
                     regex: "(.*)\\.pkg\\.tar\\.xz".to_string(),
                     target: "/var/www/archlinux/pkg".to_string(),
                 }
-            ].to_vec(),
+            ],
         };
 
         let actual = parse_configuration(&configuration);

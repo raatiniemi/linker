@@ -118,14 +118,14 @@ fn link_node_matching_configuration(
     match match_link_maps(&nodes, &link_maps) {
         Some(n) => create_node_link(&n, create_link),
         None => match nodes {
-            Node::Leaf(_) => [nodes.to_owned()].to_vec(),
-            Node::Link(_, _) => [nodes.to_owned()].to_vec(),
+            Node::Leaf(_) => vec![nodes.to_owned()],
+            Node::Link(_, _) => vec![nodes.to_owned()],
             Node::Branch(path, nodes) => {
                 let remaining_nodes = link_nodes_matching_configuration(&nodes, link_maps, create_link);
                 if !remaining_nodes.is_empty() {
-                    [Node::Branch(path.to_owned(), remaining_nodes)].to_vec()
+                    vec![Node::Branch(path.to_owned(), remaining_nodes)]
                 } else {
-                    [].to_vec()
+                    vec![]
                 }
             }
         }
@@ -134,9 +134,9 @@ fn link_node_matching_configuration(
 
 fn create_node_link(node: &Node, create_link: fn(&Node) -> bool) -> Vec<Node> {
     if create_link(&node) {
-        [].to_vec()
+        vec![]
     } else {
-        [node.to_owned()].to_vec()
+        vec![node.to_owned()]
     }
 }
 
@@ -221,9 +221,9 @@ mod tests {
         };
         let configuration = Configuration {
             source: None,
-            targets: [].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [].to_vec(),
+            targets: vec![],
+            excludes: vec![],
+            link_maps: vec![],
         };
 
         run(&tracer, &arguments, &configuration);
@@ -247,23 +247,23 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "(.*)\\.pkg\\.tar\\.zst".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Link(
                 as_string(&targets_path.join("name.pkg.tar.zst")),
                 as_string(&sources_path.join("name.pkg.tar.zst")),
             ),
-        ].to_vec();
+        ];
 
         run(&tracer, &arguments, &configuration);
 
@@ -287,23 +287,23 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "folder".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Link(
                 as_string(&targets_path.join("folder")),
                 as_string(&sources_path.join("folder")),
             ),
-        ].to_vec();
+        ];
 
         run(&tracer, &arguments, &configuration);
 
@@ -328,23 +328,23 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "subfolder".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Link(
                 as_string(&targets_path.join("subfolder")),
                 as_string(&sources_path.join("folder").join("subfolder")),
             ),
-        ].to_vec();
+        ];
 
         run(&tracer, &arguments, &configuration);
 
@@ -369,23 +369,23 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "folder".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Link(
                 as_string(&targets_path.join("folder")),
                 as_string(&sources_path.join("folder")),
             ),
-        ].to_vec();
+        ];
 
         run(&tracer, &arguments, &configuration);
 
@@ -411,18 +411,18 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "(.*)\\.pkg\\.tar\\.zst".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [].to_vec();
+        let expected: Vec<Node> = vec![];
 
         run(&tracer, &arguments, &configuration);
 
@@ -446,18 +446,18 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "folder".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [].to_vec();
+        let expected: Vec<Node> = vec![];
 
         run(&tracer, &arguments, &configuration);
 
@@ -482,18 +482,18 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "subfolder".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [].to_vec();
+        let expected: Vec<Node> = vec![];
 
         run(&tracer, &arguments, &configuration);
 
@@ -518,18 +518,18 @@ mod tests {
         create_directory_at_path(&targets_path);
         let configuration = Configuration {
             source: Some(as_string(&sources_path)),
-            targets: [
+            targets: vec![
                 as_string(&targets_path),
-            ].to_vec(),
-            excludes: [].to_vec(),
-            link_maps: [
+            ],
+            excludes: vec![],
+            link_maps: vec![
                 LinkMap {
                     regex: "folder".to_string(),
                     target: as_string(&targets_path),
                 }
-            ].to_vec(),
+            ],
         };
-        let expected: Vec<Node> = [].to_vec();
+        let expected: Vec<Node> = vec![];
 
         run(&tracer, &arguments, &configuration);
 

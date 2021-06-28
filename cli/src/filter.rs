@@ -37,7 +37,7 @@ fn extract_source_path_for_targets(targets: &[Node]) -> Vec<String> {
         .flat_map(|n| {
             match n {
                 Node::Leaf(_) => Vec::new(),
-                Node::Link(_, path) => [path.to_owned()].to_vec(),
+                Node::Link(_, path) => vec![path.to_owned()],
                 Node::Branch(_, _) => Vec::new(),
             }
         })
@@ -50,7 +50,7 @@ fn filter_linked_nodes(node: &Node, source_path_for_targets: &[String]) -> Vec<N
     } else {
         match node {
             Node::Branch(_, _) => filter_branch(node, source_path_for_targets),
-            _ => [node.to_owned()].to_vec()
+            _ => vec![node.to_owned()]
         }
     }
 }
@@ -71,12 +71,12 @@ fn filter_branch(node: &Node, source_path_for_targets: &[String]) -> Vec<Node> {
                     .flat_map(|n| filter_linked_nodes(n, source_path_for_targets))
                     .collect();
                 if !remaining_nodes.is_empty() {
-                    [Node::Branch(path.to_owned(), remaining_nodes.to_owned())].to_vec()
+                    vec![Node::Branch(path.to_owned(), remaining_nodes.to_owned())]
                 } else {
                     Vec::new()
                 }
             } else {
-                [node.to_owned()].to_vec()
+                vec![node.to_owned()]
             }
         }
         _ => Vec::new(),
@@ -108,13 +108,13 @@ mod tests {
     #[test]
     fn filter_with_source_leaf() {
         let tracer = stdout::new_pipeline().install_simple();
-        let sources: Vec<Node> = [
+        let sources: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
         let targets: Vec<Node> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter(&tracer, &sources, &targets);
 
@@ -124,15 +124,15 @@ mod tests {
     #[test]
     fn filter_with_linked_source_leaf() {
         let tracer = stdout::new_pipeline().install_simple();
-        let sources: Vec<Node> = [
+        let sources: Vec<Node> = vec![
             Node::Leaf("/var/tmp/leaf".to_string()),
-        ].to_vec();
-        let targets: Vec<Node> = [
+        ];
+        let targets: Vec<Node> = vec![
             Node::Link(
                 "/var/tmp/link".to_string(),
                 "/var/tmp/leaf".to_string(),
             ),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter(&tracer, &sources, &targets);
@@ -145,13 +145,13 @@ mod tests {
     #[test]
     fn filter_with_source_link() {
         let tracer = stdout::new_pipeline().install_simple();
-        let sources: Vec<Node> = [
+        let sources: Vec<Node> = vec![
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
         let targets: Vec<Node> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Link("/var/tmp/link".to_string(), "/var/tmp/leaf".to_string()),
-        ].to_vec();
+        ];
 
         let actual = filter(&tracer, &sources, &targets);
 
@@ -163,19 +163,19 @@ mod tests {
     #[test]
     fn filter_with_source_branch() {
         let tracer = stdout::new_pipeline().install_simple();
-        let sources: Vec<Node> = [
+        let sources: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
         let targets: Vec<Node> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
                 Vec::new(),
             ),
-        ].to_vec();
+        ];
 
         let actual = filter(&tracer, &sources, &targets);
 
@@ -185,29 +185,29 @@ mod tests {
     #[test]
     fn filter_with_nested_source_branch() {
         let tracer = stdout::new_pipeline().install_simple();
-        let sources: Vec<Node> = [
+        let sources: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Branch(
                         "/var/tmp/branch/child".to_string(),
                         Vec::new(),
                     ),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
+        ];
         let targets: Vec<Node> = Vec::new();
-        let expected: Vec<Node> = [
+        let expected: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Branch(
                         "/var/tmp/branch/child".to_string(),
                         Vec::new(),
                     ),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
+        ];
 
         let actual = filter(&tracer, &sources, &targets);
 
@@ -217,23 +217,23 @@ mod tests {
     #[test]
     fn filter_with_linked_source_branch() {
         let tracer = stdout::new_pipeline().install_simple();
-        let sources: Vec<Node> = [
+        let sources: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Branch(
                         "/var/tmp/branch/child".to_string(),
                         Vec::new(),
                     ),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
-        let targets: Vec<Node> = [
+        ];
+        let targets: Vec<Node> = vec![
             Node::Link(
                 "/var/tmp/link".to_string(),
                 "/var/tmp/branch".to_string(),
             ),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter(&tracer, &sources, &targets);
@@ -244,23 +244,23 @@ mod tests {
     #[test]
     fn filter_with_nested_linked_source_branch() {
         let tracer = stdout::new_pipeline().install_simple();
-        let sources: Vec<Node> = [
+        let sources: Vec<Node> = vec![
             Node::Branch(
                 "/var/tmp/branch".to_string(),
-                [
+                vec![
                     Node::Branch(
                         "/var/tmp/branch/child".to_string(),
                         Vec::new(),
                     ),
-                ].to_vec(),
+                ],
             ),
-        ].to_vec();
-        let targets: Vec<Node> = [
+        ];
+        let targets: Vec<Node> = vec![
             Node::Link(
                 "/var/tmp/link".to_string(),
                 "/var/tmp/branch/child".to_string(),
             ),
-        ].to_vec();
+        ];
         let expected: Vec<Node> = Vec::new();
 
         let actual = filter(&tracer, &sources, &targets);

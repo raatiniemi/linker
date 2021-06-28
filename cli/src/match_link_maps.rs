@@ -70,7 +70,7 @@ mod tests {
     use crate::match_link_maps::match_link_maps;
     use crate::node::Node;
 
-    // Leaf
+// Leaf
 
     #[test]
     fn match_leaf_with_empty_path() {
@@ -103,12 +103,12 @@ mod tests {
         let node: Node = Node::Leaf(
             "/var/tmp/sources/leaf".to_string()
         );
-        let link_maps: Vec<LinkMap> = [
+        let link_maps: Vec<LinkMap> = vec![
             LinkMap {
                 regex: "regex".to_string(),
                 target: "/var/tmp/targets".to_string(),
             }
-        ].to_vec();
+        ];
         let expected: Option<Node> = None;
 
         let actual = match_link_maps(&node, &link_maps);
@@ -121,12 +121,12 @@ mod tests {
         let node: Node = Node::Leaf(
             "/var/tmp/sources/leaf".to_string()
         );
-        let link_maps: Vec<LinkMap> = [
+        let link_maps: Vec<LinkMap> = vec![
             LinkMap {
                 regex: "leaf".to_string(),
                 target: "/var/tmp/targets".to_string(),
             }
-        ].to_vec();
+        ];
         let expected: Option<Node> = Some(
             Node::Link(
                 "/var/tmp/targets/leaf".to_string(),
@@ -144,12 +144,12 @@ mod tests {
         let node: Node = Node::Leaf(
             "/var/tmp/sources/leaf-1".to_string()
         );
-        let link_maps: Vec<LinkMap> = [
+        let link_maps: Vec<LinkMap> = vec![
             LinkMap {
                 regex: "leaf[-](\\d{1})".to_string(),
                 target: "/var/tmp/targets".to_string(),
             }
-        ].to_vec();
+        ];
         let expected: Option<Node> = Some(
             Node::Link(
                 "/var/tmp/targets/leaf-1".to_string(),
@@ -228,12 +228,12 @@ mod tests {
             "/var/tmp/sources/branch".to_string(),
             Vec::new(),
         );
-        let link_maps: Vec<LinkMap> = [
+        let link_maps: Vec<LinkMap> = vec![
             LinkMap {
                 regex: "regex".to_string(),
                 target: "/var/tmp/targets".to_string(),
             }
-        ].to_vec();
+        ];
         let expected: Option<Node> = None;
 
         let actual = match_link_maps(&node, &link_maps);
@@ -247,12 +247,12 @@ mod tests {
             "/var/tmp/sources/branch".to_string(),
             Vec::new(),
         );
-        let link_maps: Vec<LinkMap> = [
+        let link_maps: Vec<LinkMap> = vec![
             LinkMap {
                 regex: "branch".to_string(),
                 target: "/var/tmp/targets".to_string(),
             }
-        ].to_vec();
+        ];
         let expected: Option<Node> = Some(
             Node::Link(
                 "/var/tmp/targets/branch".to_string(),

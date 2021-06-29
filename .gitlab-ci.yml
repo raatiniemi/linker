@@ -47,7 +47,7 @@ test:cli:
 
 # stage: registry
 
-registry:app:
+registry:cli:
   stage: registry
   extends:
     - .docker-registry

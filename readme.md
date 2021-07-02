@@ -3,8 +3,6 @@
 [![license](https://img.shields.io/badge/license-GPLv2-blue.svg)](license)
 [![pipeline status](https://gitlab.com/rahome/linker/badges/main/pipeline.svg)](https://gitlab.com/rahome/linker/-/commits/master)
 [![coverage report](https://gitlab.com/rahome/linker/badges/main/coverage.svg)](https://gitlab.com/rahome/linker/-/commits/master)
-[![docker pulls](https://img.shields.io/docker/pulls/raatiniemi/linker.svg)](https://hub.docker.com/r/raatiniemi/linker/)
-[![docker image size](https://img.shields.io/docker/image-size/raatiniemi/linker/latest)](https://hub.docker.com/r/raatiniemi/linker/)
 
 The application will index a source directory and compare the index against one
 or more target directories. Based on whether link map configuration exists for
@@ -27,11 +25,13 @@ the symbolic link, i.e. the linked name do not really matters.
 
 ## How to
 
-In order to build the application, run `./gradlew build shadowJar`. This will
-produce a JAR which will be located within the `build/libs` directory, with the
-name `linker-$version-all.jar`. *Note that you need to swap the `$version` with
-the actual version.* To run this JAR, with the necessary configuration, use the
-following `java -jar build/libs/linker-$version-all.jar configuration.json`.
+In order to build the application run `cargo build --release`, this will produce
+binaries located within the `./target/release` directory.
+
+### `cli`
+
+The `cli` application accepts a couple of arguments, use the `-h` option to view
+help information.
 
 Sample configuration file:
 
@@ -76,7 +76,7 @@ ln -s ../source-directory/target-item-1 /path/to/target-directory-1/target-item-
 
 ```
 linker
-Copyright (C) 2020 raatiniemi
+Copyright (C) 2021 raatiniemi
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -90,6 +90,7 @@ trivy:cli:
   stage: trivy
   extends:
     - .trivy
+  allow_failure: true
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always

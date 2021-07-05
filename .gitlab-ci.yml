@@ -98,3 +98,5 @@ trivy:cli:
     - job: registry:cli
       optional: true
       artifacts: false
+  variables:
+    DOCKER_TAG_PREFIX: 'cli-'

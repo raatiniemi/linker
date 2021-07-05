@@ -4,6 +4,7 @@ stages:
   - build
   - test
   - registry
+  - trivy
 
 include:
   - project: 'rahome/gitlab-ci-templates'
@@ -12,6 +13,10 @@ include:
       - '/templates/Docker.gitlab-ci.yml'
       - '/templates/Rust.gitlab-ci.yml'
       - '/templates/Yaml.gitlab-ci.yml'
+  - project: 'rahome/trivy-cache'
+    ref: main
+    file:
+      - '/Trivy.gitlab-ci.yml'
 
 # stage: lint
 
@@ -19,11 +24,19 @@ lint:docker:
   stage: lint
   extends:
     - .docker-lint
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - when: on_success
 
 lint:yaml:
   stage: lint
   extends:
     - .yaml-lint
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - when: on_success
 
 # stage: build
 
@@ -31,6 +44,10 @@ build:cli:
   stage: build
   extends:
     - .rust-build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - when: on_success
   needs: []
   artifacts:
     paths:
@@ -43,6 +60,10 @@ test:cli:
   stage: test
   extends:
     - .rust-test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - when: on_success
   needs: []
 
 # stage: registry
@@ -51,8 +72,10 @@ registry:cli:
   stage: registry
   extends:
     - .docker-registry
-  only:
-    - main
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   needs:
     - job: build:cli
     - job: test:cli
@@ -60,3 +83,18 @@ registry:cli:
   variables:
     DOCKER_TAG_PREFIX: 'cli-'
     DOCKER_FILE: 'docker/cli/Dockerfile'
+
+# stage: trivy
+
+trivy:cli:
+  stage: trivy
+  extends:
+    - .trivy
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  needs:
+    - job: registry:cli
+      optional: true
+      artifacts: false

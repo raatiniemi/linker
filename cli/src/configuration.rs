@@ -18,8 +18,6 @@
 use std::fs;
 
 use json::JsonValue;
-use opentelemetry::sdk::trace;
-use opentelemetry::trace::Tracer;
 
 #[derive(Default, Eq, PartialEq, Clone, Debug)]
 pub struct Configuration {
@@ -35,21 +33,19 @@ pub struct LinkMap {
     pub target: String,
 }
 
-pub fn read_configuration(tracer: &trace::Tracer, path: &str) -> Configuration {
-    tracer.in_span("read_configuration", |_| {
-        let data = fs::read_to_string(path)
-            .expect(&format!("Unable to read configuration file at path {}", path).as_str());
+pub fn read_configuration(path: &str) -> Configuration {
+    let data = fs::read_to_string(path)
+        .expect(&format!("Unable to read configuration file at path {}", path).as_str());
 
-        let configuration = parse_configuration(data.as_str());
-        if configuration.source.is_none() {
-            panic!("Configuration is missing valid source")
-        }
-        if configuration.targets.is_empty() {
-            panic!("Configuration is missing valid targets")
-        }
+    let configuration = parse_configuration(data.as_str());
+    if configuration.source.is_none() {
+        panic!("Configuration is missing valid source")
+    }
+    if configuration.targets.is_empty() {
+        panic!("Configuration is missing valid targets")
+    }
 
-        configuration
-    })
+    configuration
 }
 
 fn parse_configuration(configuration: &str) -> Configuration {

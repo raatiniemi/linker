@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use rayon::prelude::*;
-
 use crate::node::Node;
 
 pub fn filter_source_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
@@ -24,7 +22,7 @@ pub fn filter_source_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
 }
 
 fn recursive_exclusion_for_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
-    return nodes.par_iter()
+    return nodes.iter()
         .map(|n| recursive_exclusion_for_node(n, excludes))
         .filter(|n| exclude(n, excludes))
         .collect();

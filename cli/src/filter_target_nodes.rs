@@ -15,12 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use rayon::prelude::*;
-
 use crate::node::Node;
 
 pub fn filter_target_nodes(nodes: &[Node]) -> Vec<Node> {
-    return nodes.par_iter()
+    return nodes.iter()
         .flat_map(|n| filter_links(n))
         .collect();
 }
@@ -28,7 +26,7 @@ pub fn filter_target_nodes(nodes: &[Node]) -> Vec<Node> {
 fn filter_links(node: &Node) -> Vec<Node> {
     return match node {
         Node::Branch(_, children) => {
-            children.par_iter()
+            children.iter()
                 .flat_map(|n| filter_links(n))
                 .collect()
         }

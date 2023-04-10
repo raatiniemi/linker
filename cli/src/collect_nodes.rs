@@ -18,8 +18,6 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use rayon::prelude::*;
-
 use crate::node::Node;
 
 pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
@@ -45,7 +43,7 @@ pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
 }
 
 fn collect_and_transform_nodes(entries: Vec<PathBuf>) -> Vec<Node> {
-    let mut nodes = entries.par_iter()
+    let mut nodes = entries.iter()
         .map(|v| transform_to_node(v, v.to_str()))
         .filter(|v| v.is_some())
         .map(|v| v.unwrap())

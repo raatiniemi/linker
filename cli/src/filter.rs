@@ -15,13 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use rayon::prelude::*;
-
 use crate::node::Node;
 
 pub fn filter(sources: &[Node], targets: &[Node]) -> Vec<Node> {
     let source_path_for_targets = extract_source_path_for_targets(targets);
-    sources.par_iter()
+    sources.iter()
         .flat_map(|n| filter_linked_nodes(&n, &source_path_for_targets))
         .collect()
 }
@@ -29,7 +27,7 @@ pub fn filter(sources: &[Node], targets: &[Node]) -> Vec<Node> {
 /// Extracts the source path from targets. As the targets should only be `Node::Link`
 /// it's the only type that we'll handle.
 fn extract_source_path_for_targets(targets: &[Node]) -> Vec<String> {
-    targets.par_iter()
+    targets.iter()
         .flat_map(|n| {
             match n {
                 Node::Leaf(_) => Vec::new(),
@@ -63,7 +61,7 @@ fn filter_branch(node: &Node, source_path_for_targets: &[String]) -> Vec<Node> {
     return match node {
         Node::Branch(path, nodes) => {
             if !nodes.is_empty() {
-                let remaining_nodes: Vec<Node> = nodes.par_iter()
+                let remaining_nodes: Vec<Node> = nodes.iter()
                     .flat_map(|n| filter_linked_nodes(n, source_path_for_targets))
                     .collect();
                 if !remaining_nodes.is_empty() {

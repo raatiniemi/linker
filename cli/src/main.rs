@@ -18,8 +18,6 @@
 use std::env;
 use std::path::PathBuf;
 
-use rayon::prelude::*;
-
 use crate::arguments::{Arguments, collect_and_parse_arguments};
 use crate::collect_nodes::collect_nodes;
 use crate::configuration::{Configuration, LinkMap, read_configuration};
@@ -77,7 +75,7 @@ fn collect_and_filter_source_nodes(configuration: &Configuration) -> Vec<Node> {
 
 fn collect_and_filter_target_nodes(configuration: &Configuration) -> Vec<Node> {
     let target_nodes = &configuration.targets.to_owned()
-        .par_iter()
+        .iter()
         .map(|v| PathBuf::from(v.as_str()))
         .flat_map(|v| collect_nodes(&v))
         .collect::<Vec<Node>>();
@@ -86,7 +84,7 @@ fn collect_and_filter_target_nodes(configuration: &Configuration) -> Vec<Node> {
 }
 
 fn link_nodes_matching_configuration(nodes: &[Node], link_maps: &[LinkMap], create_link: fn(&Node) -> bool) -> Vec<Node> {
-    nodes.par_iter()
+    nodes.iter()
         .flat_map(|v| link_node_matching_configuration(&v, &link_maps, create_link))
         .collect::<Vec<Node>>()
 }
@@ -128,7 +126,7 @@ fn print(node: Node) {
         Node::Branch(path, mut nodes) => {
             println!("{:?}", path);
             nodes.sort();
-            nodes.par_iter()
+            nodes.iter()
                 .for_each(|v| print(v.to_owned()));
         }
     }

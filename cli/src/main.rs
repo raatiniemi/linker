@@ -51,7 +51,8 @@ fn main() {
 fn run(arguments: &Arguments, configuration: &Configuration) -> Vec<Node> {
     let source_nodes = collect_and_filter_source_nodes(&configuration);
     let target_nodes = collect_and_filter_target_nodes(&configuration);
-    let nodes = filter(&source_nodes, &target_nodes);
+    let mut nodes = filter(&source_nodes, &target_nodes);
+    nodes.sort();
 
     link_nodes_matching_configuration(
         &nodes,

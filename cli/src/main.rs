@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use std::env;
 use std::path::PathBuf;
 
+use clap::Parser;
 use log::info;
 
-use crate::arguments::{Arguments, collect_and_parse_arguments};
+use crate::arguments::Arguments;
 use crate::collect_nodes::collect_nodes;
 use crate::configuration::{Configuration, LinkMap, read_configuration};
 use crate::filter::filter;
@@ -43,7 +43,7 @@ mod arguments;
 fn main() {
     env_logger::init();
 
-    let arguments = collect_and_parse_arguments(env::args_os());
+    let arguments = Arguments::parse();
     let configuration = read_configuration(&arguments.configuration);
 
     let mut remaining_nodes = run(&arguments, &configuration);

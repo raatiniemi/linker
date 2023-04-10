@@ -19,6 +19,7 @@ use std::fs;
 use std::os::unix::fs as unix_fs;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use log::{error, info, warn};
 
 use crate::node::Node;
 
@@ -26,7 +27,7 @@ pub fn dry_run_create_link_for_node(node: &Node) -> bool {
     return match node {
         Node::Leaf(_) => false,
         Node::Link(target, source) => {
-            println!("{}", format!("Creating symbolic link ${:?} -> {:?}", target, source));
+            info!("Creating symbolic link {} -> {}", target, source);
             true
         }
         Node::Branch(_, _) => false,
@@ -50,7 +51,7 @@ fn create_link(target: &str, source: &str) -> bool {
     return match result {
         Ok(_) => true,
         Err(err) => {
-            eprintln!("{}", format!("Unable to create link {:?} -> {:?}: {:?}", target, source, err));
+            warn!("Unable to create link {:?} -> {:?}: {:?}", target, source, err);
             false
         }
     };
@@ -61,7 +62,7 @@ fn create_parent_directory(target: &str) -> bool {
     match result {
         Ok(path) => create_directory(path.as_path().parent()),
         Err(error) => {
-            eprintln!("{}", format!("Unable to create path for {:?}: {:?}", target, error));
+            warn!("Unable to create path for {:?}: {:?}", target, error);
             false
         }
     }
@@ -74,7 +75,7 @@ fn create_directory(value: Option<&Path>) -> bool {
                 let result = fs::create_dir(path);
                 match result.err() {
                     Some(error) => {
-                        eprintln!("{}", format!("Unable to create directory for {:?}: {:?}", path, error));
+                        error!("Unable to create directory for {:?}: {:?}", path, error);
                         false
                     }
                     None => true

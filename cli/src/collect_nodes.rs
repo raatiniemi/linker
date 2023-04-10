@@ -17,13 +17,14 @@
 
 use std::fs;
 use std::path::{Path, PathBuf};
+use log::error;
 
 use crate::node::Node;
 
 pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
     let directory = fs::read_dir(path);
     if directory.is_err() {
-        eprintln!("Unable to read \"{:?}\" directory: {:?}", path.to_str().unwrap(), directory.err().unwrap());
+        error!("Unable to read \"{:?}\" directory: {:?}", path.to_str().unwrap(), directory.err().unwrap());
         return Vec::new();
     }
 
@@ -31,7 +32,7 @@ pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
     for reader in directory {
         for result in reader {
             if result.is_err() {
-                eprintln!("Unable to handle entry: {:?}", result.err().unwrap());
+                error!("Unable to handle entry: {:?}", result.err().unwrap());
                 continue;
             }
 

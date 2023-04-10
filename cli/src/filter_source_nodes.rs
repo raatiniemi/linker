@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use log::warn;
 use crate::node::Node;
 
 pub fn filter_source_nodes(nodes: &[Node], excludes: &[String]) -> Vec<Node> {
@@ -43,7 +44,7 @@ fn exclude(node: &Node, excludes: &[String]) -> bool {
     return match value {
         Some(basename) => !excludes.contains(&basename.to_lowercase()),
         None => {
-            eprintln!("Unable to extract basename from {:?}", node);
+            warn!("Unable to extract basename from {:?}", node);
             true
         }
     };

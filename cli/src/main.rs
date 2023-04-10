@@ -18,6 +18,8 @@
 use std::env;
 use std::path::PathBuf;
 
+use log::info;
+
 use crate::arguments::{Arguments, collect_and_parse_arguments};
 use crate::collect_nodes::collect_nodes;
 use crate::configuration::{Configuration, LinkMap, read_configuration};
@@ -39,6 +41,8 @@ mod link;
 mod arguments;
 
 fn main() {
+    env_logger::init();
+
     let arguments = collect_and_parse_arguments(env::args_os());
     let configuration = read_configuration(&arguments.configuration);
 
@@ -122,10 +126,10 @@ fn create_node_link(node: &Node, create_link: fn(&Node) -> bool) -> Vec<Node> {
 
 fn print(node: Node) {
     match node {
-        Node::Leaf(path) => println!("{:?}", path),
-        Node::Link(target, _) => println!("{:?}", target),
+        Node::Leaf(path) => info!("{:?}", path),
+        Node::Link(target, _) => info!("{:?}", target),
         Node::Branch(path, mut nodes) => {
-            println!("{:?}", path);
+            info!("{:?}", path);
             nodes.sort();
             nodes.iter()
                 .for_each(|v| print(v.to_owned()));

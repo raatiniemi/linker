@@ -18,6 +18,7 @@
 use std::path::MAIN_SEPARATOR;
 use std::str::FromStr;
 
+use log::warn;
 use regex::Regex;
 
 use crate::configuration::LinkMap;
@@ -36,32 +37,32 @@ fn find_link_map_match(path: &String, link_maps: &[LinkMap]) -> Option<Node> {
         return None;
     }
 
-    match path.rsplit(MAIN_SEPARATOR).next() {
-        Some(basename) => {
-            let value: Option<&LinkMap> = link_maps.iter()
+    path.rsplit(MAIN_SEPARATOR).next()
+        .and_then(|basename| {
+            link_maps.iter()
                 .filter(|v| is_link_map_match(basename, v))
-                .last();
-
-            match value {
-                Some(link_map) => Some(
+                .last()
+                .map(|link_map| {
                     Node::Link(
                         [link_map.target.to_string(), basename.to_string()]
                             .join(&MAIN_SEPARATOR.to_string()),
                         path.to_string(),
                     )
-                ),
-                None => None,
-            }
-        }
-        None => None,
-    }
+                })
+        })
 }
 
 fn is_link_map_match(basename: &str, link_map: &&LinkMap) -> bool {
-    let regex = Regex::from_str(link_map.regex.as_str())
-        .expect(&format!("Unable to build regex: {:?}", link_map.regex));
+    let result = Regex::from_str(link_map.regex.as_str())
+        .map(|x| x.is_match(basename));
 
-    regex.is_match(basename)
+    match result {
+        Ok(is_match) => is_match,
+        Err(e) => {
+            warn!("Unable to build regex from string: {}", e);
+            false
+        }
+    }
 }
 
 #[cfg(test)]

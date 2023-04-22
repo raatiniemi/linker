@@ -105,10 +105,10 @@ mod tests {
             "/var/tmp/sources/leaf".to_string()
         );
         let link_maps: Vec<LinkMap> = vec![
-            LinkMap {
-                regex: "regex".to_string(),
-                target: "/var/tmp/targets".to_string(),
-            }
+            LinkMap::new(
+                "regex".to_string(),
+                "/var/tmp/targets".to_string(),
+            ).unwrap()
         ];
         let expected: Option<Node> = None;
 
@@ -123,10 +123,10 @@ mod tests {
             "/var/tmp/sources/leaf".to_string()
         );
         let link_maps: Vec<LinkMap> = vec![
-            LinkMap {
-                regex: "leaf".to_string(),
-                target: "/var/tmp/targets".to_string(),
-            }
+            LinkMap::new(
+                "leaf".to_string(),
+                "/var/tmp/targets".to_string(),
+            ).unwrap()
         ];
         let expected: Option<Node> = Some(
             Node::Link(
@@ -146,10 +146,10 @@ mod tests {
             "/var/tmp/sources/leaf-1".to_string()
         );
         let link_maps: Vec<LinkMap> = vec![
-            LinkMap {
-                regex: "leaf[-](\\d{1})".to_string(),
-                target: "/var/tmp/targets".to_string(),
-            }
+            LinkMap::new(
+                "leaf[-](\\d{1})".to_string(),
+                "/var/tmp/targets".to_string(),
+            ).unwrap()
         ];
         let expected: Option<Node> = Some(
             Node::Link(
@@ -230,10 +230,10 @@ mod tests {
             Vec::new(),
         );
         let link_maps: Vec<LinkMap> = vec![
-            LinkMap {
-                regex: "regex".to_string(),
-                target: "/var/tmp/targets".to_string(),
-            }
+            LinkMap::new(
+                "regex".to_string(),
+                "/var/tmp/targets".to_string(),
+            ).unwrap()
         ];
         let expected: Option<Node> = None;
 
@@ -249,10 +249,10 @@ mod tests {
             Vec::new(),
         );
         let link_maps: Vec<LinkMap> = vec![
-            LinkMap {
-                regex: "branch".to_string(),
-                target: "/var/tmp/targets".to_string(),
-            }
+            LinkMap::new(
+                "branch".to_string(),
+                "/var/tmp/targets".to_string(),
+            ).unwrap()
         ];
         let expected: Option<Node> = Some(
             Node::Link(

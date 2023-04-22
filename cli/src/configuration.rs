@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use std::error::Error;
 use std::fs;
 
 use json::JsonValue;
@@ -31,6 +32,17 @@ pub struct Configuration {
 pub struct LinkMap {
     pub regex: String,
     pub target: String,
+}
+
+impl LinkMap {
+    pub(crate) fn new(regex: String, target: String) -> Result<Self, Box<dyn Error>> {
+        Ok(
+            LinkMap {
+                regex,
+                target,
+            }
+        )
+    }
 }
 
 pub fn read_configuration(path: &str) -> Configuration {
@@ -128,7 +140,10 @@ fn map_valid_link_maps(value: &[JsonValue]) -> Vec<LinkMap> {
             (regex, target)
         })
         .filter(|(regex, target)| !regex.is_empty() && !target.is_empty())
-        .map(|(regex, target)| LinkMap { regex, target })
+        .map(|(regex, target)| {
+            LinkMap::new(regex, target)
+                .expect("Unable to create link map")
+        })
         .collect()
 }
 
@@ -408,10 +423,10 @@ mod tests {
                 "*zip".to_string()
             ],
             link_maps: vec![
-                LinkMap {
-                    regex: "(.*)\\.pkg\\.tar\\.xz".to_string(),
-                    target: "/var/www/archlinux/pkg".to_string(),
-                }
+                LinkMap::new(
+                    "(.*)\\.pkg\\.tar\\.xz".to_string(),
+                    "/var/www/archlinux/pkg".to_string(),
+                ).unwrap()
             ],
         };
 

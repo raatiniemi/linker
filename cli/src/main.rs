@@ -232,10 +232,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "(.*)\\.pkg\\.tar\\.zst".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "(.*)\\.pkg\\.tar\\.zst".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![
@@ -271,10 +271,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "folder".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "folder".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![
@@ -311,10 +311,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "subfolder".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "subfolder".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![
@@ -351,10 +351,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "folder".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "folder".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![
@@ -392,10 +392,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "(.*)\\.pkg\\.tar\\.zst".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "(.*)\\.pkg\\.tar\\.zst".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![];
@@ -426,10 +426,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "folder".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "folder".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![];
@@ -461,10 +461,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "subfolder".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "subfolder".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![];
@@ -496,10 +496,10 @@ mod tests {
             ],
             excludes: vec![],
             link_maps: vec![
-                LinkMap {
-                    regex: "folder".to_string(),
-                    target: as_string(&targets_path),
-                }
+                LinkMap::new(
+                    "folder".to_string(),
+                    as_string(&targets_path),
+                ).unwrap()
             ],
         };
         let expected: Vec<Node> = vec![];

@@ -110,10 +110,7 @@ fn map_targets(data: &JsonValue) -> Vec<String> {
 
 fn map_valid_targets(value: &[JsonValue]) -> Vec<String> {
     value.iter()
-        .map(|v| {
-            v.as_str().expect("Invalid value in target configuration")
-                .to_string()
-        })
+        .map(|v| v.to_string())
         .collect()
 }
 
@@ -126,10 +123,7 @@ fn map_excludes(data: &JsonValue) -> Vec<String> {
 
 fn map_valid_excludes(value: &[JsonValue]) -> Vec<String> {
     value.iter()
-        .map(|v| {
-            v.as_str().expect("Invalid value in exclude configuration")
-                .to_string()
-        })
+        .map(|v| v.to_string())
         .map(|v| v.to_lowercase())
         .collect()
 }
@@ -145,12 +139,8 @@ fn map_valid_link_maps(value: &[JsonValue]) -> Vec<LinkMap> {
     value.iter()
         .filter(|v| v["regex"].is_string() && v["target"].is_string())
         .map(|v| {
-            let regex = v["regex"].as_str()
-                .expect("Invalid value in link map regex configuration")
-                .to_string();
-            let target = v["target"].as_str()
-                .expect("Invalid value in link map target configuration")
-                .to_string();
+            let regex = v["regex"].to_string();
+            let target = v["target"].to_string();
             (regex, target)
         })
         .filter(|(regex, target)| !regex.is_empty() && !target.is_empty())

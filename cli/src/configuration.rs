@@ -17,8 +17,10 @@
 
 use std::error::Error;
 use std::fs;
+use std::str::FromStr;
 
 use json::JsonValue;
+use regex::Regex;
 
 #[derive(Default, Eq, PartialEq, Clone, Debug)]
 pub struct Configuration {
@@ -28,20 +30,32 @@ pub struct Configuration {
     pub link_maps: Vec<LinkMap>,
 }
 
-#[derive(Eq, PartialEq, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct LinkMap {
-    pub regex: String,
+    regex: Regex,
     pub target: String,
 }
 
+impl PartialEq for LinkMap {
+    fn eq(&self, other: &Self) -> bool {
+        self.regex.to_string() == other.regex.to_string() && self.target == other.target
+    }
+}
+
+impl Eq for LinkMap {}
+
 impl LinkMap {
-    pub(crate) fn new(regex: String, target: String) -> Result<Self, Box<dyn Error>> {
+    pub(crate) fn new(pattern: String, target: String) -> Result<Self, Box<dyn Error>> {
         Ok(
             LinkMap {
-                regex,
+                regex: Regex::from_str(pattern.as_str())?,
                 target,
             }
         )
+    }
+
+    pub(crate) fn is_match(&self, basename: &str) -> bool {
+        self.regex.is_match(basename)
     }
 }
 

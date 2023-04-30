@@ -26,7 +26,7 @@ use crate::configuration::{Configuration, LinkMap, read_configuration};
 use crate::filter::filter;
 use crate::filter_source_nodes::filter_source_nodes;
 use crate::filter_target_nodes::filter_target_nodes;
-use crate::link::{create_link_for_node, dry_run_create_link_for_node};
+use crate::link::{create_link_for_node, create_link_for_node_dry_run};
 use crate::match_link_maps::match_link_maps;
 use crate::node::Node;
 
@@ -63,7 +63,7 @@ fn run(arguments: &Arguments, configuration: &Configuration) -> Vec<Node> {
         &nodes,
         &configuration.link_maps,
         if arguments.dry_run {
-            dry_run_create_link_for_node
+            create_link_for_node_dry_run
         } else {
             create_link_for_node
         },

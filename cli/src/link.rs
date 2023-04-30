@@ -26,7 +26,7 @@ use log::{debug, info, warn};
 use crate::linker_error::LinkerError;
 use crate::node::Node;
 
-pub fn dry_run_create_link_for_node(node: &Node) -> bool {
+pub fn create_link_for_node_dry_run(node: &Node) -> bool {
     return match node {
         Node::Leaf(path) => {
             warn!("Unable to create link with leaf path {}", path);
@@ -98,7 +98,7 @@ mod tests {
 
     use tempdir::TempDir;
 
-    use crate::link::{create_link_for_node, dry_run_create_link_for_node};
+    use crate::link::{create_link_for_node, create_link_for_node_dry_run};
     use crate::node::Node;
 
     fn create_temporary_directory() -> TempDir {
@@ -128,11 +128,11 @@ mod tests {
     // - Leaf
 
     #[test]
-    fn dry_run_create_link_for_node_with_leaf() {
+    fn create_link_for_node_dry_run_with_leaf() {
         let node = Node::Leaf("/tmp/leaf".to_string());
         let expected = false;
 
-        let actual = dry_run_create_link_for_node(&node);
+        let actual = create_link_for_node_dry_run(&node);
 
         assert_eq!(expected, actual)
     }
@@ -140,14 +140,14 @@ mod tests {
     // - Link
 
     #[test]
-    fn dry_run_create_link_for_node_with_link() {
+    fn create_link_for_node_dry_run_with_link() {
         let node = Node::Link(
             "/tmp/link".to_string(),
             "/tmp/leaf".to_string(),
         );
         let expected = true;
 
-        let actual = dry_run_create_link_for_node(&node);
+        let actual = create_link_for_node_dry_run(&node);
 
         assert_eq!(expected, actual)
     }
@@ -155,14 +155,14 @@ mod tests {
     // - Branch
 
     #[test]
-    fn dry_run_create_link_for_node_with_branch() {
+    fn create_link_for_node_dry_run_with_branch() {
         let node = Node::Branch(
             "/tmp/branch".to_string(),
             vec![],
         );
         let expected = false;
 
-        let actual = dry_run_create_link_for_node(&node);
+        let actual = create_link_for_node_dry_run(&node);
 
         assert_eq!(expected, actual)
     }

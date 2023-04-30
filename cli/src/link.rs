@@ -15,77 +15,78 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use std::error::Error;
 use std::fs;
 use std::os::unix::fs as unix_fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::str::FromStr;
-use log::{error, info, warn};
 
+use log::{debug, info, warn};
+
+use crate::linker_error::LinkerError;
 use crate::node::Node;
 
 pub fn dry_run_create_link_for_node(node: &Node) -> bool {
     return match node {
-        Node::Leaf(_) => false,
+        Node::Leaf(path) => {
+            warn!("Unable to create link with leaf path {}", path);
+            false
+        }
         Node::Link(target, source) => {
             info!("Creating symbolic link {} -> {}", target, source);
             true
         }
-        Node::Branch(_, _) => false,
+        Node::Branch(path, _) => {
+            warn!("Unable to create link with branch path {}", path);
+            false
+        }
     };
 }
 
 pub fn create_link_for_node(node: &Node) -> bool {
     return match node {
-        Node::Leaf(_) => false,
-        Node::Link(target, source) => create_link(&target, &source),
-        Node::Branch(_, _) => false,
-    };
-}
-
-fn create_link(target: &str, source: &str) -> bool {
-    if !create_parent_directory(target) {
-        return false;
-    }
-
-    let result = unix_fs::symlink(source.to_string(), target.to_string());
-    return match result {
-        Ok(_) => true,
-        Err(err) => {
-            warn!("Unable to create link {:?} -> {:?}: {:?}", target, source, err);
+        Node::Leaf(path) => {
+            warn!("Unable to create link with leaf path {}", path);
             false
         }
-    };
-}
-
-fn create_parent_directory(target: &str) -> bool {
-    let result = PathBuf::from_str(target);
-    match result {
-        Ok(path) => create_directory(path.as_path().parent()),
-        Err(error) => {
-            warn!("Unable to create path for {:?}: {:?}", target, error);
-            false
-        }
-    }
-}
-
-fn create_directory(value: Option<&Path>) -> bool {
-    match value {
-        Some(path) => {
-            if !path.exists() {
-                let result = fs::create_dir(path);
-                match result.err() {
-                    Some(error) => {
-                        error!("Unable to create directory for {:?}: {:?}", path, error);
-                        false
-                    }
-                    None => true
+        Node::Link(target, source) => {
+            match create_link(&target, &source) {
+                Ok(_) => {
+                    info!("Symbolic link {} -> {} was successfully created", target, source);
+                    true
                 }
-            } else {
-                true
+                Err(e) => {
+                    warn!("Unable to link {:?} -> {:?}: {}", target, source, e);
+                    false
+                }
             }
         }
-        None => false
-    }
+        Node::Branch(path, _) => {
+            warn!("Unable to create link with branch path {}", path);
+            false
+        }
+    };
+}
+
+fn create_link(target: &str, source: &str) -> Result<(), Box<dyn Error>> {
+    let target_path = PathBuf::from_str(target.clone())?;
+    return match target_path.as_path().parent() {
+        Some(parent_path) => {
+            debug!("Check if path {:?} exists", parent_path);
+            if !parent_path.exists() {
+                debug!("Path {:?} do not exists, creating...", parent_path);
+                fs::create_dir(parent_path)?;
+                debug!("Path {:?} was successfully created", parent_path);
+            }
+
+
+            debug!("Creating symbolic link {} -> {}...", target, source);
+            unix_fs::symlink(source.to_string(), target.to_string())
+                .map_err(|e| Box::new(LinkerError::UnableToCreateSymlink(e)))?;
+            Ok(())
+        }
+        None => Err(Box::new(LinkerError::UnableToGetParentDirectory(target_path))),
+    };
 }
 
 //noinspection DuplicatedCode

@@ -39,6 +39,7 @@ mod filter;
 mod match_link_maps;
 mod link;
 mod arguments;
+mod linker_error;
 
 fn main() {
     env_logger::init();

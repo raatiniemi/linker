@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 LABEL maintainer="Tobias Raatiniemi <raatiniemi@gmail.com>"
 
 RUN set -x \

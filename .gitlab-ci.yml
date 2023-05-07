@@ -1,11 +1,4 @@
 ---
-stages:
-  - lint
-  - build
-  - test
-  - registry
-  - trivy
-
 include:
   - project: 'rahome/gitlab-ci-templates'
     ref: main
@@ -18,43 +11,35 @@ include:
     file:
       - '/Trivy.gitlab-ci.yml'
 
-# stage: lint
-
-lint:docker:
-  stage: lint
-  extends:
-    - .docker-lint
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: never
-    - when: on_success
-
-lint:yaml:
-  stage: lint
-  extends:
-    - .yaml-lint
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: never
-    - when: on_success
-
-# stage: build
-
 build:cli:
   stage: build
-  extends:
-    - .rust-build
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
-    - when: on_success
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
   needs: []
+  extends:
+    - .rust-build
   artifacts:
     paths:
       - ./target
     expire_in: 2 hours
 
-# stage: test
+build:docker:
+  stage: build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+  needs:
+    - job: build:cli
+  extends:
+    - .docker-registry
+  variables:
+    DOCKER_TAG_PREFIX: 'cli-'
+    DOCKER_FILE: 'docker/cli/Dockerfile'
 
 test:cli:
   stage: test
@@ -63,34 +48,21 @@ test:cli:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
-    - when: on_success
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
   needs: []
 
-# stage: registry
-
-registry:cli:
-  stage: registry
-  extends:
-    - .docker-registry
+test:docker:
+  stage: test
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-  needs:
-    - job: build:cli
-    - job: test:cli
-      artifacts: false
-  variables:
-    DOCKER_TAG_PREFIX: 'cli-'
-    DOCKER_FILE: 'docker/cli/Dockerfile'
-
-# stage: trivy
-
-trivy:cli:
-  stage: trivy
+    - if: '$CI_COMMIT_BRANCH'
   extends:
-    - .trivy
-  allow_failure: true
+    - .docker-lint
+
+test:trivy:
+  stage: test
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
@@ -99,5 +71,17 @@ trivy:cli:
     - job: registry:cli
       optional: true
       artifacts: false
+  extends:
+    - .trivy
+  allow_failure: true
   variables:
     DOCKER_TAG_PREFIX: 'cli-'
+
+test:yaml:
+  stage: test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+  extends:
+    - .yaml-lint

@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 LABEL maintainer="Tobias Raatiniemi <raatiniemi@gmail.com>"
 
 RUN set -x \

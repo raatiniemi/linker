@@ -17,6 +17,7 @@
 
 use std::fs;
 use std::path::{Path, PathBuf};
+
 use log::error;
 
 use crate::node::Node;
@@ -98,18 +99,16 @@ fn normalize_link_source(v: &str) -> String {
 //noinspection DuplicatedCode
 #[cfg(test)]
 mod tests {
-    extern crate tempdir;
-
     use std::fs::File;
     use std::os::unix::fs as unix_fs;
     use std::path::Path;
 
-    use tempdir::TempDir;
+    use tempfile::TempDir;
 
     use super::*;
 
     fn create_temporary_directory() -> TempDir {
-        TempDir::new("node")
+        TempDir::new()
             .expect("Unable to create temporary directory")
     }
 

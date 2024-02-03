@@ -145,7 +145,7 @@ mod tests {
     use std::fs::File;
     use std::path::{Path, PathBuf};
 
-    use tempdir::TempDir;
+    use tempfile::TempDir;
 
     use crate::arguments::Arguments;
     use crate::collect_nodes::collect_nodes;
@@ -154,7 +154,7 @@ mod tests {
     use crate::run;
 
     fn create_temporary_directory() -> TempDir {
-        TempDir::new("linker")
+        TempDir::new()
             .expect("Unable to create temporary directory")
     }
 

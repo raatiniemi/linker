@@ -96,13 +96,13 @@ mod tests {
     use std::fs::File;
     use std::path::{Path, PathBuf};
 
-    use tempdir::TempDir;
+    use tempfile::TempDir;
 
     use crate::link::{create_link_for_node, create_link_for_node_dry_run};
     use crate::node::Node;
 
     fn create_temporary_directory() -> TempDir {
-        TempDir::new("node")
+        TempDir::new()
             .expect("Unable to create temporary directory")
     }
 

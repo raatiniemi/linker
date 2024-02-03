@@ -41,6 +41,16 @@ build:docker:
     DOCKER_TAG_PREFIX: 'cli-'
     DOCKER_FILE: 'docker/cli/Dockerfile'
 
+test:cli:audit:
+  stage: test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  extends:
+    - .rust-audit
+  needs: []
+
 test:cli:
   stage: test
   rules:

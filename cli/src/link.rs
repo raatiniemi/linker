@@ -69,7 +69,7 @@ pub fn create_link_for_node(node: &Node) -> bool {
 }
 
 fn create_link(target: &str, source: &str) -> Result<(), Box<dyn Error>> {
-    let target_path = PathBuf::from_str(target.clone())?;
+    let target_path = PathBuf::from_str(target)?;
     return match target_path.as_path().parent() {
         Some(parent_path) => {
             debug!("Check if path {:?} exists", parent_path);

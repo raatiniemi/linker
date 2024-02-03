@@ -29,7 +29,7 @@ pub fn collect_nodes(path: &PathBuf) -> Vec<Node> {
     }
 
     let mut entries: Vec<PathBuf> = Vec::new();
-    for reader in directory {
+    if let Ok(reader) = directory {
         for result in reader {
             if result.is_err() {
                 error!("Unable to handle entry: {:?}", result.err().unwrap());

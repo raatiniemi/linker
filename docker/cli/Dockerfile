@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM registry.gitlab.com/rahome/docker/debian:bookworm-slim
 LABEL maintainer="Tobias Raatiniemi <raatiniemi@gmail.com>"
 
 RUN set -x \

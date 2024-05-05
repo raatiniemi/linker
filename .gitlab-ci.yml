@@ -15,7 +15,6 @@ build:cli:
   stage: build
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: never
     - if: '$CI_COMMIT_BRANCH'
     - if: '$CI_COMMIT_TAG'
   needs: []
@@ -30,7 +29,6 @@ build:docker:
   stage: build
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: never
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
     - if: '$CI_COMMIT_TAG'
   needs:
@@ -45,7 +43,6 @@ test:cli:audit:
   stage: test
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   extends:
     - .rust-audit
@@ -76,11 +73,9 @@ test:trivy:
   stage: test
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   needs:
     - job: build:docker
-      optional: true
       artifacts: false
   extends:
     - .trivy

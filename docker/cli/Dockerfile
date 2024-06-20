@@ -5,7 +5,7 @@ RUN set -x \
   && mkdir -p /etc/linker \
   && mkdir -p /opt/linker
 
-COPY target/release/cli /opt/linker/cli
+COPY target/x86_64-unknown-linux-gnu/release/cli /opt/linker/cli
 
 ENTRYPOINT ["/opt/linker/cli"]
 

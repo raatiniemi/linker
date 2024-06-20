@@ -22,7 +22,7 @@ build:cli:
     - .rust-build
   artifacts:
     paths:
-      - ./target
+      - ./target/x86_64-unknown-linux-gnu/release
     expire_in: 2 hours
 
 build:docker:
